@@ -1,0 +1,5 @@
+*.egg*
+__pycache__
+.vscode
+*.pyc
+*cache

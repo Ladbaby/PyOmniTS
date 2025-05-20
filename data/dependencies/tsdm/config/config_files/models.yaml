@@ -1,0 +1,16 @@
+# download sources for dataset
+
+NODE: https://github.com/rtqichen/torchdiffeq.git
+N-BEATS: https://github.com/ElementAI/N-BEATS.git
+SET-TS: https://github.com/BorgwardtLab/Set_Functions_for_Time_Series.git
+TPA: https://github.com/gantheory/TPA-LSTM.git
+GRU-ODE-Bayes: https://github.com/edebrouwer/gru_ode_bayes.git
+IP-Net: https://github.com/mlds-lab/interp-net.git
+Latent-ODE: https://github.com/YuliaRubanova/latent_ode.git
+ODE-RNN: https://github.com/YuliaRubanova/latent_ode.git
+BRITS: https://github.com/NIPS-BRITS/BRITS.git
+mTAN: https://github.com/satyanshukla/mTANs.git
+M-RNN: https://github.com/jsyoon0823/MRNN.git
+NCDE: https://github.com/patrick-kidger/NeuralCDE
+Informer: https://github.com/zhouhaoyi/Informer2020
+TFT: https://github.com/google-research/google-research/trunk/tft

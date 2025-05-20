@@ -1,0 +1,22 @@
+# download sources for dataset
+# UCI
+Electricity: https://archive.ics.uci.edu/ml/machine-learning-databases/00321/
+Traffic: https://archive.ics.uci.edu/ml/machine-learning-databases/00204/
+Human Activity: https://archive.ics.uci.edu/ml/machine-learning-databases/00506/
+Air Quality Multi-Site: https://archive.ics.uci.edu/ml/machine-learning-databases/00501/
+Air Quality: https://archive.ics.uci.edu/ml/machine-learning-databases/00381/
+Household Consumption: https://archive.ics.uci.edu/ml/machine-learning-databases/00235/
+Character Trajectories: https://archive.ics.uci.edu/ml/machine-learning-databases/character-trajectories/
+# GITHUB
+M4: https://github.com/Mcompetitions/M4-methods/tree/master/Dataset
+# KAGGLE
+M5: https://www.kaggle.com/c/m5-forecasting-accuracy
+tourism1: https://www.kaggle.com/c/tourism1
+tourism2: https://www.kaggle.com/c/tourism2
+# OTHER
+MuJoCo: https://www.cs.toronto.edu/~rtqichen/dataset/HopperPhysics/training.pt
+M3: https://forecasters.org/data/m3comp/M3C.xls
+UWAVE: https://timeseriesclassification.com/Downloads/UWaveGestureLibrary.zip
+Physionet 2012: https://www.physionet.org/static/published-projects/challenge-2012/predicting-mortality-of-icu-patients-the-physionet-computing-in-cardiology-challenge-2012-1.0.0.zip
+Physionet 2019: https://archive.physionet.org/users/shared/challenge-2019/
+USHCN: https://cdiac.ess-dive.lbl.gov/ftp/ushcn_daily/
