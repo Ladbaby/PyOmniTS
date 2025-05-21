@@ -10,7 +10,7 @@ from utils.globals import logger
 class Model(nn.Module):
     """
     - paper: "SegRNN: Segment Recurrent Neural Network for Long-Term Time Series Forecasting"
-    - paper link: https://arxiv.org/abs/2308.11200.pdf
+    - paper link: https://arxiv.org/abs/2308.11200
     - code adapted from: https://github.com/thuml/Time-Series-Library
     """
 

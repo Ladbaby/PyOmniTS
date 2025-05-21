@@ -15,7 +15,7 @@ from utils.ExpConfigs import ExpConfigs
 class Model(nn.Module):
     """
     - Paper: "Graph-Guided Network for Irregularly Sampled Multivariate Time Series" (ICLR 2022)
-    - Paper link: https://arxiv.org/abs/2110.05357
+    - Paper link: https://openreview.net/forum?id=Kwm8I7dU-l5
     - Code adapted from: https://github.com/WenjieDu/PyPOTS
 
     The core wrapper assembles the submodules of Raindrop classification model

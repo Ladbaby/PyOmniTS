@@ -44,7 +44,7 @@ def get_subsequent_mask(seq):
 class Model(nn.Module):
     '''
     - paper: "Warpformer: A Multi-scale Modeling Approach for Irregular Clinical Time Series" (KDD 2023)
-    - paper link: http://arxiv.org/abs/2306.09368
+    - paper link: https://dl.acm.org/doi/abs/10.1145/3580305.3599543
     - code adapted from: https://github.com/imJiawen/Warpformer
     '''
     def __init__(
