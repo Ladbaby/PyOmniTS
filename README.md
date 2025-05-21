@@ -38,53 +38,55 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 - ✅: supported
 - ❌: not supported
 - '-': not implemented
+- MTS: regularly sampled multivariate time series
+- IMTS: irregularly sampled multivariate time series
 
 |Model|Venue|Type|Forecasting|Classification|Imputation
 |---|---|---|---|---|---|
-|Ada-MSHyper|NeurIPS 2024|MTS|✅|-|-
-|Autoformer|NeurIPS 2021|MTS|✅|✅|-
-|BigST|VLDB 2024|MTS|✅|-|-
-|Crossformer|ICLR 2023|MTS|✅|✅|-
-|CRU|ICML 2022|IMTS|✅|❌|-
-|DLinear|AAAI 2023|MTS|✅|✅|-
-|ETSformer|arXiv 2022|MTS|✅|✅|-
-|FEDformer|ICML 2022|MTS|✅|✅|-
-|FiLM|NeurIPS 2022|MTS|✅|✅|-
-|FourierGNN|NeurIPS 2023|MTS|✅|-|-
-|FreTS|NeurIPS 2023|MTS|✅|✅|-
-|GNeuralFlows|NeurIPS 2024|IMTS|✅|❌|-
-|GraFITi|AAAI 2024|IMTS|✅|-|-
-|GRU-D|Scientific Reports 2018|IMTS|✅|✅|-
-|Hi-Patch|ICML 2025|IMTS|✅|✅|-
-|higp|ICML 2024|MTS|✅|-|-
-|HyperIMTS|ICML 2025|IMTS|✅|-|-
-|Informer|AAAI 2021|MTS|✅|✅|-
-|iTransformer|ICLR 2024|MTS|✅|✅|-
-|Koopa|NeurIPS 2023|MTS|✅|❌|-
-|Latent_ODE|NeurIPS 2019|IMTS|✅|❌|-
-|Leddam|ICML 2024|MTS|✅|✅|-
-|LightTS|arXiv 2022|MTS|✅|✅|-
-|Mamba|Language Modeling 2024|MTS|✅|✅|-
-|MICN|ICLR 2023|MTS|✅|✅|-
-|MOIRAI|ICML 2024|Any|✅|-|-
-|mTAN|ICLR 2021|IMTS|✅|✅|-
-|NeuralFlows|NeurIPS 2021|IMTS|✅|❌|-
-|Nonstationary Transformer|NeurIPS 2022|MTS|✅|✅|-
-|PatchTST|ICLR 2023|MTS|✅|✅|-
-|PrimeNet|AAAI 2023|IMTS|✅|✅|-
-|Pyraformer|ICLR 2022|MTS|✅|✅|-
-|Raindrop|ICLR 2022|IMTS|✅|✅|-
-|Reformer|ICLR 2020|MTS|✅|✅|-
-|SeFT|ICML 2020|IMTS|✅|✅|-
-|SegRNN|arXiv 2023|MTS|✅|✅|-
-|Temporal Fusion Transformer|arXiv 2019|MTS|✅|-|-
-|TiDE|TMLR 2023|MTS|✅|✅|-
-|TimeMixer|ICLR 2024|MTS|✅|✅|-
-|TimesNet|ICLR 2023|MTS|✅|✅|-
-|tPatchGNN|ICML 2024|IMTS|✅|-|-
-|Transformer|NeurIPS 2017|MTS|✅|✅|-
-|TSMixer|TMLR 2023|MTS|✅|✅|-
-|Warpformer|KDD 2023|IMTS|✅|-|-
+|[Ada-MSHyper](https://openreview.net/forum?id=RNbrIQ0se8)|NeurIPS 2024|MTS|✅|-|-
+|[Autoformer](https://openreview.net/pdf?id=I55UqU-M11y)|NeurIPS 2021|MTS|✅|✅|✅
+|[BigST](https://dl.acm.org/doi/abs/10.14778/3641204.3641217)|VLDB 2024|MTS|✅|-|-
+|[Crossformer](https://openreview.net/pdf?id=vSVLM2j9eie)|ICLR 2023|MTS|✅|✅|✅
+|[CRU](https://proceedings.mlr.press/v162/schirmer22a.html)|ICML 2022|IMTS|✅|❌|-
+|[DLinear](https://ojs.aaai.org/index.php/AAAI/article/view/26317)|AAAI 2023|MTS|✅|✅|-
+|[ETSformer](https://arxiv.org/abs/2202.01381)|arXiv 2022|MTS|✅|✅|-
+|[FEDformer](https://proceedings.mlr.press/v162/zhou22g.html)|ICML 2022|MTS|✅|✅|-
+|[FiLM](https://papers.nips.cc/paper_files/paper/2022/hash/524ef58c2bd075775861234266e5e020-Abstract-Conference.html)|NeurIPS 2022|MTS|✅|✅|-
+|[FourierGNN](https://openreview.net/forum?id=bGs1qWQ1Fx)|NeurIPS 2023|MTS|✅|-|-
+|[FreTS](https://papers.nips.cc/paper_files/paper/2023/hash/f1d16af76939f476b5f040fd1398c0a3-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|✅|-
+|[GNeuralFlows](https://openreview.net/forum?id=tFB5SsabVb)|NeurIPS 2024|IMTS|✅|❌|✅
+|[GraFITi](https://ojs.aaai.org/index.php/AAAI/article/view/29560)|AAAI 2024|IMTS|✅|-|✅
+|[GRU-D](https://www.nature.com/articles/s41598-018-24271-9)|Scientific Reports 2018|IMTS|✅|✅|✅
+|[Hi-Patch](https://openreview.net/forum?id=nBgQ66iEUu)|ICML 2025|IMTS|✅|✅|-
+|[higp](https://proceedings.mlr.press/v235/cini24a.html)|ICML 2024|MTS|✅|-|-
+|[HyperIMTS](https://openreview.net/forum?id=u8wRbX2r2V)|ICML 2025|IMTS|✅|-|-
+|[Informer](https://ojs.aaai.org/index.php/AAAI/article/view/17325)|AAAI 2021|MTS|✅|✅|✅
+|[iTransformer](https://openreview.net/forum?id=JePfAI8fah)|ICLR 2024|MTS|✅|✅|-
+|[Koopa](https://papers.nips.cc/paper_files/paper/2023/hash/28b3dc0970fa4624a63278a4268de997-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|❌|-
+|[Latent_ODE](https://papers.nips.cc/paper_files/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html)|NeurIPS 2019|IMTS|✅|❌|-
+|[Leddam](https://openreview.net/forum?id=87CYNyCGOo)|ICML 2024|MTS|✅|✅|-
+|[LightTS](https://arxiv.org/abs/2207.01186)|arXiv 2022|MTS|✅|✅|-
+|[Mamba](https://openreview.net/forum?id=tEYskw1VY2)|Language Modeling 2024|MTS|✅|✅|-
+|[MICN](https://openreview.net/pdf?id=zt53IDUR1U)|ICLR 2023|MTS|✅|✅|-
+|[MOIRAI](https://proceedings.mlr.press/v235/woo24a.html)|ICML 2024|Any|✅|-|-
+|[mTAN](https://openreview.net/forum?id=4c0J6lwQ4_)|ICLR 2021|IMTS|✅|✅|✅
+|[NeuralFlows](https://proceedings.neurips.cc/paper/2021/hash/b21f9f98829dea9a48fd8aaddc1f159d-Abstract.html)|NeurIPS 2021|IMTS|✅|❌|-
+|[Nonstationary Transformer](https://openreview.net/pdf?id=ucNDIDRNjjv)|NeurIPS 2022|MTS|✅|✅|-
+|[PatchTST](https://openreview.net/forum?id=Jbdc0vTOcol)|ICLR 2023|MTS|✅|✅|✅
+|[PrimeNet](https://ojs.aaai.org/index.php/AAAI/article/view/25876)|AAAI 2023|IMTS|✅|✅|-
+|[Pyraformer](https://openreview.net/pdf?id=0EXmFzUn5I)|ICLR 2022|MTS|✅|✅|-
+|[Raindrop](https://openreview.net/forum?id=Kwm8I7dU-l5)|ICLR 2022|IMTS|✅|✅|✅
+|[Reformer](https://openreview.net/forum?id=rkgNKkHtvB)|ICLR 2020|MTS|✅|✅|-
+|[SeFT](https://proceedings.mlr.press/v119/horn20a.html)|ICML 2020|IMTS|✅|✅|✅
+|[SegRNN](https://arxiv.org/abs/2308.11200)|arXiv 2023|MTS|✅|✅|-
+|[Temporal Fusion Transformer](https://arxiv.org/abs/1912.09363)|arXiv 2019|MTS|✅|-|-
+|[TiDE](https://openreview.net/forum?id=pCbC3aQB5W)|TMLR 2023|MTS|✅|✅|-
+|[TimeMixer](https://openreview.net/forum?id=7oLshfEIC2)|ICLR 2024|MTS|✅|✅|-
+|[TimesNet](https://openreview.net/pdf?id=ju_Uqw384Oq)|ICLR 2023|MTS|✅|✅|-
+|[tPatchGNN](https://openreview.net/forum?id=UZlMXUGI6e)|ICML 2024|IMTS|✅|-|✅
+|[Transformer](https://papers.nips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)|NeurIPS 2017|MTS|✅|✅|-
+|[TSMixer](https://openreview.net/forum?id=wbpxTuXgm0)|TMLR 2023|MTS|✅|✅|-
+|[Warpformer](https://dl.acm.org/doi/abs/10.1145/3580305.3599543)|KDD 2023|IMTS|✅|-|-
 
 
 ## 4. 💾 Datasets
@@ -96,6 +98,8 @@ Dataest classes are put in `data/data_provider/datasets`, and dependencies can b
 - ✅: supported
 - ❌: not supported
 - '-': not implemented
+- MTS: regularly sampled multivariate time series
+- IMTS: irregularly sampled multivariate time series
 
 |Dataset|Type|Field|Forecasting
 |---|---|---|---|
@@ -111,6 +115,8 @@ Dataest classes are put in `data/data_provider/datasets`, and dependencies can b
 |USHCN|IMTS|weather|✅
 |Weather|MTS|weather|✅
 
+Datasets for classification and imputation have not released yet.
+
 ## 5. 📉 Loss Functions
 
 The following loss functions are included under `loss_fns/`:
@@ -123,13 +129,14 @@ The following loss functions are included under `loss_fns/`:
 |MSE_Dual|Forecasting/Imputation||Used in Ada-MSHyper|
 |MSE|Forecasting/Imputation|-|
 
-## 6. Roadmap
+## 6. 🚧 Roadmap
 
-PyOmniTS is continous evolving:
+PyOmniTS is continously evolving:
 
 - [ ] More tutorials.
 - [ ] Classification support in core components.
-- [ ] Optional python package management via uv.
+- [ ] Imputation support in core components.
+- [ ] Optional python package management via [uv](https://github.com/astral-sh/uv).
 
 ## Yet Another Code Framework?
 
