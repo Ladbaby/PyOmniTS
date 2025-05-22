@@ -25,7 +25,8 @@ This is also the official repository for the following paper:
 ## 2. 🧭 Documentation
 
 1. [🚀 Get Started](https://github.com/qianlima-lab/PyOmniTS/blob/master/docs/tutorial/1_get_started.md)
-2. 🧩 API Definition
+2. [⚙️ Change Experiment Settings](https://github.com/qianlima-lab/PyOmniTS/blob/master/docs/tutorial/2_change_experiment_settings.md)
+3. 🧩 API Definition
 
     - [Forecasting API](https://github.com/qianlima-lab/PyOmniTS/blob/master/docs/forecasting/1_API.md)
 
