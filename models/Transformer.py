@@ -119,7 +119,7 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        x_mark: Tensor,
+        x_mark: Tensor = None,
         y: Tensor = None,
         y_mark: Tensor = None,
         y_mask: Tensor = None,
