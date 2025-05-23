@@ -1,6 +1,59 @@
 # 🧩 API Definition for Forecasting
 
-### 1. 🤖 Model API
+Models, datasets, and loss functions follow predefined naming rules to be compatible with each other.
+
+e.g., when training model Transformer on dataset Human Activity:
+
+- model: in `models/Transformers.py`:
+
+    ```python
+    def forward(
+        self, 
+        x: Tensor,
+        x_mark: Tensor = None,
+        y: Tensor = None,
+        y_mark: Tensor = None,
+        y_mask: Tensor = None,
+        y_class: Tensor = None,
+        **kwargs
+    ):
+    ```
+- dataset: in `collate_fn` of `data/data_provider/datasets/HumanActivity.py`:
+
+    ```python
+    return {
+        "x": torch.nan_to_num(xs),
+        "x_mark": fix_nan_x_mark(x_marks.unsqueeze(-1), seq_len=configs.seq_len).float(),
+        "x_mask": x_masks.float(),
+        "y": torch.nan_to_num(ys),
+        "y_mark": fix_nan_y_mark(y_marks.unsqueeze(-1)).float(),
+        "y_mask": y_masks.float(),
+        "sample_ID": sample_IDs
+    }
+    ```
+
+    > Tips: `collate_fn` will be called after the `__getitem__` function of dataset, separately processing each batch.
+
+Comparing the input arguments of the model's `forward` and the keys in return value of the dataset, they have common parts (`x`, `x_mark`, `y`, `y_mark`, `y_mask`) and different ones (`y_class` in model; `x_mask`, `sample_ID` in dataset).
+
+During training, data with same names will be passed to corresponding arguments in model (`x`, `x_mark`, `y`, `y_mark`, `y_mask`), while unknown names (`x_mask`, `sample_ID`) from the dataset will be ignored and hold by `**kwargs`, which is never accessed.
+
+As for the argument not provided by forecasting dataset Human Activity (`y_class`, the class label for classification task), they will be set to default values in subsequent initialization in model's `forward` function:
+
+```python
+# BEGIN adaptor
+...
+if y_class is None:
+    if self.configs.task_name == "classification":
+        logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+    y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
+...
+# END adaptor
+```
+
+Thereby, any model can train on any dataset without raising errors.
+
+## 1. 🤖 Model API
 
 - Python file name
 
@@ -21,12 +74,12 @@
     ```python
     def __init__(
         self,
-        configs: ExpArgs
+        configs: ExpConfigs
     ):
         super().__init__()
     ```
 
-    Existing arguments can be found in `utils/args.py`, and `utils/ExpArgs.py` is used to support pylint checking.
+    Existing arguments can be found in `utils/args.py`, and `utils/ExpConfigs.py` is used to support pylint checking.
 
     > ❗️The global configuration should be treated as **read only**.
 
@@ -71,7 +124,7 @@
     "loss": ..., # commonly used with "ModelProvidedLoss"
     ```
 
-### 2. 💾 Dataset API
+## 2. 💾 Dataset API
 
 - Python file name
 
@@ -92,12 +145,12 @@
     ```python
     def __init__(
         self, 
-        configs: ExpArgs,
+        configs: ExpConfigs,
         flag: str = 'train'
     ):
     ```
 
-    Existing arguments can be found in `utils/args.py`, and `utils/ExpArgs.py` is used to support pylint checking.
+    Existing arguments can be found in `utils/args.py`, and `utils/ExpConfigs.py` is used to support pylint checking.
 
     > ❗️The global configuration should be treated as **read only**.
 
@@ -122,7 +175,7 @@
     "sample_ID": ..., # sample ID; (1)
     ```
 
-### 3. 📉 Loss Function API
+## 3. 📉 Loss Function API
 
 - Python file name
 
