@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import BinaryIO
 
 import numpy as np
 import torch
@@ -99,7 +100,7 @@ class Data(Dataset):
         self.x_reprs = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
 
 
-    def load_and_preprocess_audio(self, audio_path: Path):
+    def load_and_preprocess_audio(self, audio_path: BinaryIO | Path):
         """
         Load audio file and preprocess for VGGish.
         
