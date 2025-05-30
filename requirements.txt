@@ -5,6 +5,7 @@ accelerate # parallel training
 coloredlogs # logging
 
 # optional
+torchaudio # OpenMIC dataset
 wandb # logging
 matplotlib
 reformer_pytorch
