@@ -21,7 +21,7 @@ from accelerate import load_checkpoint_in_model
 from data.data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
 from utils.tools import EarlyStopping, test_params_flop, test_train_time, test_gpu_memory
-from utils.metrics import metric
+from utils.metrics import metric, metric_classification
 from utils.globals import logger, accelerator
 from utils.ExpConfigs import ExpConfigs
 
@@ -124,6 +124,14 @@ class Exp_Main(Exp_Basic):
             # check if outputs' true is the the same as input dataset's y
             if "true" in outputs.keys() and not torch.equal(batch["y"], outputs["true"]):
                 logger.warning(f"Model's outputs['true'] is not equal to input's batch['y']. Please confirm that you are not using input's batch['y'] as ground truth. This is expected in some models such as diffusion.")
+        elif self.configs.task_name in ["classification"]:
+            if "true_class" in outputs.keys():
+                # check if outputs' true_class is the the same as input dataset's y_class
+                if not torch.equal(batch["y_class"], outputs["true_class"]):
+                    logger.warning(f"Model's outputs['true_class'] is not equal to input's batch['y_class']. Please confirm that you are not using input's batch['y_class'] as ground truth.")
+                # check data type and LongTensor dtype:
+                if outputs["true_class"].dtype is not torch.int64:
+                    logger.warning(f"batch['true_class'] is expected to have dtype torch.int64. Currently it has dtype {outputs['true_class'].dtype}")
 
     def _merge_gathered_dicts(self, dicts: list[dict]) -> dict:
         '''
@@ -308,6 +316,8 @@ class Exp_Main(Exp_Basic):
                             loss.backward(retain_graph=self.configs.retain_graph)
                         else:
                             accelerator.backward(loss, retain_graph=self.configs.retain_graph)
+                        if self.configs.task_name == "classification":
+                            clip_grad_norm_(model_train.parameters(), max_norm=4.0)
                         model_optim.step()
 
                 # DEBUG: state saving is disabled to minimize disk write time
@@ -505,6 +515,10 @@ class Exp_Main(Exp_Basic):
             inputx = []
             masks = []
             IDs = []
+
+            # classification
+            pred_classes = []
+            true_classes = []
             
             with torch.no_grad():
                 batch: dict[str, Tensor] # type hints
@@ -535,6 +549,9 @@ class Exp_Main(Exp_Basic):
                     if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation", "representation_learning"]:
                         preds.append(outputs_all["pred"].detach().cpu().numpy())
                         trues.append(batch_all['y'].detach().cpu().numpy())
+                    elif self.configs.task_name in ["classification"]:
+                        pred_classes.append(outputs_all["pred_class"].detach().cpu().numpy())
+                        true_classes.append(batch_all['y_class'].detach().cpu().numpy())
                     inputx.append(batch_all['x'].detach().cpu().numpy())
                     if if_masks:
                         masks.append(torch.cat([batch_all["x_mask"], batch_all["y_mask"]], dim=1).detach().cpu().numpy())
@@ -544,6 +561,9 @@ class Exp_Main(Exp_Basic):
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation", "representation_learning"]:
                 preds = np.concatenate(preds, axis=0)
                 trues = np.concatenate(trues, axis=0)
+            elif self.configs.task_name in ["classification"]:
+                pred_classes = np.concatenate(pred_classes, axis=0)
+                true_classes = np.concatenate(true_classes, axis=0)
             inputx = np.concatenate(inputx, axis=0)
             if if_masks:
                 masks = np.concatenate(masks, axis=0)
@@ -561,6 +581,13 @@ class Exp_Main(Exp_Basic):
                     wandb.log({
                         "loss_test": np.mean(metrics["mse"]),
                     })
+            elif self.configs.task_name in ["classification"]:
+                self.configs: ExpConfigs # type hints
+                metrics = metric_classification(
+                    pred_classes=pred_classes, 
+                    true_classes=true_classes,
+                    n_classes=self.configs.n_classes
+                )
             # convert to float before saving to json
             for key, value in metrics.items():
                 if isinstance(value, np.float32):
@@ -579,6 +606,9 @@ class Exp_Main(Exp_Basic):
                     preds_file_name = f"reprs_{self.configs.target_variable_index}.npy" if (self.configs.task_name == "representation_learning" and self.configs.features in ["MS", 'S']) else "preds.npy"
                     np.save(folder_path / preds_file_name, preds)
                     np.save(folder_path / 'trues.npy', trues)
+                elif self.configs.task_name in ["classification"]:
+                    np.save(folder_path / "pred_classes.npy", pred_classes)
+                    np.save(folder_path / 'true_classes.npy', true_classes)
                 np.save(folder_path / 'xs.npy', inputx)
                 if if_masks:
                     np.save(folder_path / 'masks.npy', masks)
