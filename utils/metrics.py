@@ -64,3 +64,34 @@ def metric(pred, true, mask=None):
         "MSE": mse,
         # "MSE_per_sample": mse_per_sample
     }
+
+def metric_classification(pred_classes, true_classes, n_classes):
+    from sklearn.metrics import roc_auc_score, average_precision_score, precision_score, recall_score, f1_score
+    ypred = np.argmax(pred_classes, axis=1)
+
+    denoms = np.sum(np.exp(pred_classes), axis=1).reshape((-1, 1))
+    probs = np.exp(pred_classes) / denoms
+
+    acc = np.sum(true_classes.ravel() == ypred.ravel()) / true_classes.shape[0] * 100
+    if n_classes == 2:
+        auc = roc_auc_score(true_classes, probs[:, 1]) * 100
+        aupr = average_precision_score(true_classes, probs[:, 1]) * 100
+        return {
+            "Accuracy": acc,
+            "AUROC": auc,
+            "AUPRC": aupr
+        }
+    else:
+        # auc = roc_auc_score(one_hot(true_classes), probs) * 100
+        # aupr = average_precision_score(one_hot(true_classes), probs) * 100
+        precision = precision_score(true_classes, ypred, average='macro', ) * 100
+        recall = recall_score(true_classes, ypred, average='macro', ) * 100
+        F1 = f1_score(true_classes, ypred, average='macro', ) * 100
+        return {
+            "Accuracy": acc,
+            # "AUROC": auc,
+            # "AUPRC": aupr,
+            "Precision": precision,
+            "Recall": recall,
+            "F1": F1
+        }
