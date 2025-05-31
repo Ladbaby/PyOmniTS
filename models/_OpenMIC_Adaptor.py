@@ -31,8 +31,7 @@ class Model(nn.Module):
         # dynamically import the desired model class
         configs_backbone = deepcopy(self.configs)
         configs_backbone.seq_len = 10
-        model_module = importlib.import_module("models." + "Linear")
-        # model = model_module.Model(self.configs).to(torch.bfloat16)
+        model_module = importlib.import_module("models." + configs.model_name)
         self.backbone = model_module.Model(configs_backbone)
 
     def forward(
