@@ -32,22 +32,26 @@ class Data(Dataset):
 
         self.bundle = VGGISH
         self.xs: Tensor = None
+        self.x_masks: Tensor = None
         self.x_reprs: Tensor = None
         self.y_classes: Tensor = None
+
+        self.load_xs = False # extremely memory demanding
+        self.x_dummy = torch.ones(16000, 1)
 
         self.preprocess()
 
     def __getitem__(self, index):
         if None not in [self.x_reprs, self.y_classes]:
             return {
-                "x": self.xs[index],
-                "x_mask": self.x_masks[index],
+                "x": self.xs[index] if self.load_xs else self.x_dummy,
+                "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
                 "x_repr": self.x_reprs[index],
                 "y_class": self.y_classes[index]
             }
         elif self.xs is not None:
             return {
-                "x": self.xs[index],
+                "x": self.xs[index] if self.load_xs else self.x_dummy,
                 "x_mask": self.x_masks[index],
             }
         else:
@@ -87,23 +91,22 @@ class Data(Dataset):
             left_boundary = int(total_files * boundary_dict[self.flag][0])
             right_boundary = int(total_files * boundary_dict[self.flag][1])
 
-            # x_temp = []
-            # min_length = 160000 # crop to min_length to align seq_len of different samples
-            # # Iterate and load only the required subset
-            # for i, file in tqdm(enumerate(all_files), total=total_files, desc="Loading"):
-            #     if i < left_boundary:
-            #         continue
-            #     elif i >= right_boundary:
-            #         break
-            #     else:
-            #         temp = self.load_and_preprocess_audio(file)
-            #         if temp.shape[1] < min_length:
-            #             min_length = temp.shape[1]
-            #         x_temp.append(temp[:, :min_length])
+            if self.load_xs:
+                x_temp = []
+                min_length = 160000 # crop to min_length to align seq_len of different samples
+                # Iterate and load only the required subset
+                for i, file in tqdm(enumerate(all_files), total=total_files, desc="Loading"):
+                    if i < left_boundary:
+                        continue
+                    elif i >= right_boundary:
+                        break
+                    else:
+                        temp = self.load_and_preprocess_audio(file)
+                        if temp.shape[1] < min_length:
+                            min_length = temp.shape[1]
+                        x_temp.append(temp[:, :min_length])
 
-            # self.xs = rearrange(torch.stack(x_temp), "N_SAMPLE ENC_IN SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN")
-            self.xs = torch.ones((self.y_classes.shape[0], self.configs.seq_len, 1)) # DEBUG: temporal change
-            self.x_masks = torch.ones_like(self.xs)
+                self.xs = rearrange(torch.stack(x_temp), "N_SAMPLE ENC_IN SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN")
         else:
             logger.warning(f"Abort loading raw dataset files.")
 
