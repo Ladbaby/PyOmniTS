@@ -33,9 +33,8 @@ class Exp_Main(Exp_Basic):
         super(Exp_Main, self).__init__(configs)
 
     def _build_model(self) -> Module:
-        # dynamically import the desired model class
-        model_module = importlib.import_module("models." + self.configs.model_name)
-        # model = model_module.Model(self.configs).to(torch.bfloat16)
+        # build the adaptor class
+        model_module = importlib.import_module("models._OpenMIC_Adaptor")
         model = model_module.Model(self.configs)
         return model
 
