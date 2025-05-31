@@ -3,16 +3,16 @@ tqdm
 ptflops # for --test_flop
 accelerate # parallel training
 coloredlogs # logging
+torchaudio # OpenMIC dataset
 
 # optional
-torchaudio # OpenMIC dataset
-wandb # logging
-matplotlib
-reformer_pytorch
-torch-geometric # higp
-# torch_sparse # higp. Installation refers to https://github.com/rusty1s/pytorch_sparse
-torchdiffeq # Latent_ODE
-jaxtyping # MORAI (uni2ts)
-gluonts # MORAI (uni2ts)
-python-igraph # GNeuralFlow
+# wandb # logging
+# matplotlib
+# reformer_pytorch
+# torch-geometric # higp
+# # torch_sparse # higp. Installation refers to https://github.com/rusty1s/pytorch_sparse
+# torchdiffeq # Latent_ODE
+# jaxtyping # MORAI (uni2ts)
+# gluonts # MORAI (uni2ts)
+# python-igraph # GNeuralFlow
 
