@@ -18,7 +18,8 @@ for pred_len in 0; do
         for i in $(seq 1 1); do
         $launch_command main.py \
             --is_training 1 \
-            --d_model 128 \
+            --factor 3 \
+            --d_model 512 \
             --n_classes 20 \
             --task_name "classification" \
             --loss "CrossEntropyLoss" \
