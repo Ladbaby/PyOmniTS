@@ -36,22 +36,24 @@ class Data(Dataset):
         self.x_reprs: Tensor = None
         self.y_classes: Tensor = None
 
-        self.load_xs = False # extremely memory demanding
-        self.x_dummy = torch.ones(16000, 1)
+        self.load_xs = False # DEPRECATED: extremely memory demanding
+        self.x_dummy = torch.ones(10, self.configs.enc_in)
 
         self.preprocess()
 
     def __getitem__(self, index):
         if None not in [self.x_reprs, self.y_classes]:
             return {
-                "x": self.xs[index] if self.load_xs else self.x_dummy,
+                # "x": self.xs[index] if self.load_xs else self.x_dummy,
+                "x": self.x_reprs[index], # treat hidden dimension as variables
                 "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
                 "x_repr": self.x_reprs[index],
                 "y_class": self.y_classes[index]
             }
         elif self.xs is not None:
             return {
-                "x": self.xs[index] if self.load_xs else self.x_dummy,
+                # "x": self.xs[index] if self.load_xs else self.x_dummy,
+                "x": self.x_reprs[index], # treat hidden dimension as variables
                 "x_mask": self.x_masks[index],
             }
         else:
