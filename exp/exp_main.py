@@ -614,3 +614,67 @@ class Exp_Main(Exp_Basic):
                     np.save(folder_path / 'masks.npy', masks)
                 if if_IDs:
                     np.save(folder_path / 'IDs.npy', IDs)
+
+    def inference(self, inference_loader: DataLoader = None) -> Generator[dict[str, Tensor], None, None]:
+        '''
+        Similar to test(), but only obtain the output of model
+
+        - inference_loader: overwrite default behavior in special cases
+        '''
+        logger.info('>>>>>>> inference start <<<<<<<')
+
+        if inference_loader is None:
+            flag = "test_all" if self.configs.test_all else "test"
+            _, inference_loader = self._get_data(flag=flag)
+
+        # find model checkpoint path is removed
+        if self.configs.checkpoints_test is None:
+            logger.exception(f"inference() requires --checkpoints_test in arguments!", stack_info=True)
+            exit(1)
+
+        checkpoint_location_itr = Path(self.configs.checkpoints_test)
+
+        model_inference = self._build_model().to(self.device).eval()
+        # load model checkpoint if load_checkpoints_test
+        if self.configs.load_checkpoints_test:
+            checkpoint_file = checkpoint_location_itr / "pytorch_model.bin"
+            if checkpoint_file.exists():
+                try: 
+                    # model state dict cannot be modified after accelerator.prepare
+                    model_inference.load_state_dict(self._get_state_dict(checkpoint_file), strict=False)
+                except Exception as e:
+                    logger.exception(f"{e}", stack_info=True)
+                    logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
+            else:
+                try:
+                    # when weights are large (>10GB), they will be saved in several files
+                    load_checkpoint_in_model(model_inference, checkpoint_location_itr)
+                except Exception as e:
+                    logger.exception(f"{e}", stack_info=True)
+                    logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
+
+        model_inference, inference_loader = accelerator.prepare(model_inference, inference_loader)
+        if not self.configs.use_multi_gpu:
+            model_inference = model_inference.to(f"cuda:{self.configs.gpu_id}")
+
+        with torch.no_grad():
+            batch: dict[str, Tensor] # type hints
+            for i, batch in tqdm(enumerate(inference_loader), total=len(inference_loader), leave=False, desc="Testing"):
+                # warn if the size does not match
+                if batch[next(iter(batch))].shape[0] != self.configs.batch_size:
+                    logger.warning(f"Batch No.{i} of total {len(inference_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
+                    continue
+                if not self.configs.use_multi_gpu:
+                    batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
+
+                outputs: dict[str, Tensor] = model_inference(
+                    exp_stage="test",
+                    **batch
+                )
+
+                batch_all: list[dict] = accelerator.gather_for_metrics([batch])
+                batch_all: dict = self._merge_gathered_dicts(batch_all)
+                outputs_all: list[dict] = accelerator.gather_for_metrics([outputs])
+                outputs_all: dict = self._merge_gathered_dicts(outputs_all)
+
+                yield batch_all, outputs_all
