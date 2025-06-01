@@ -37,31 +37,31 @@ class Data(Dataset):
         self.y_classes: Tensor = None
 
         self.load_xs = False # DEPRECATED: extremely memory demanding
-        self.x_dummy = torch.ones(10, self.configs.enc_in)
+        self.x_dummy = torch.ones(16000 * 10, 1)
 
         self.preprocess()
 
     def __getitem__(self, index):
-        if None not in [self.y_classes]:
+        if self.y_classes is not None:
+            # train/val/test case
             return {
-                # "x": self.xs[index] if self.load_xs else self.x_dummy,
-                "x": self.x_reprs[index], # treat hidden dimension as variables
+                "x": self.x_dummy, # DEPRECATED: will be overwritten by x_repr in _OpenMIC_Adaptor
                 "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
                 "x_repr": self.x_reprs[index],
                 "y_class": self.y_classes[index]
             }
-        elif self.x_reprs is not None:
+        elif self.xs is not None:
+            # inference case
             return {
-                # "x": self.xs[index] if self.load_xs else self.x_dummy,
-                "x": self.x_reprs[index], # treat hidden dimension as variables
-                "x_mask": self.x_masks[index],
+                "x": self.xs[index], # will be overwritten by x_repr in _OpenMIC_Adaptor
+                "x_mask": self.x_masks[index], # WARNING: time length is 10 instead of 160000 to save memory
             }
         else:
             logger.exception(f"self.xs is None. Did you forget to call load_custom_data?", stack_info=True)
             exit(1)
 
     def __len__(self):
-        return len(self.y_classes) if self.y_classes is not None else len(self.x_reprs)
+        return len(self.y_classes) if self.y_classes is not None else len(self.xs)
 
     def preprocess(self):
         '''
@@ -177,7 +177,7 @@ class Data(Dataset):
                 sample = tensor[start_idx:end_idx]
                 
                 # Create mask for this sample (1 for real data, 0 for padding)
-                mask = torch.ones(sample.shape[0], dtype=torch.bool)
+                mask = torch.ones(math.ceil(sample.shape[0] / 16000))
                 
                 # Pad if the sample is shorter than seq_len
                 if sample.shape[0] < seq_len:
@@ -186,7 +186,7 @@ class Data(Dataset):
                     sample = torch.cat((sample, padding), dim=0)
                     
                     # Add padding mask (0 for padded positions)
-                    padding_mask = torch.zeros(padding_length, dtype=torch.bool)
+                    padding_mask = torch.zeros(10 - mask.shape[0])
                     mask = torch.cat((mask, padding_mask), dim=0)
                 
                 samples.append(sample)
@@ -208,9 +208,9 @@ class Data(Dataset):
                 output_tensor = torch.cat((output_tensor, additional_samples), dim=0)
                 
                 # Create mask for batch padding (all zeros since these are entirely padded samples)
-                batch_padding_mask = torch.zeros(needed_samples, seq_len, dtype=torch.bool)
+                batch_padding_mask = torch.zeros(needed_samples, 10)
                 output_mask = torch.cat((output_mask, batch_padding_mask), dim=0)
             
-            return output_tensor, output_mask
+            return output_tensor, output_mask.unsqueeze(-1)
 
-        self.x_reprs, self.x_masks = split_tensor(tensor=waveform, seq_len=SEQ_LEN)
+        self.xs, self.x_masks = split_tensor(tensor=waveform, seq_len=SEQ_LEN)
