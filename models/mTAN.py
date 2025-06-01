@@ -47,7 +47,7 @@ class Model(nn.Module):
         if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             self.reconstruction_loss_fn = ReconstructionLoss()
         elif configs.task_name == "classification":
-            self.classifier = create_classifier(self.latent_dim, rec_hidden)
+            self.classifier = create_classifier(self.latent_dim, rec_hidden, N=configs.n_classes)
             self.reconstruction_loss_fn = ReconstructionLoss()
             self.classification_loss_fn = nn.CrossEntropyLoss()
         else:
@@ -143,14 +143,14 @@ class Model(nn.Module):
                 ce_loss = self.classification_loss_fn(pred_y, y_class.unsqueeze(0).repeat_interleave(self.k_iwae, 0).view(-1))
                 loss = recon_loss + self.alpha * ce_loss
                 return {
-                    "pred_class": pred_y,
-                    "true": y_class,
+                    "pred_class": pred_y.view(self.k_iwae, batch_len, pred_y.shape[1]).mean(0),
+                    "true_class": y_class,
                     "loss": loss
                 }
             else:
                 return {
                     "pred_class": pred_y.view(self.k_iwae, batch_len, pred_y.shape[1]).mean(0),
-                    "true": y_class
+                    "true_class": y_class
                 }
         else:
             raise NotImplementedError
