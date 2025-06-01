@@ -34,7 +34,7 @@ class Exp_Main(Exp_Basic):
 
     def _build_model(self) -> Module:
         # build the adaptor class
-        model_module = importlib.import_module("models._OpenMIC_Adaptor")
+        model_module = importlib.import_module("models._OpenMIC_Adaptor") # WARNING: strictly assumes the outer model is _OpenMIC_Adaptor 
         model = model_module.Model(self.configs)
         return model
 
@@ -105,7 +105,7 @@ class Exp_Main(Exp_Basic):
                 # S4 layer don't need to load these weights
                 if_fixed = True
                 continue
-            new_state_dict[key] = value.contiguous()
+            new_state_dict[f"backbone.{key}"] = value.contiguous() # WARNING: strictly assumes the outer model is _OpenMIC_Adaptor 
         if if_fixed:
             logger.warning("Automatically fixed model state dict errors. It may cause unexpected behavior!")
         return new_state_dict
@@ -479,12 +479,17 @@ class Exp_Main(Exp_Basic):
                         original_state_dict = self._get_state_dict(checkpoint_file)
                         load_result = model_test.load_state_dict(original_state_dict, strict=False)
                         if load_result.missing_keys or load_result.unexpected_keys:
-                            logger.warning(f"""The following keys in checkpoint are not correctly loaded:
-                            {load_result.missing_keys=}
-                            {load_result.unexpected_keys=}
+                            missing_keys = []
+                            for key in load_result.missing_keys:
+                                if not key.startswith("vggish."):
+                                    missing_keys.append(key)
+                            if len(missing_keys) > 0:
+                                logger.warning(f"Missing keys in model weights: {missing_keys}")
+                            if load_result.unexpected_keys:
+                                logger.warning(f"Unexpected keys in checkpoint file: {load_result.unexpected_keys}")
+                            if len(missing_keys) > 0 or load_result.unexpected_keys:
+                                logger.warning("Results may be incorrect!")
 
-                            Results may be incorrect!
-                            """)
                     except Exception as e:
                         logger.exception(f"{e}", stack_info=True)
                         logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
@@ -640,7 +645,18 @@ class Exp_Main(Exp_Basic):
             if checkpoint_file.exists():
                 try: 
                     # model state dict cannot be modified after accelerator.prepare
-                    model_inference.load_state_dict(self._get_state_dict(checkpoint_file), strict=False)
+                    load_result = model_inference.load_state_dict(self._get_state_dict(checkpoint_file), strict=False)
+                    if load_result.missing_keys or load_result.unexpected_keys:
+                        missing_keys = []
+                        for key in load_result.missing_keys:
+                            if not key.startswith("vggish."):
+                                missing_keys.append(key)
+                        if len(missing_keys) > 0:
+                            logger.warning(f"Missing keys in model weights: {missing_keys}")
+                        if load_result.unexpected_keys:
+                            logger.warning(f"Unexpected keys in checkpoint file: {load_result.unexpected_keys}")
+                        if len(missing_keys) > 0 or load_result.unexpected_keys:
+                            logger.warning("Results may be incorrect!")
                 except Exception as e:
                     logger.exception(f"{e}", stack_info=True)
                     logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
