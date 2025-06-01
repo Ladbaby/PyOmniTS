@@ -22,7 +22,12 @@ class Model(nn.Module):
         assert self.configs.is_training == 0, "VGGish only suppports '--is_training 0'. Do not train it!"
 
         self.bundle = VGGISH
-        self.model = self.bundle.get_model()
+        try:
+            self.model = self.bundle.get_model()
+        except Exception as e:
+            logger.exception(e)
+            logger.warning(f"It is possible that downloaded weight for VGGish under `~/.cache/torch/hub/torchaudio/models/` is broken. Try manually remove it then rerun.")
+            exit(1)
         self.input_proc = VGGISH.get_input_processor()
 
     def forward(
