@@ -24,6 +24,9 @@ class Model(nn.Module):
         self.seq_len = configs.seq_len_max_irr or configs.seq_len # equal to seq_len_max_irr if not None, else seq_len
         self.label_len = configs.label_len
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
+        if self.pred_len == 0:
+            self.pred_len = 1
+            logger.warning(f"--pred_len cannot be 0. It has been force overwritten to 1.")
 
         self.seq_len_all = self.seq_len + self.label_len
 
@@ -181,7 +184,7 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        x_mark: Tensor,
+        x_mark: Tensor = None,
         y: Tensor = None,
         y_mask: Tensor = None, 
         y_class: Tensor = None, 
