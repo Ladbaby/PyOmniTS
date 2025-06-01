@@ -41,7 +41,7 @@ class Model(nn.Module):
         # add x_repr as input
         if "x_repr" not in kwargs.keys():
             kwargs["x_repr"] = self.vggish(**kwargs)["pred_repr"]
-            kwargs["x"] = kwargs["x_repr"]
+            kwargs["x"] = kwargs["x_repr"] # force overwrite x with its representation
         if self.configs.task_name == "classification":
             return self.backbone(**kwargs)
         else:
