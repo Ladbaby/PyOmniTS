@@ -45,7 +45,7 @@ class EarlyStopping:
         if self.verbose:
             logger.debug(f'Validation loss decreased ({self.val_loss_min:.2e} --> {val_loss:.2e}).  Saving model ...')
         accelerator.save_model(
-            model, 
+            model.backbone, # WARNING: strictly assumes the outer model is _OpenMIC_Adaptor 
             path, 
             safe_serialization=False
         )
