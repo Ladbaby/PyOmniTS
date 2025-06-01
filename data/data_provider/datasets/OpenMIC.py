@@ -69,7 +69,27 @@ class Data(Dataset):
         '''
         raw_audio_path = Path(self.configs.dataset_root_path) / "audio"
 
-        if raw_audio_path.exists():
+        # load y_class
+        try:
+            npz_data = np.load(Path(self.configs.dataset_root_path) / self.configs.dataset_file_name)
+
+            total_files = len(npz_data['Y_true'])
+            boundary_dict = {
+                'train': (0, 0.9 * 0.9),
+                'val': (0.9 * 0.9, 0.9),
+                'test': (0.9, 1),
+                'test_all': (0, 1),
+            }
+            left_boundary = int(total_files * boundary_dict[self.flag][0])
+            right_boundary = int(total_files * boundary_dict[self.flag][1])
+
+            self.y_classes = torch.argmax(torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary]), dim=1).type(torch.LongTensor)
+            self.x_reprs = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
+        except Exception as e:
+            logger.warning(f"{e}", stack_info=True)
+            logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
+
+        if self.load_xs and raw_audio_path.exists():
             logger.debug(f"Loading audio files from {raw_audio_path}")
 
             # load x
@@ -80,46 +100,21 @@ class Data(Dataset):
                         if file.is_file():
                             all_files.append(file)
 
-            # Calculate the number of files for each split
-            total_files = len(all_files)
-            subset_ratio = 1 # DEBUG: select only a subset for training in debug
-            total_files = int(total_files * subset_ratio)
-            boundary_dict = {
-                'train': (0, 0.9 * 0.9),
-                'val': (0.9 * 0.9, 0.9),
-                'test': (0.9, 1),
-                'test_all': (0, 1),
-            }
-            left_boundary = int(total_files * boundary_dict[self.flag][0])
-            right_boundary = int(total_files * boundary_dict[self.flag][1])
+            x_temp = []
+            min_length = 160000 # crop to min_length to align seq_len of different samples
+            # Iterate and load only the required subset
+            for i, file in tqdm(enumerate(all_files), total=total_files, desc="Loading"):
+                if i < left_boundary:
+                    continue
+                elif i >= right_boundary:
+                    break
+                else:
+                    temp = self.load_and_preprocess_audio(file)
+                    if temp.shape[1] < min_length:
+                        min_length = temp.shape[1]
+                    x_temp.append(temp[:, :min_length])
 
-            if self.load_xs:
-                x_temp = []
-                min_length = 160000 # crop to min_length to align seq_len of different samples
-                # Iterate and load only the required subset
-                for i, file in tqdm(enumerate(all_files), total=total_files, desc="Loading"):
-                    if i < left_boundary:
-                        continue
-                    elif i >= right_boundary:
-                        break
-                    else:
-                        temp = self.load_and_preprocess_audio(file)
-                        if temp.shape[1] < min_length:
-                            min_length = temp.shape[1]
-                        x_temp.append(temp[:, :min_length])
-
-                self.xs = rearrange(torch.stack(x_temp), "N_SAMPLE ENC_IN SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN")
-        else:
-            logger.warning(f"Abort loading raw dataset files.")
-
-        # load y_class
-        try:
-            npz_data = np.load(Path(self.configs.dataset_root_path) / self.configs.dataset_file_name)
-            self.y_classes = torch.argmax(torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary]), dim=1).type(torch.LongTensor)
-            self.x_reprs = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
-        except Exception as e:
-            logger.warning(f"{e}", stack_info=True)
-            logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
+            self.xs = rearrange(torch.stack(x_temp), "N_SAMPLE ENC_IN SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN")
 
 
     def load_and_preprocess_audio(self, audio: BinaryIO | Path):
