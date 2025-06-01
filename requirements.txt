@@ -4,6 +4,8 @@ ptflops # for --test_flop
 accelerate # parallel training
 coloredlogs # logging
 torchaudio # OpenMIC dataset
+einops
+scikit-learn
 
 # optional
 # wandb # logging
