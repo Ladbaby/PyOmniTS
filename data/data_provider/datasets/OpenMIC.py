@@ -42,7 +42,7 @@ class Data(Dataset):
         self.preprocess()
 
     def __getitem__(self, index):
-        if None not in [self.x_reprs, self.y_classes]:
+        if None not in [self.y_classes]:
             return {
                 # "x": self.xs[index] if self.load_xs else self.x_dummy,
                 "x": self.x_reprs[index], # treat hidden dimension as variables
@@ -50,7 +50,7 @@ class Data(Dataset):
                 "x_repr": self.x_reprs[index],
                 "y_class": self.y_classes[index]
             }
-        elif self.xs is not None:
+        elif self.x_reprs is not None:
             return {
                 # "x": self.xs[index] if self.load_xs else self.x_dummy,
                 "x": self.x_reprs[index], # treat hidden dimension as variables
@@ -61,7 +61,7 @@ class Data(Dataset):
             exit(1)
 
     def __len__(self):
-        return len(self.y_classes) if self.y_classes is not None else len(self.xs)
+        return len(self.y_classes) if self.y_classes is not None else len(self.x_reprs)
 
     def preprocess(self):
         '''
@@ -213,4 +213,4 @@ class Data(Dataset):
             
             return output_tensor, output_mask
 
-        self.xs, self.x_masks = split_tensor(tensor=waveform, seq_len=SEQ_LEN)
+        self.x_reprs, self.x_masks = split_tensor(tensor=waveform, seq_len=SEQ_LEN)
