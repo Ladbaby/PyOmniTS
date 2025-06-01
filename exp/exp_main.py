@@ -128,9 +128,9 @@ class Exp_Main(Exp_Basic):
                 # check if outputs' true_class is the the same as input dataset's y_class
                 if not torch.equal(batch["y_class"], outputs["true_class"]):
                     logger.warning(f"Model's outputs['true_class'] is not equal to input's batch['y_class']. Please confirm that you are not using input's batch['y_class'] as ground truth.")
-                # check data type and LongTensor dtype:
-                if outputs["true_class"].dtype is not torch.int64:
-                    logger.warning(f"batch['true_class'] is expected to have dtype torch.int64. Currently it has dtype {outputs['true_class'].dtype}")
+                # check data type and LongTensor dtype for CrossEntropyLoss:
+                # if outputs["true_class"].dtype is not torch.int64:
+                #     logger.warning(f"batch['true_class'] is expected to have dtype torch.int64. Currently it has dtype {outputs['true_class'].dtype}")
 
     def _merge_gathered_dicts(self, dicts: list[dict]) -> dict:
         '''
