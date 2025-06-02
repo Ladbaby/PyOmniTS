@@ -105,15 +105,9 @@ class Data(Dataset):
             left_boundary = int(total_files * boundary_dict[self.flag][0])
             right_boundary = int(total_files * boundary_dict[self.flag][1])
 
-            # CrossEntropyLoss [N_SAMPLE]
-            self.y_classes = torch.argmax(torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary]), dim=1).type(torch.LongTensor) 
-
-            # BCELoss [N_SAMPLE, N_CLASSES]
-            # threshold = 0.5
-            # self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
-            # self.y_classes[self.y_classes < threshold] = 0.
-            # self.y_classes[self.y_classes > 0] = 1.
-            # self.y_classes = self.y_classes.float()
+            # [N_SAMPLE, N_CLASSES]
+            self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
+            self.y_classes = self.y_classes.float()
 
             self.x_reprs = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
 
