@@ -8,7 +8,7 @@ import torchaudio
 from torch import Tensor
 from torchaudio.prototype.pipelines import VGGISH
 from einops import repeat, rearrange
-from tqdm import tqdm
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 from torch.utils.data import Dataset
 from utils.globals import logger
@@ -58,29 +58,30 @@ class Data(Dataset):
         self.x_repr_times: Tensor = None
         self.y_classes: Tensor = None
 
-        self.load_xs = False # DEPRECATED: extremely memory demanding
-        self.x_dummy = torch.ones(16000 * 10, 1)
+        self.load_xs = True # load downsampled audio files
+        self.x_dummy = torch.ones(self.configs.sampling_rate * 10, 1)
 
         self.preprocess()
 
     def __getitem__(self, index):
+        temp_dict = {}
         if self.xs is not None:
-            # inference case
-            return {
-                "x": self.xs[index], # will be overwritten by x_repr_time in _OpenMIC_Adaptor
-                "x_mask": self.x_masks[index], # WARNING: time length is 10 instead of 160000 to save memory
-            }
-        elif self.y_classes is not None:
-            # train/val/test case
-            return {
-                "x": self.x_dummy, # DEPRECATED: will be overwritten by x_repr_time in _OpenMIC_Adaptor
-                "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
-                "x_repr_time": self.x_repr_times[index],
-                "y_class": self.y_classes[index]
-            }
+            temp_dict["x"] = self.xs[index]
         else:
-            logger.exception(f"self.xs is None. Did you forget to call load_custom_data?", stack_info=True)
-            exit(1)
+            temp_dict["x"] = self.x_dummy
+
+        if self.x_masks is not None:
+            temp_dict["x_mask"] = self.x_masks[index]
+        else:
+            temp_dict["x_mask"] = self.x_dummy
+
+        if self.x_repr_times is not None:
+            temp_dict["x_repr_time"] = self.x_repr_times[index]
+
+        if self.y_classes is not None:
+            temp_dict["y_class"] = self.y_classes[index]
+
+        return temp_dict
 
     def __len__(self):
         return len(self.y_classes) if self.y_classes is not None else len(self.xs)
@@ -89,21 +90,22 @@ class Data(Dataset):
         '''
         Load all audio files
         '''
-        raw_audio_path = Path(self.configs.dataset_root_path) / "audio"
+        processed_audio_path = Path(self.configs.dataset_root_path) / "processed"
+
+        total_files = 20000
+        boundary_dict = {
+            'train': (0, 0.9 * 0.9),
+            'val': (0.9 * 0.9, 0.9),
+            'test': (0.9, 1),
+            'test_all': (0, 1),
+        }
+        left_boundary = int(total_files * boundary_dict[self.flag][0])
+        right_boundary = int(total_files * boundary_dict[self.flag][1])
 
         # load y_class
         try:
             npz_data = np.load(Path(self.configs.dataset_root_path) / self.configs.dataset_file_name, allow_pickle=True)
 
-            total_files = len(npz_data['Y_true'])
-            boundary_dict = {
-                'train': (0, 0.9 * 0.9),
-                'val': (0.9 * 0.9, 0.9),
-                'test': (0.9, 1),
-                'test_all': (0, 1),
-            }
-            left_boundary = int(total_files * boundary_dict[self.flag][0])
-            right_boundary = int(total_files * boundary_dict[self.flag][1])
 
             # [N_SAMPLE, N_CLASSES]
             self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
@@ -123,32 +125,20 @@ class Data(Dataset):
             logger.warning(f"{e}", stack_info=True)
             logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
 
-        if self.load_xs and raw_audio_path.exists():
-            logger.debug(f"Loading audio files from {raw_audio_path}")
+        
+        if self.load_xs and processed_audio_path.exists():
+            try:
+                logger.debug(f"Loading audio files from {processed_audio_path / 'xs.npy'}")
+                xs_temp = np.load(processed_audio_path / "xs.npy")
+                x_scaler = StandardScaler()
+                x_scaler.fit(xs_temp)
+                xs_temp = xs_temp[left_boundary: right_boundary]
+                xs_temp = x_scaler.transform(xs_temp)
 
-            # load x
-            all_files = []
-            for folder in raw_audio_path.iterdir():
-                if folder.is_dir():
-                    for file in folder.iterdir():
-                        if file.is_file():
-                            all_files.append(file)
-
-            x_temp = []
-            min_length = 160000 # crop to min_length to align seq_len of different samples
-            # Iterate and load only the required subset
-            for i, file in tqdm(enumerate(all_files), total=total_files, desc="Loading"):
-                if i < left_boundary:
-                    continue
-                elif i >= right_boundary:
-                    break
-                else:
-                    temp = self.load_and_preprocess_audio(file)
-                    if temp.shape[1] < min_length:
-                        min_length = temp.shape[1]
-                    x_temp.append(temp[:, :min_length])
-
-            self.xs = rearrange(torch.stack(x_temp), "N_SAMPLE ENC_IN SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN")
+                self.xs = repeat(torch.from_numpy(xs_temp), "N_SAMPLE SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN", ENC_IN=1)
+            except Exception as e:
+                logger.warning(f"{e}", stack_info=True)
+                logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
 
 
     def load_and_preprocess_audio(self, audio: BinaryIO | Path):
@@ -186,15 +176,14 @@ class Data(Dataset):
             )
             waveform = resampler(waveform)
         
-        return waveform / 255 # normalize to [0, 1]
-        # return waveform
+        return waveform
 
     def load_custom_data(self, audio: BinaryIO | Path):
         self.inference_flag = True
         waveform = self.load_and_preprocess_audio(audio) # [enc_in, seq_len]
         waveform = rearrange(waveform, "ENC_IN SEQ_LEN -> SEQ_LEN ENC_IN")
 
-        SEQ_LEN = 16000 * 10 # 16k sampling rate * 10 seconds
+        SEQ_LEN = self.configs.sampling_rate * 10 # 16k sampling rate * 10 seconds
 
         def split_tensor(tensor, seq_len):
             time_length, enc_in = tensor.shape
