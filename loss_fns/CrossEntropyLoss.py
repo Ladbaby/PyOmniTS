@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 class Loss(nn.Module):
@@ -7,9 +8,10 @@ class Loss(nn.Module):
 
     def forward(self, pred_class, true_class, **kwargs):
         '''
-        - pred: [BATCH_SIZE, N_CLASSES] torch.float32
-        - true: [BATCH_SIZE] LongTensor, which means dtype of torch.int64
+        - pred_class: [BATCH_SIZE, N_CLASSES] torch.float32
+        - true_class: [BATCH_SIZE, N_CLASSES] torch.float32
+            should be converted to LongTensor of shape [BATCH_SIZE], which means dtype of torch.int64
         '''
         return {
-            "loss": self.criterion(pred_class, true_class)
+            "loss": self.criterion(pred_class, torch.argmax(true_class, dim=1).to(pred_class.device))
         }
