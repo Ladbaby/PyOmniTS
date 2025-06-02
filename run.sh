@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# sh scripts/Linear/OpenMIC.sh
 # sh scripts/Autoformer/OpenMIC.sh
 # sh scripts/Crossformer/OpenMIC.sh
 # sh scripts/DLinear/OpenMIC.sh
@@ -13,6 +12,7 @@
 # sh scripts/iTransformer/OpenMIC.sh
 # sh scripts/Leddam/OpenMIC.sh
 # sh scripts/LightTS/OpenMIC.sh
+# sh scripts/Linear/OpenMIC.sh
 # sh scripts/MambaSimple/OpenMIC.sh
 # sh scripts/MICN/OpenMIC.sh
 # sh scripts/mTAN/OpenMIC.sh
