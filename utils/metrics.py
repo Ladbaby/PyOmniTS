@@ -68,7 +68,7 @@ def metric(pred, true, mask=None):
 def metric_classification(pred_classes, true_classes, n_classes):
     from sklearn.metrics import roc_auc_score, average_precision_score, precision_score, recall_score, f1_score
     if len(true_classes.shape) == 2:
-        # BCELoss case
+        # [BATCH_SIZE, N_CLASSES] -> [BATCH_SIZE]
         true_classes = np.argmax(true_classes, axis=1)
     ypred = np.argmax(pred_classes, axis=1)
 
