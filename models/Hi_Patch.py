@@ -126,7 +126,7 @@ class Model(nn.Module):
             x = x_repr_time
         if x_mask is not None:
             BATCH_SIZE, _, ENC_IN = x_mask.shape
-            x_mask = (x_mask.view(BATCH_SIZE, -1, 16000, ENC_IN).sum(dim=2) > 0).float().repeat(1, 1, x.shape[-1] // ENC_IN) # [BATCH_SIZE, SEQ_LEN, 128]
+            x_mask = (x_mask.view(BATCH_SIZE, -1, self.configs.sampling_rate, ENC_IN).sum(dim=2) > 0).float().repeat(1, 1, x.shape[-1] // ENC_IN) # [BATCH_SIZE, SEQ_LEN, 128]
 
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.configs.pred_len if self.configs.pred_len != 0 else SEQ_LEN
