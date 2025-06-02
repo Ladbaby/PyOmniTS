@@ -11,8 +11,9 @@ class Loss(nn.Module):
 
     def forward(self, pred_class, true_class, **kwargs):
         '''
-        - pred: [BATCH_SIZE, N_CLASSES] torch.float32
-        - true: [BATCH_SIZE, N_CLASSES] torch.float32
+        - pred_class: [BATCH_SIZE, N_CLASSES] torch.float32
+            should be processed by sigmoid
+        - true_class: [BATCH_SIZE, N_CLASSES] torch.float32
         '''
         return {
             "loss": self.criterion(torch.sigmoid(pred_class), true_class)
