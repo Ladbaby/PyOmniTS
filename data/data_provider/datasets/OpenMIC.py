@@ -64,19 +64,19 @@ class Data(Dataset):
         self.preprocess()
 
     def __getitem__(self, index):
-        if self.y_classes is not None:
+        if self.xs is not None:
+            # inference case
+            return {
+                "x": self.xs[index], # will be overwritten by x_repr_time in _OpenMIC_Adaptor
+                "x_mask": self.x_masks[index], # WARNING: time length is 10 instead of 160000 to save memory
+            }
+        elif self.y_classes is not None:
             # train/val/test case
             return {
                 "x": self.x_dummy, # DEPRECATED: will be overwritten by x_repr_time in _OpenMIC_Adaptor
                 "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
                 "x_repr_time": self.x_repr_times[index],
                 "y_class": self.y_classes[index]
-            }
-        elif self.xs is not None:
-            # inference case
-            return {
-                "x": self.xs[index], # will be overwritten by x_repr_time in _OpenMIC_Adaptor
-                "x_mask": self.x_masks[index], # WARNING: time length is 10 instead of 160000 to save memory
             }
         else:
             logger.exception(f"self.xs is None. Did you forget to call load_custom_data?", stack_info=True)
@@ -186,7 +186,8 @@ class Data(Dataset):
             )
             waveform = resampler(waveform)
         
-        return waveform
+        return waveform / 255 # normalize to [0, 1]
+        # return waveform
 
     def load_custom_data(self, audio: BinaryIO | Path):
         self.inference_flag = True
