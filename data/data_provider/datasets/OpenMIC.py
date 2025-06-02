@@ -55,7 +55,7 @@ class Data(Dataset):
         self.bundle = VGGISH
         self.xs: Tensor = None
         self.x_masks: Tensor = None
-        self.x_reprs: Tensor = None
+        self.x_repr_times: Tensor = None
         self.y_classes: Tensor = None
 
         self.load_xs = False # DEPRECATED: extremely memory demanding
@@ -67,15 +67,15 @@ class Data(Dataset):
         if self.y_classes is not None:
             # train/val/test case
             return {
-                "x": self.x_dummy, # DEPRECATED: will be overwritten by x_repr in _OpenMIC_Adaptor
+                "x": self.x_dummy, # DEPRECATED: will be overwritten by x_repr_time in _OpenMIC_Adaptor
                 "x_mask": self.x_masks[index] if self.x_masks else self.x_dummy,
-                "x_repr": self.x_reprs[index],
+                "x_repr_time": self.x_repr_times[index],
                 "y_class": self.y_classes[index]
             }
         elif self.xs is not None:
             # inference case
             return {
-                "x": self.xs[index], # will be overwritten by x_repr in _OpenMIC_Adaptor
+                "x": self.xs[index], # will be overwritten by x_repr_time in _OpenMIC_Adaptor
                 "x_mask": self.x_masks[index], # WARNING: time length is 10 instead of 160000 to save memory
             }
         else:
@@ -109,7 +109,7 @@ class Data(Dataset):
             self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
             self.y_classes = self.y_classes.float()
 
-            self.x_reprs = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
+            self.x_repr_times = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
 
             # DEBUG
             # self.sample_keys = npz_data['sample_key'][left_boundary: right_boundary]
@@ -211,7 +211,7 @@ class Data(Dataset):
                 sample = tensor[start_idx:end_idx]
                 
                 # Create mask for this sample (1 for real data, 0 for padding)
-                mask = torch.ones(math.ceil(sample.shape[0] / 16000))
+                mask = torch.ones(sample.shape[0])
                 
                 # Pad if the sample is shorter than seq_len
                 if sample.shape[0] < seq_len:
@@ -220,7 +220,7 @@ class Data(Dataset):
                     sample = torch.cat((sample, padding), dim=0)
                     
                     # Add padding mask (0 for padded positions)
-                    padding_mask = torch.zeros(10 - mask.shape[0])
+                    padding_mask = torch.zeros(seq_len - mask.shape[0])
                     mask = torch.cat((mask, padding_mask), dim=0)
                 
                 samples.append(sample)
@@ -242,7 +242,7 @@ class Data(Dataset):
                 output_tensor = torch.cat((output_tensor, additional_samples), dim=0)
                 
                 # Create mask for batch padding (all zeros since these are entirely padded samples)
-                batch_padding_mask = torch.zeros(needed_samples, 10)
+                batch_padding_mask = torch.zeros(needed_samples, output_tensor.shape[1])
                 output_mask = torch.cat((output_mask, batch_padding_mask), dim=0)
             
             return output_tensor, output_mask.unsqueeze(-1)
