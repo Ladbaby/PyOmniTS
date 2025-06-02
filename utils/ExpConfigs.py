@@ -25,6 +25,7 @@ class ExpConfigs:
     collate_fn: str
     augmentation_ratio: int
     missing_rate: float
+    sampling_rate: int
 
     # forecasting task
     seq_len: int
