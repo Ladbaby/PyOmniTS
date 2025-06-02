@@ -12,7 +12,7 @@ from utils.globals import logger
 
 class Model(nn.Module):
     """
-    Adaptor model that calculate VGGish feature x_repr of shape [BATCH_SIZE, SEQ_LEN, D_MODEL] for input x, then invoke backbone model.
+    Adaptor model that calculate VGGish feature x_repr_time of shape [BATCH_SIZE, SEQ_LEN, D_MODEL] for input x, then invoke backbone model.
     """
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()
@@ -38,10 +38,10 @@ class Model(nn.Module):
         self, 
         **kwargs
     ):
-        # add x_repr as input
-        if "x_repr" not in kwargs.keys():
-            kwargs["x_repr"] = self.vggish(**kwargs)["pred_repr"]
-        kwargs["x"] = kwargs["x_repr"] # force overwrite x with its representation
+        # add x_repr_time as input
+        if "x_repr_time" not in kwargs.keys():
+            kwargs["x_repr_time"] = self.vggish(**kwargs)["pred_repr_time"]
+        # kwargs["x"] = kwargs["x_repr_time"] # DEBUG: force overwrite x with its representation
         if self.configs.task_name == "classification":
             return self.backbone(**kwargs)
         else:

@@ -79,6 +79,7 @@ class Model(nn.Module):
         x: Tensor, 
         x_mark: Tensor = None, 
         x_mask: Tensor = None, 
+        x_repr_time: Tensor = None, 
         y: Tensor = None, 
         y_mark: Tensor = None, 
         y_mask: Tensor = None,
@@ -87,6 +88,13 @@ class Model(nn.Module):
         **kwargs
     ):
         # BEGIN adaptor
+        # adaptor for OpenMIC
+        if x_repr_time is not None:
+            x = x_repr_time
+        if x_mask is not None:
+            BATCH_SIZE, _, ENC_IN = x_mask.shape
+            x_mask = (x_mask.view(BATCH_SIZE, -1, 16000, ENC_IN).sum(dim=2) > 0).float().repeat(1, 1, x.shape[-1] // ENC_IN) # [BATCH_SIZE, SEQ_LEN, 128]
+
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if x_mark is None:

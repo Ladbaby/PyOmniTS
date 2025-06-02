@@ -119,6 +119,7 @@ class Model(nn.Module):
         self, 
         x: Tensor,
         x_mark: Tensor = None, 
+        x_repr_time: Tensor = None, 
         y: Tensor = None,
         y_mark: Tensor = None,
         y_mask: Tensor = None,
@@ -126,6 +127,10 @@ class Model(nn.Module):
         **kwargs
     ):
         # BEGIN adaptor
+        # adaptor for OpenMIC
+        if x_repr_time is not None:
+            x = x_repr_time
+
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if x_mark is None:

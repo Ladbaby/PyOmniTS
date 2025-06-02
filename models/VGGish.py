@@ -48,7 +48,7 @@ class Model(nn.Module):
         
         if self.configs.task_name in ["representation_learning"]:
             return {
-                "pred_repr": torch.stack(output),
+                "pred_repr_time": torch.stack(output),
             }
         else:
             raise NotImplementedError

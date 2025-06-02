@@ -138,12 +138,17 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
+        x_repr_time: Tensor,
         y: Tensor = None,
         y_mask: Tensor = None, 
         y_class: Tensor = None, 
         **kwargs
     ):
         # BEGIN adaptor
+        # adaptor for OpenMIC
+        if x_repr_time is not None:
+            x = x_repr_time
+
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:

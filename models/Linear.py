@@ -30,7 +30,7 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        x_repr: Tensor = None,
+        x_repr_time: Tensor = None,
         y: Tensor = None,
         y_mask: Tensor = None,
         y_class: Tensor = None,
@@ -62,14 +62,14 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         elif self.configs.task_name == "classification":
-            if x_repr is None:
+            if x_repr_time is None:
                 return {
                     "pred_class": self.decoder_classification(rearrange(x, "B L N -> B (N L)")),
                     "true_class": y_class
                 }
             else:
                 return {
-                    "pred_class": self.decoder_classification_repr(rearrange(x_repr, "B L N -> B (N L)")),
+                    "pred_class": self.decoder_classification_repr(rearrange(x_repr_time, "B L N -> B (N L)")),
                     "true_class": y_class
                 }
         else:
