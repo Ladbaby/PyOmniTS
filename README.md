@@ -9,7 +9,7 @@
 
 This is also the official repository for the following paper:
 
-- [HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting](https://openreview.net/forum?id=u8wRbX2r2V) (ICML 2025)
+- HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting (ICML 2025) [[OpenReview]](https://openreview.net/forum?id=u8wRbX2r2V) [[arXiv]](https://arxiv.org/abs/2505.17431)
 
 ## 1. ✨ Hightlighted Features
 
