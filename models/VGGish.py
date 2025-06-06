@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch import Tensor
+from torchaudio.prototype.pipelines import VGGISH
 from einops import rearrange
 
 from layers.VGGish.hubconf import vggish
@@ -20,7 +21,8 @@ class Model(nn.Module):
 
         assert self.task_name in ["representation_learning"], "VGGish only suppports '--task_name representation_learning'"
 
-        self.model = vggish(pretrained=False)
+        self.model = vggish(pretrained=False, preprocess=False)
+        self._preprocess = VGGISH.get_input_processor()
 
     def forward(
         self, 
@@ -35,7 +37,7 @@ class Model(nn.Module):
         output = []
         for sample in x:
             # The VGGish model expects input of shape [time_length]
-            output.append(self.model(sample) / 255.0)
+            output.append(self.model(self._preprocess(sample)) / 255.0)
         
         if self.configs.task_name in ["representation_learning"]:
             return {
