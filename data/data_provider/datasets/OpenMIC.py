@@ -130,10 +130,6 @@ class Data(Dataset):
             try:
                 logger.debug(f"Loading audio files from {processed_audio_path / 'xs.npy'}")
                 xs_temp = np.load(processed_audio_path / "xs.npy")
-                x_scaler = StandardScaler()
-                x_scaler.fit(xs_temp)
-                xs_temp = xs_temp[left_boundary: right_boundary]
-                xs_temp = x_scaler.transform(xs_temp)
 
                 self.xs = repeat(torch.from_numpy(xs_temp), "N_SAMPLE SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN", ENC_IN=1)
             except Exception as e:
