@@ -29,8 +29,6 @@ class Model(nn.Module):
         x: Tensor,
         **kwargs
     ):
-        self.model.eval()
-
         # Convert to mono if stereo
         x = torch.mean(x, dim=-1) # (BATCH_SIZE, SEQ_LEN)
 
