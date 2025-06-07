@@ -29,8 +29,16 @@ class MainProcessLogger(logging.Logger):
 logging.setLoggerClass(MainProcessLogger)
 logger = logging.getLogger('global')
 
-os.makedirs('logs', exist_ok=True)
+current_directory = os.getcwd()
+folder_name = os.path.basename(current_directory)
+if folder_name == "backend":
+    # cwd in backend case
+    base_path = ""
+else:
+    # cwd in InsRec root case
+    base_path = "backend/"
+os.makedirs(f'{base_path}logs', exist_ok=True)
 
-logHandler = handlers.RotatingFileHandler('logs/debug.log', maxBytes=5242880, backupCount=2, encoding='utf-8')
+logHandler = handlers.RotatingFileHandler(f'{base_path}logs/debug.log', maxBytes=5242880, backupCount=2, encoding='utf-8')
 logger.addHandler(logHandler)
 coloredlogs.install(level="DEBUG", logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
