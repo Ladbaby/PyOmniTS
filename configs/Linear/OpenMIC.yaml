@@ -87,6 +87,7 @@ primenet_pooling: ave
 retain_graph: 0
 revin: 1
 revin_affine: 0
+sampling_rate: 16000
 save_arrays: 0
 scale_factor: 2
 seq_len: 10
