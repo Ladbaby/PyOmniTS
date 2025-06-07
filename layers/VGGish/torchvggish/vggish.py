@@ -59,6 +59,8 @@ class Postprocessor(nn.Module):
         self.pca_eigen_vectors = nn.Parameter(self.pca_eigen_vectors, requires_grad=False)
         self.pca_means = nn.Parameter(self.pca_means, requires_grad=False)
 
+        self.load_state_dict(torch.load("storage/pretrained/OpenMIC/VGGish/vggish_pca_params.pth"))
+
     def postprocess(self, embeddings_batch):
         """Applies tensor postprocessing to a batch of embeddings.
 

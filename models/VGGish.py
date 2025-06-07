@@ -5,6 +5,7 @@ from torchaudio.prototype.pipelines import VGGISH
 from einops import rearrange
 
 from layers.VGGish.hubconf import vggish
+from layers.VGGish.torchvggish.vggish import Postprocessor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
@@ -21,8 +22,15 @@ class Model(nn.Module):
 
         assert self.task_name in ["representation_learning"], "VGGish only suppports '--task_name representation_learning'"
 
-        self.model = vggish(pretrained=False, preprocess=False)
         self._preprocess = VGGISH.get_input_processor()
+
+        self.pipeline = True
+
+        if self.pipeline:
+            self.model = VGGISH.get_model()
+            self._postprocess = Postprocessor()
+        else:
+            self.model = vggish(pretrained=False, preprocess=False)
 
     def forward(
         self, 
@@ -35,7 +43,10 @@ class Model(nn.Module):
         output = []
         for sample in x:
             # The VGGish model expects input of shape [time_length]
-            output.append(self.model(self._preprocess(sample)) / 255.0)
+            if self.pipeline:
+                output.append(self._postprocess(self.model(self._preprocess(sample))))
+            else:
+                output.append(self.model(self._preprocess(sample)) / 255.0)
         
         if self.configs.task_name in ["representation_learning"]:
             return {
