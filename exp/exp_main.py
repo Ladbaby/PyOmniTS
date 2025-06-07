@@ -519,7 +519,8 @@ class Exp_Main(Exp_Basic):
                 input_tensor_names = ["x", "y", "x_mask", "y_mask", "sample_ID"]
                 output_tensor_names = ["pred"]
             elif self.configs.task_name in ["classification"]:
-                input_tensor_names = ["x", "y_class", "x_mask", "y_mask", "sample_ID"]
+                # input_tensor_names = ["x", "y_class", "x_mask", "y_mask", "sample_ID"]
+                input_tensor_names = ["y_class"]
                 output_tensor_names = ["pred_class"]
             elif self.configs.task_name in ["representation_learning"]:
                 input_tensor_names = []
@@ -561,7 +562,8 @@ class Exp_Main(Exp_Basic):
                             array_dict[tensor_name].append(outputs_all[tensor_name].detach().cpu().numpy())
 
             for tensor_name in input_tensor_names + output_tensor_names:
-                array_dict[tensor_name] = np.concatenate(array_dict[tensor_name], axis=0)
+                if tensor_name in array_dict.keys():
+                    array_dict[tensor_name] = np.concatenate(array_dict[tensor_name], axis=0)
 
             metrics = None
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
