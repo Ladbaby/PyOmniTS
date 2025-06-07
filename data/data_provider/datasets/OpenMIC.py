@@ -233,3 +233,4 @@ class Data(Dataset):
             return output_tensor, output_mask.unsqueeze(-1)
 
         self.xs, self.x_masks = split_tensor(tensor=waveform, seq_len=SEQ_LEN)
+        self.x_repr_times = None
