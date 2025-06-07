@@ -27,7 +27,11 @@ class Model(nn.Module):
         self.pipeline = True
 
         if self.pipeline:
-            self.model = VGGISH.get_model()
+            try:
+                self.model = VGGISH.get_model()
+            except Exception as e:
+                logger.exception(e, stack_info=True)
+                logger.warning("Hint: maybe the downloaded weight for VGGish pipeline at '~/.cache/torch/hub/torchaudio/models/vggish.pt' is broken. Try manually remove it then rerun.")
             self._postprocess = Postprocessor()
         else:
             self.model = vggish(pretrained=False, preprocess=False)
