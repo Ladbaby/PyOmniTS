@@ -1,3 +1,5 @@
+import urllib.request
+import os
 from pathlib import Path
 import datetime
 import warnings
@@ -16,6 +18,7 @@ from torch.nn import Module
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils import clip_grad_norm_
 from torch.optim.lr_scheduler import LambdaLR, CosineAnnealingLR, LRScheduler
+from torchvision.datasets.utils import download_url
 from accelerate import load_checkpoint_in_model
 
 from data.data_provider.data_factory import data_provider
@@ -623,31 +626,64 @@ class Exp_Main(Exp_Basic):
         # load model checkpoint if load_checkpoints_test
         if self.configs.load_checkpoints_test:
             checkpoint_file = checkpoint_location_itr / "pytorch_model.bin"
-            if checkpoint_file.exists():
-                try: 
-                    # model state dict cannot be modified after accelerator.prepare
-                    load_result = model_inference.load_state_dict(self._get_state_dict(checkpoint_file), strict=False)
-                    if load_result.missing_keys or load_result.unexpected_keys:
-                        missing_keys = []
-                        for key in load_result.missing_keys:
-                            if not key.startswith("vggish."):
-                                missing_keys.append(key)
-                        if len(missing_keys) > 0:
-                            logger.warning(f"Missing keys in model weights: {missing_keys}")
-                        if load_result.unexpected_keys:
-                            logger.warning(f"Unexpected keys in checkpoint file: {load_result.unexpected_keys}")
-                        if len(missing_keys) > 0 or load_result.unexpected_keys:
-                            logger.warning("Results may be incorrect!")
-                except Exception as e:
-                    logger.exception(f"{e}", stack_info=True)
-                    logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
-            else:
+            # WARNING: the following logic assumes weights are < 10GB
+            if not checkpoint_file.exists():
+                # try downloading from web 
+                url = f"https://huggingface.co/Ladbaby/InsRec-models/resolve/main/{self.configs.dataset_name}/{self.configs.model_name}/pytorch_model.bin?download=true"
+                download_choice = input(f'''The checkpoint file for model '{self.configs.model_name}' on dataset '{self.configs.dataset_name}' is going to be downloaded at "{checkpoint_file}" via url {url}, proceed? (Y/N):''')
+                while True:
+                    if download_choice.upper() == 'Y':
+                        break
+                    elif download_choice.upper() == 'N':
+                        logger.info("Download aborted.")
+                        exit(0)
+                    else:
+                        download_choice = input(f"Invalid choice '{download_choice}', please select between Y and N:")
+
+                # Read proxy settings from environment variables (both lowercase and uppercase)
+                http_proxy = os.environ.get('http_proxy') or os.environ.get('HTTP_PROXY')
+                https_proxy = os.environ.get('https_proxy') or os.environ.get('HTTPS_PROXY')
+
+                proxies = {}
+                if http_proxy:
+                    proxies['http'] = http_proxy
+                    proxies['https'] = http_proxy # if https_proxy is not present, use http_proxy for https traffic instead
+                if https_proxy:
+                    proxies['https'] = https_proxy
+
+                # Install proxy handler if proxies are found
+                if proxies:
+                    logger.debug(f"Using proxy read from environments for download: {proxies}")
+                    proxy_handler = urllib.request.ProxyHandler(proxies)
+                    opener = urllib.request.build_opener(proxy_handler)
+                    urllib.request.install_opener(opener)
                 try:
-                    # when weights are large (>10GB), they will be saved in several files
-                    load_checkpoint_in_model(model_inference, checkpoint_location_itr)
+                    download_url(
+                        url=url,
+                        root=checkpoint_location_itr,
+                        filename="pytorch_model.bin"
+                    )
                 except Exception as e:
-                    logger.exception(f"{e}", stack_info=True)
-                    logger.exception(f"Failed to load checkpoint file at {checkpoint_file}. Skipping it...")
+                    logger.exception(e, stack_info=True)
+            try: 
+                # model state dict cannot be modified after accelerator.prepare
+                load_result = model_inference.load_state_dict(self._get_state_dict(checkpoint_file), strict=False)
+                if load_result.missing_keys or load_result.unexpected_keys:
+                    missing_keys = []
+                    for key in load_result.missing_keys:
+                        if not key.startswith("vggish."):
+                            missing_keys.append(key)
+                    if len(missing_keys) > 0:
+                        logger.warning(f"Missing keys in model weights: {missing_keys}")
+                    if load_result.unexpected_keys:
+                        logger.warning(f"Unexpected keys in checkpoint file: {load_result.unexpected_keys}")
+                    if len(missing_keys) > 0 or load_result.unexpected_keys:
+                        logger.warning("Results may be incorrect!")
+            except Exception as e:
+                logger.exception(f"{e}", stack_info=True)
+                logger.exception(f"Failed to load checkpoint file at {checkpoint_file}.")
+                logger.warning(f"It is possible that the checkpoint file is broken. Try manually remove it then rerun.")
+                
 
         model_inference, inference_loader = accelerator.prepare(model_inference, inference_loader)
         if not self.configs.use_multi_gpu:
