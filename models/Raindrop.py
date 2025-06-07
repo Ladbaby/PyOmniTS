@@ -118,8 +118,7 @@ class Model(nn.Module):
         if y_mask is None:
             y_mask = torch.ones_like(y, dtype=y.dtype, device=y.device)
         if y_class is None:
-            if self.configs.task_name == "classification":
-                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            
             y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
         timestamps = x_mark[:, :, 0] # (BATCH_SIZE, SEQ_LEN)
         lengths = self.compute_lengths(timestamps) # (BATCH_SIZE)

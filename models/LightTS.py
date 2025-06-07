@@ -142,8 +142,7 @@ class Model(nn.Module):
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
         if y_class is None:
-            if self.configs.task_name == "classification":
-                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            
             y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
         # END adaptor
 
