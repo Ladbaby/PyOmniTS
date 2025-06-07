@@ -101,39 +101,28 @@ class Data(Dataset):
         right_boundary = int(total_files * boundary_dict[self.flag][1])
 
         # load y_class
-        try:
-            npz_data = np.load(Path(self.configs.dataset_root_path) / self.configs.dataset_file_name, allow_pickle=True)
+        npz_data_path = Path(self.configs.dataset_root_path) / self.configs.dataset_file_name
+        if npz_data_path.exists():
+            npz_data = np.load(npz_data_path, allow_pickle=True)
+            self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary]).float() # [N_SAMPLE, N_CLASSES]
+        else:
+            logger.warning(f"Skip loading missing dataset file '{npz_data_path}'. You can ignore this warning, if you are only running inference instead of train/val/test")
 
-
-            # [N_SAMPLE, N_CLASSES]
-            self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
-            self.y_classes = self.y_classes.float()
-
-            # self.x_repr_times = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
-            self.x_repr_times = torch.from_numpy(np.load(processed_audio_path / "x_repr_times.npy")[left_boundary: right_boundary] / 255.0).float()
-
-            # DEBUG
-            # self.sample_keys = npz_data['sample_key'][left_boundary: right_boundary]
-            # for class_tensor, sample_key, Y_true, Y_mask in zip(self.y_classes, self.sample_keys, npz_data['Y_true'][left_boundary: right_boundary], npz_data['Y_mask'][left_boundary: right_boundary]):
-            #     logger.debug(f"{class_tensor=}")
-            #     logger.debug(f"{sample_key=}")
-            #     logger.debug(f"{Y_true=}")
-            #     logger.debug(f"{Y_mask=}")
-            #     input()
-        except Exception as e:
-            logger.warning(f"{e}", stack_info=True)
-            logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
+        x_repr_times_path = processed_audio_path / "x_repr_times.npy"
+        if x_repr_times_path.exists():
+            self.x_repr_times = torch.from_numpy(np.load(x_repr_times_path)[left_boundary: right_boundary] / 255.0).float()
+        else:
+            logger.warning(f"Skip loading missing dataset file '{x_repr_times_path}'. You can ignore this warning, if you are only running inference instead of train/val/test")
 
         
-        if self.load_xs and processed_audio_path.exists():
-            try:
-                logger.debug(f"Loading audio files from {processed_audio_path / 'xs.npy'}")
-                xs_temp = np.load(processed_audio_path / "xs.npy")[left_boundary:right_boundary]
-
+        if self.load_xs:
+            xs_path = processed_audio_path / "xs.npy"
+            if xs_path.exists():
+                logger.debug(f"Loading audio files from '{xs_path}")
+                xs_temp = np.load(xs_path)[left_boundary:right_boundary]
                 self.xs = repeat(torch.from_numpy(xs_temp), "N_SAMPLE SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN", ENC_IN=1)
-            except Exception as e:
-                logger.warning(f"{e}", stack_info=True)
-                logger.warning(f"You can ignore the above warning, if you are only running inference instead of train/val/test")
+            else:
+                logger.warning(f"Skip loading missing dataset file '{xs_path}'. You can ignore this warning, if you are only running inference instead of train/val/test")
 
 
     def load_and_preprocess_audio(self, audio: BinaryIO | Path):
