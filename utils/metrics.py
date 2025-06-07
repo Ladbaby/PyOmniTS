@@ -77,9 +77,9 @@ def metric_classification(
     **kwargs
 ):
     from sklearn.metrics import roc_auc_score, average_precision_score, precision_score, recall_score, f1_score
-    if len(true_classes.shape) == 2:
+    if len(y_class.shape) == 2:
         # [BATCH_SIZE, N_CLASSES] -> [BATCH_SIZE]
-        true_classes = np.argmax(true_classes, axis=1)
+        y_class = np.argmax(y_class, axis=1)
     ypred = np.argmax(pred_class, axis=1)
 
     denoms = np.sum(np.exp(pred_class), axis=1).reshape((-1, 1))
