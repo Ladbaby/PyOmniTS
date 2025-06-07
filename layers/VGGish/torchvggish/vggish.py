@@ -1,12 +1,15 @@
 import os
+from pathlib import Path
+import urllib.request
 
 import numpy as np
 import torch
 import torch.nn as nn
 from torch import hub
+from torchvision.datasets.utils import download_url
 
 from . import vggish_input, vggish_params
-
+from utils.globals import logger
 
 class VGG(nn.Module):
     def __init__(self, features):
@@ -69,7 +72,51 @@ class Postprocessor(nn.Module):
         else:
             # cwd in InsRec root case
             base_path = "backend/"
-        self.load_state_dict(torch.load(f"{base_path}storage/pretrained/OpenMIC/VGGish/vggish_pca_params.pth"))
+        checkpoint_file = Path(f"{base_path}storage/pretrained/OpenMIC/VGGish/vggish_pca_params.pth")
+        if not checkpoint_file.exists():
+            # try downloading from web 
+            url = "https://huggingface.co/Ladbaby/InsRec-models/resolve/main/OpenMIC/VGGish/vggish_pca_params.pth?download=true"
+            download_choice = input(f'''The checkpoint file for the Postprocesor of VGGish is going to be downloaded at "{checkpoint_file}" via url {url}, proceed? (Y/N):''')
+            while True:
+                if download_choice.upper() == 'Y':
+                    break
+                elif download_choice.upper() == 'N':
+                    logger.info("Download aborted.")
+                    exit(0)
+                else:
+                    download_choice = input(f"Invalid choice '{download_choice}', please select between Y and N:")
+
+            # Read proxy settings from environment variables (both lowercase and uppercase)
+            http_proxy = os.environ.get('http_proxy') or os.environ.get('HTTP_PROXY')
+            https_proxy = os.environ.get('https_proxy') or os.environ.get('HTTPS_PROXY')
+
+            proxies = {}
+            if http_proxy:
+                proxies['http'] = http_proxy
+                proxies['https'] = http_proxy # if https_proxy is not present, use http_proxy for https traffic instead
+            if https_proxy:
+                proxies['https'] = https_proxy
+
+            # Install proxy handler if proxies are found
+            if proxies:
+                logger.debug(f"Using proxy read from environments for download: {proxies}")
+                proxy_handler = urllib.request.ProxyHandler(proxies)
+                opener = urllib.request.build_opener(proxy_handler)
+                urllib.request.install_opener(opener)
+            try:
+                download_url(
+                    url=url,
+                    root=f"{base_path}storage/pretrained/OpenMIC/VGGish",
+                    filename="vggish_pca_params.pth"
+                )
+            except Exception as e:
+                logger.exception(e, stack_info=True)
+        try:
+            self.load_state_dict(torch.load(checkpoint_file))
+        except Exception as e:
+            logger.exception(e, stack_info=True)
+            logger.exception(f"Postprocessor of VGGish failed to load checkpoint file at '{checkpoint_file}'.")
+            logger.warning(f"It is possible that the checkpoint file at '{checkpoint_file}' is broken. Try manually remove it then rerun.")
 
     def postprocess(self, embeddings_batch):
         """Applies tensor postprocessing to a batch of embeddings.
