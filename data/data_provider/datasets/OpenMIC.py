@@ -111,7 +111,8 @@ class Data(Dataset):
             self.y_classes = torch.from_numpy(npz_data['Y_true'][left_boundary: right_boundary] * npz_data['Y_mask'][left_boundary: right_boundary])
             self.y_classes = self.y_classes.float()
 
-            self.x_repr_times = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
+            # self.x_repr_times = torch.from_numpy(npz_data['X'][left_boundary: right_boundary] / 255.0).float()
+            self.x_repr_times = torch.from_numpy(np.load(processed_audio_path / "x_repr_times.npy")[left_boundary: right_boundary] / 255.0).float()
 
             # DEBUG
             # self.sample_keys = npz_data['sample_key'][left_boundary: right_boundary]
@@ -129,7 +130,7 @@ class Data(Dataset):
         if self.load_xs and processed_audio_path.exists():
             try:
                 logger.debug(f"Loading audio files from {processed_audio_path / 'xs.npy'}")
-                xs_temp = np.load(processed_audio_path / "xs.npy")
+                xs_temp = np.load(processed_audio_path / "xs.npy")[left_boundary:right_boundary]
 
                 self.xs = repeat(torch.from_numpy(xs_temp), "N_SAMPLE SEQ_LEN -> N_SAMPLE SEQ_LEN ENC_IN", ENC_IN=1)
             except Exception as e:
