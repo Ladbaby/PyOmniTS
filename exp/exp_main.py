@@ -630,7 +630,7 @@ class Exp_Main(Exp_Basic):
             if not checkpoint_file.exists():
                 # try downloading from web 
                 url = f"https://huggingface.co/Ladbaby/InsRec-models/resolve/main/{self.configs.dataset_name}/{self.configs.model_name}/pytorch_model.bin?download=true"
-                download_choice = input(f'''The checkpoint file for model '{self.configs.model_name}' on dataset '{self.configs.dataset_name}' is going to be downloaded at "{checkpoint_file}" via url {url}, proceed? (Y/N):''')
+                download_choice = input(f'''The checkpoint file for model '{self.configs.model_name}' on dataset '{self.configs.dataset_name}' is going to be downloaded at '{checkpoint_file}' via url {url}, proceed? (Y/N):''')
                 while True:
                     if download_choice.upper() == 'Y':
                         break
@@ -681,8 +681,8 @@ class Exp_Main(Exp_Basic):
                         logger.warning("Results may be incorrect!")
             except Exception as e:
                 logger.exception(f"{e}", stack_info=True)
-                logger.exception(f"Failed to load checkpoint file at {checkpoint_file}.")
-                logger.warning(f"It is possible that the checkpoint file is broken. Try manually remove it then rerun.")
+                logger.exception(f"Failed to load checkpoint file at '{checkpoint_file}'.")
+                logger.warning(f"It is possible that the checkpoint file at '{checkpoint_file}' is broken. Try manually remove it then rerun.")
                 
 
         model_inference, inference_loader = accelerator.prepare(model_inference, inference_loader)
