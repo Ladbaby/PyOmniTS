@@ -41,16 +41,21 @@ def one_hot(y_):
     n_values = np.max(y_) + 1
     return np.eye(n_values)[np.array(y_, dtype=np.int32)]
 
-def metric(pred, true, mask=None):
-    mae = MAE(pred, true, mask)
-    mse = MSE(pred, true, mask)
+def metric(
+    pred: np.ndarray, 
+    y: np.ndarray, 
+    y_mask: np.ndarray = None,
+    **kwargs
+):
+    mae = MAE(pred, y, y_mask)
+    mse = MSE(pred, y, y_mask)
 
     mse_per_sample = []
     for sample in range(pred.shape[0]):
-        if mask is not None:
-            mse_per_sample.append(MSE(pred[sample], true[sample], mask[sample]))
+        if y_mask is not None:
+            mse_per_sample.append(MSE(pred[sample], y[sample], y_mask[sample]))
         else:
-            mse_per_sample.append(MSE(pred[sample], true[sample]))
+            mse_per_sample.append(MSE(pred[sample], y[sample]))
 
     # rmse = RMSE(pred, true, mask)
     # mape = MAPE(pred, true)
@@ -65,31 +70,36 @@ def metric(pred, true, mask=None):
         # "MSE_per_sample": mse_per_sample
     }
 
-def metric_classification(pred_classes, true_classes, n_classes):
+def metric_classification(
+    pred_class: np.ndarray, 
+    y_class: np.ndarray, 
+    n_classes: int,
+    **kwargs
+):
     from sklearn.metrics import roc_auc_score, average_precision_score, precision_score, recall_score, f1_score
     if len(true_classes.shape) == 2:
         # [BATCH_SIZE, N_CLASSES] -> [BATCH_SIZE]
         true_classes = np.argmax(true_classes, axis=1)
-    ypred = np.argmax(pred_classes, axis=1)
+    ypred = np.argmax(pred_class, axis=1)
 
-    denoms = np.sum(np.exp(pred_classes), axis=1).reshape((-1, 1))
-    probs = np.exp(pred_classes) / denoms
+    denoms = np.sum(np.exp(pred_class), axis=1).reshape((-1, 1))
+    probs = np.exp(pred_class) / denoms
 
-    acc = np.sum(true_classes.ravel() == ypred.ravel()) / true_classes.shape[0] * 100
+    acc = np.sum(y_class.ravel() == ypred.ravel()) / y_class.shape[0] * 100
     if n_classes == 2:
-        auc = roc_auc_score(true_classes, probs[:, 1]) * 100
-        aupr = average_precision_score(true_classes, probs[:, 1]) * 100
+        auc = roc_auc_score(y_class, probs[:, 1]) * 100
+        aupr = average_precision_score(y_class, probs[:, 1]) * 100
         return {
             "Accuracy": acc,
             "AUROC": auc,
             "AUPRC": aupr
         }
     else:
-        # auc = roc_auc_score(one_hot(true_classes), probs) * 100
-        # aupr = average_precision_score(one_hot(true_classes), probs) * 100
-        precision = precision_score(true_classes, ypred, average='macro', ) * 100
-        recall = recall_score(true_classes, ypred, average='macro', ) * 100
-        F1 = f1_score(true_classes, ypred, average='macro', ) * 100
+        # auc = roc_auc_score(one_hot(y_class), probs) * 100
+        # aupr = average_precision_score(one_hot(y_class), probs) * 100
+        precision = precision_score(y_class, ypred, average='macro', ) * 100
+        recall = recall_score(y_class, ypred, average='macro', ) * 100
+        F1 = f1_score(y_class, ypred, average='macro', ) * 100
         return {
             "Accuracy": acc,
             # "AUROC": auc,
