@@ -8,12 +8,10 @@ import torchaudio
 from torch import Tensor
 from torchaudio.prototype.pipelines import VGGISH
 from einops import repeat, rearrange
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 from torch.utils.data import Dataset
 from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
-from utils.configs import configs
 
 class Data(Dataset):
     '''
