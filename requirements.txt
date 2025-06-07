@@ -4,6 +4,7 @@ ptflops # for --test_flop
 accelerate # parallel training
 coloredlogs # logging
 torchaudio # OpenMIC dataset
+torchvision
 einops
 scikit-learn
 resampy
