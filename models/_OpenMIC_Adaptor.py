@@ -42,7 +42,7 @@ class Model(nn.Module):
         if "x_repr_time" not in kwargs.keys():
             kwargs["x_repr_time"] = self.vggish(**kwargs)["pred_repr_time"]
         # kwargs["x"] = kwargs["x_repr_time"] # DEBUG: force overwrite x with its representation
-        if self.configs.task_name == "classification":
+        if self.configs.task_name in ["classification", "representation_learning"]:
             return self.backbone(**kwargs)
         else:
             raise NotImplementedError
