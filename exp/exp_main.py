@@ -542,8 +542,10 @@ class Exp_Main(Exp_Basic):
                             array_dict[tensor_name].append(outputs_all[tensor_name].detach().cpu().numpy())
 
             for tensor_name in input_tensor_names + output_tensor_names:
-                if tensor_name in array_dict.keys():
+                if len(array_dict[tensor_name]) > 0:
                     array_dict[tensor_name] = np.concatenate(array_dict[tensor_name], axis=0)
+                else:
+                    array_dict[tensor_name] = None # reset to default value for metric calculation
 
             metrics = None
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
@@ -570,6 +572,8 @@ class Exp_Main(Exp_Basic):
 
             if self.configs.save_arrays:
                 for tensor_name in input_tensor_names:
-                    np.save(folder_path / f"input_{tensor_name}.npy", array_dict[tensor_name])
+                    if array_dict[tensor_name] is not None:
+                        np.save(folder_path / f"input_{tensor_name}.npy", array_dict[tensor_name])
                 for tensor_name in output_tensor_names:
-                    np.save(folder_path / f"output_{tensor_name}.npy", array_dict[tensor_name])
+                    if array_dict[tensor_name] is not None:
+                        np.save(folder_path / f"output_{tensor_name}.npy", array_dict[tensor_name])
