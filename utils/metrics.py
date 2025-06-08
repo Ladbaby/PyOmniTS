@@ -41,16 +41,21 @@ def one_hot(y_):
     n_values = np.max(y_) + 1
     return np.eye(n_values)[np.array(y_, dtype=np.int32)]
 
-def metric(pred, true, mask=None):
-    mae = MAE(pred, true, mask)
-    mse = MSE(pred, true, mask)
+def metric(
+    pred: np.ndarray, 
+    y: np.ndarray, 
+    y_mask: np.ndarray = None,
+    **kwargs
+):
+    mae = MAE(pred, y, y_mask)
+    mse = MSE(pred, y, y_mask)
 
     mse_per_sample = []
     for sample in range(pred.shape[0]):
-        if mask is not None:
-            mse_per_sample.append(MSE(pred[sample], true[sample], mask[sample]))
+        if y_mask is not None:
+            mse_per_sample.append(MSE(pred[sample], y[sample], y_mask[sample]))
         else:
-            mse_per_sample.append(MSE(pred[sample], true[sample]))
+            mse_per_sample.append(MSE(pred[sample], y[sample]))
 
     # rmse = RMSE(pred, true, mask)
     # mape = MAPE(pred, true)

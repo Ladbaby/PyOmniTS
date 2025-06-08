@@ -499,12 +499,16 @@ class Exp_Main(Exp_Basic):
             folder_path.mkdir(exist_ok=True)
             logger.info(f"Testing results will be saved under {folder_path}")
 
-            # forecasting, etc
-            preds = []
-            trues = []
-            inputx = []
-            masks = []
-            IDs = []
+            # dictionary holding input and output data
+            array_dict = {}
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
+                input_tensor_names = ["x", "y", "x_mask", "y_mask", "sample_ID"]
+                output_tensor_names = ["pred"]
+            else:
+                raise NotImplementedError
+
+            for tensor_name in input_tensor_names + output_tensor_names:
+                array_dict[tensor_name] = []
             
             with torch.no_grad():
                 batch: dict[str, Tensor] # type hints
@@ -530,57 +534,42 @@ class Exp_Main(Exp_Basic):
                     outputs_all: list[dict] = accelerator.gather_for_metrics([outputs])
                     outputs_all: dict = self._merge_gathered_dicts(outputs_all)
 
-                    if_masks = "x_mask" in batch_all.keys() and "y_mask" in batch_all.keys()
-                    if_IDs = "sample_ID" in batch_all.keys()
-                    if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation", "representation_learning"]:
-                        preds.append(outputs_all["pred"].detach().cpu().numpy())
-                        trues.append(batch_all['y'].detach().cpu().numpy())
-                    inputx.append(batch_all['x'].detach().cpu().numpy())
-                    if if_masks:
-                        masks.append(torch.cat([batch_all["x_mask"], batch_all["y_mask"]], dim=1).detach().cpu().numpy())
-                    if if_IDs:
-                        IDs.append(batch_all["sample_ID"].detach().cpu().numpy())
+                    for tensor_name in input_tensor_names:
+                        if tensor_name in batch_all.keys():
+                            array_dict[tensor_name].append(batch_all[tensor_name].detach().cpu().numpy())
+                    for tensor_name in output_tensor_names:
+                        if tensor_name in outputs_all.keys():
+                            array_dict[tensor_name].append(outputs_all[tensor_name].detach().cpu().numpy())
 
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation", "representation_learning"]:
-                preds = np.concatenate(preds, axis=0)
-                trues = np.concatenate(trues, axis=0)
-            inputx = np.concatenate(inputx, axis=0)
-            if if_masks:
-                masks = np.concatenate(masks, axis=0)
-            if if_IDs:
-                IDs = np.concatenate(IDs, axis=0)
+            for tensor_name in input_tensor_names + output_tensor_names:
+                if tensor_name in array_dict.keys():
+                    array_dict[tensor_name] = np.concatenate(array_dict[tensor_name], axis=0)
 
+            metrics = None
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
-                metrics = metric(
-                    pred=preds, 
-                    true=trues, 
-                    mask=masks[:, -preds.shape[1]:] if len(masks) != 0 else None
-                )
+                metrics = metric(**array_dict)
                 if (self.configs.wandb and accelerator.is_main_process and self.configs.is_training) or self.configs.sweep:
                     import wandb
                     wandb.log({
-                        "loss_test": np.mean(metrics["mse"]),
+                        "loss_test": np.mean(metrics["MSE"]),
                     })
-            # convert to float before saving to json
-            for key, value in metrics.items():
-                if isinstance(value, np.float32):
-                    metrics[key] = float(value)
-                if isinstance(value, list):
-                    for item in value:
-                        if isinstance(item, np.float32):
-                            metrics[key] = [float(v) for v in value]
-                            break
-            logger.info("Metrics:\n%s", json.dumps(metrics, indent=4)) # log result in a readable way
-            with open(folder_path / "metric.json", "w") as f:
-                json.dump(metrics, f, indent=2)
+            
+            if metrics is not None:
+                # convert to float before saving to json
+                for key, value in metrics.items():
+                    if isinstance(value, np.float32):
+                        metrics[key] = float(value)
+                    if isinstance(value, list):
+                        for item in value:
+                            if isinstance(item, np.float32):
+                                metrics[key] = [float(v) for v in value]
+                                break
+                logger.info("Metrics:\n%s", json.dumps(metrics, indent=4)) # log result in a readable way
+                with open(folder_path / "metric.json", "w") as f:
+                    json.dump(metrics, f, indent=2)
 
             if self.configs.save_arrays:
-                if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
-                    preds_file_name = f"reprs_{self.configs.target_variable_index}.npy" if (self.configs.task_name == "representation_learning" and self.configs.features in ["MS", 'S']) else "preds.npy"
-                    np.save(folder_path / preds_file_name, preds)
-                    np.save(folder_path / 'trues.npy', trues)
-                np.save(folder_path / 'xs.npy', inputx)
-                if if_masks:
-                    np.save(folder_path / 'masks.npy', masks)
-                if if_IDs:
-                    np.save(folder_path / 'IDs.npy', IDs)
+                for tensor_name in input_tensor_names:
+                    np.save(folder_path / f"input_{tensor_name}.npy", array_dict[tensor_name])
+                for tensor_name in output_tensor_names:
+                    np.save(folder_path / f"output_{tensor_name}.npy", array_dict[tensor_name])
