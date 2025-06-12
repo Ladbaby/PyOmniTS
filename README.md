@@ -7,7 +7,7 @@
 
 ---
 
-This branch is the backend for 🎹 InsRec, a musical instrument recognition app.
+This branch is the backend for [🎹 InsRec](https://github.com/Ladbaby/InsRec), a musical instrument recognition app.
 
 ## 1. ✨ Hightlighted Features
 
