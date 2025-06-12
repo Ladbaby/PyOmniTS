@@ -7,9 +7,7 @@
 
 ---
 
-This is also the official repository for the following paper:
-
-- [HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting](https://openreview.net/forum?id=u8wRbX2r2V) (ICML 2025)
+This branch is the backend for 🎹 InsRec, a musical instrument recognition app.
 
 ## 1. ✨ Hightlighted Features
 
@@ -94,29 +92,9 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 
 Dataest classes are put in `data/data_provider/datasets`, and dependencies can be found in `data/dependencies`:
 
-11 datasets, covering regular and irregular ones, have been included in PyOmniTS, and more are coming.
-
-- ✅: supported
-- ❌: not supported
-- '-': not implemented
-- MTS: regularly sampled multivariate time series
-- IMTS: irregularly sampled multivariate time series
-
-|Dataset|Type|Field|Forecasting
-|---|---|---|---|
-|ECL|MTS|electricity|✅
-|ETTh1|MTS|electricity|✅
-|ETTm1|MTS|electricity|✅
-|Human Activity|IMTS|biomechanics|✅
-|ILI|MTS|healthcare|✅
-|MIMIC III|IMTS|healthcare|✅
-|MIMIC IV|IMTS|healthcare|✅
-|PhysioNet'12|IMTS|healthcare|✅
-|Traffic|MTS|traffic|✅
-|USHCN|IMTS|weather|✅
-|Weather|MTS|weather|✅
-
-Datasets for classification and imputation have not released yet.
+|Dataset|#Instrument|#Sample
+|---|---|---|
+|OpenMIC-2018|20|20000
 
 ## 5. 📉 Loss Functions
 
