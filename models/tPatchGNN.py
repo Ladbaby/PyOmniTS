@@ -34,7 +34,7 @@ class Model(nn.Module):
         self.te_dim = configs.tpatchgnn_te_dim
         self.n_heads = configs.n_heads
         self.tf_layer = 1
-        self.node_dim = 10
+        self.node_dim = configs.node_dim
         self.hop = 1
         self.outlayer = "Linear"
 

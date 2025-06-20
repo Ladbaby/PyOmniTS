@@ -97,6 +97,7 @@ class ExpConfigs:
     embed: str
     activation: str
     output_attention: int
+    node_dim: int
     # PatchTST
     patchtst_fc_dropout: float
     patchtst_head_dropout: float

@@ -111,6 +111,7 @@ parser.add_argument('--dropout', type=float, default=0.05, help='dropout')
 parser.add_argument('--embed', type=str, choices=["timeF", "fixed", "learned"], default='timeF', help='time features encoding')
 parser.add_argument('--activation', type=str, default='gelu', help='activation')
 parser.add_argument('--output_attention', type=int, default=0, help='output attention weight')
+parser.add_argument('--node_dim', type=int, default=10, help='hidden dimension of nodes used in a few GNNs, like tPatchGNN')
 # PatchTST
 parser.add_argument('--patchtst_fc_dropout', type=float, default=0.05, help='fully connected dropout')
 parser.add_argument('--patchtst_head_dropout', type=float, default=0.0, help='head dropout')
