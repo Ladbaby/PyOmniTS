@@ -158,6 +158,17 @@ We encountered the following problems when using existing ones:
 
     some existing pipelines use fancy high-level packages in building the pipeline, which can lower the flexibility of code modification.
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## Acknowledgement
 
 - [Time Series Library](https://github.com/thuml/Time-Series-Library): Models and datasets for regularly sampled time series are mostly adapted from it.
