@@ -31,7 +31,7 @@ class Model(nn.Module):
         self.supports = None
         self.n_layer = 1
         dropout = 0
-        self.te_dim = 10
+        self.te_dim = configs.tpatchgnn_te_dim
         self.n_heads = configs.n_heads
         self.tf_layer = 1
         self.node_dim = 10

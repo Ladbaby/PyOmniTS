@@ -140,6 +140,8 @@ class ExpConfigs:
     nonstationarytransformer_p_hidden_layers: int
     # Informer
     informer_distil: int
+    # tPatchGNN
+    tpatchgnn_te_dim: int
 
     # Used to be compatible with ipython. Never used
     f: int = 1

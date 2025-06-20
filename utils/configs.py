@@ -158,6 +158,8 @@ parser.add_argument('--nonstationarytransformer_p_hidden_layers', type=int, defa
 parser.add_argument('--informer_distil', type=int,
                     help='whether to use distilling in encoder, using this argument means not using distilling',
                     default=1)
+# tPatchGNN
+parser.add_argument('--tpatchgnn_te_dim', type=int, default=10, help="Number of units for time encoding")
 
 # Used to be compatible with ipython. Never used
 parser.add_argument("--f", help="a dummy argument to fool ipython", default="1")
