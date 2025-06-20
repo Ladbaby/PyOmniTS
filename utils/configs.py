@@ -66,6 +66,9 @@ parser.add_argument('--patience', type=int, default=5, help='early stopping pati
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='initial learning rate')
 parser.add_argument('--loss', type=str, default='MSE', help='loss function, should be exactly the same as the file name under loss_fns directory')
 parser.add_argument('--lr_scheduler', type=str, choices=["ExponentialDecayLR", "ManualMilestonesLR", "DelayedStepDecayLR", "CosineAnnealingLR", "MultiStepLR"], default='DelayedStepDecayLR', help='learning rate scheduler. Originally named as --lradj')
+parser.add_argument('--pretrained_checkpoint_root_path', type=str, default="", help="Path to folder containing pretrained model's checkpoints")
+parser.add_argument('--pretrained_checkpoint_file_name', type=str, default="", help="file name of pretrained model's checkpoints, including file type extension")
+parser.add_argument('--n_train_stages', type=int, default=1, help="Some models have multiple training stages, like pretraining + finetuning. e.g., --n_train_stages 2 will pass train_stage=1 and train_stage=2 to model during training.")
 parser.add_argument('--retain_graph', type=int, default=0, help='whether to retain compute graph in back propagation. Used in special models like HD_TTS.')
 
 # testing
@@ -108,9 +111,6 @@ parser.add_argument('--dropout', type=float, default=0.05, help='dropout')
 parser.add_argument('--embed', type=str, choices=["timeF", "fixed", "learned"], default='timeF', help='time features encoding')
 parser.add_argument('--activation', type=str, default='gelu', help='activation')
 parser.add_argument('--output_attention', type=int, default=0, help='output attention weight')
-parser.add_argument('--pretrained_checkpoint_root_path', type=str, default="", help="Path to folder containing pretrained model's checkpoints")
-parser.add_argument('--pretrained_checkpoint_file_name', type=str, default="", help="file name of pretrained model's checkpoints, including file type extension")
-parser.add_argument('--n_train_stages', type=int, default=1, help="Some models have multiple training stages, like pretraining + finetuning. e.g., --n_train_stages 2 will pass train_stage=1 and train_stage=2 to model during training.")
 # PatchTST
 parser.add_argument('--patchtst_fc_dropout', type=float, default=0.05, help='fully connected dropout')
 parser.add_argument('--patchtst_head_dropout', type=float, default=0.0, help='head dropout')
