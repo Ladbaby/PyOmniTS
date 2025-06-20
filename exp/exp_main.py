@@ -151,7 +151,8 @@ class Exp_Main(Exp_Basic):
         model_train: Module, 
         vali_loader: DataLoader, 
         criterion: Module, 
-        current_epoch: int
+        current_epoch: int,
+        train_stage: int
     ) -> np.ndarray:
         total_loss = []
         model_train.eval()
@@ -173,6 +174,7 @@ class Exp_Main(Exp_Basic):
                     # some model's forward function return different values in "train", "val", "test", they can use `exp_stage` as argument to distinguish
                     outputs: dict[str, Tensor] = model_train(
                         exp_stage="val",
+                        train_stage=train_stage,
                         **batch
                     )
 
@@ -317,7 +319,13 @@ class Exp_Main(Exp_Basic):
 
                 # validation
                 if epoch % self.configs.val_interval == 0:
-                    vali_loss = self.vali(model_train, vali_loader, criterion, epoch)
+                    vali_loss = self.vali(
+                        model_train=model_train, 
+                        vali_loader=vali_loader, 
+                        criterion=criterion, 
+                        current_epoch=epoch,
+                        train_stage=train_stage
+                    )
                     if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
                         wandb.log({
                             "loss_train": np.mean(train_loss),
