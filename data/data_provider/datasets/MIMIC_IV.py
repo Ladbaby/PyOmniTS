@@ -22,7 +22,7 @@ class Data(Dataset):
         **kwargs
     ):
         '''
-        warpper for MIMIC IV Bilos2021 dataset implemented in tsdm
+        wrapper for MIMIC IV Bilos2021 dataset implemented in tsdm
         tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
         this version of MIMIC IV does not align the timesteps among samples (but do align within sample), which means:

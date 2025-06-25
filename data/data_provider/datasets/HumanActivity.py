@@ -19,7 +19,7 @@ class Data(Dataset):
         **kwargs
     ):
         '''
-        warpper for Human Activity dataset
+        wrapper for Human Activity dataset
 
         - number of variables: 12
         - number of samples: 949 + 192 + 218

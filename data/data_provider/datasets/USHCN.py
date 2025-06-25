@@ -22,7 +22,7 @@ class Data(Dataset):
         **kwargs
     ):
         '''
-        warpper for USHCN DeBrouwer2019 dataset implemented in tsdm
+        wrapper for USHCN DeBrouwer2019 dataset implemented in tsdm
         tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
         this version of USHCN does not align the timesteps among samples (but do align within sample), which means:
