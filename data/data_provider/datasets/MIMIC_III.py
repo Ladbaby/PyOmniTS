@@ -81,10 +81,10 @@ class Data(Dataset):
             self.patch_len_max_irr = 0
             seq_residual_len = 0
 
-            SEQ_LEN = configs.seq_len
-            PRED_LEN = configs.pred_len
+            SEQ_LEN = self.configs.seq_len
+            PRED_LEN = self.configs.pred_len
 
-            PATCH_LEN = configs.patch_len
+            PATCH_LEN = self.configs.patch_len
                         
             for sample in dataset:
                 x_mark, x, y_mark = sample.inputs
@@ -97,7 +97,7 @@ class Data(Dataset):
                 if self.configs.collate_fn == "collate_fn_patch":
                     assert SEQ_LEN % PATCH_LEN == 0, f"seq_len {SEQ_LEN} should be divisible by patch_len {PATCH_LEN}"
                     n_patch: int = SEQ_LEN // PATCH_LEN
-                    n_patch_y: int = math.ceil(configs.pred_len / PATCH_LEN)
+                    n_patch_y: int = math.ceil(self.configs.pred_len / PATCH_LEN)
 
                     patch_i_end_previous = 0
                     for i in range(n_patch):
@@ -123,7 +123,7 @@ class Data(Dataset):
 
             if self.configs.collate_fn == "collate_fn_patch":
                 n_patch: int = SEQ_LEN // PATCH_LEN
-                n_patch_y: int = math.ceil(configs.pred_len / PATCH_LEN)
+                n_patch_y: int = math.ceil(self.configs.pred_len / PATCH_LEN)
                 self.seq_len_max_irr = max(self.seq_len_max_irr, self.patch_len_max_irr * n_patch)
                 self.pred_len_max_irr = max(self.pred_len_max_irr, self.patch_len_max_irr * n_patch_y)
             
