@@ -8,7 +8,7 @@ fi
 model_name="$(basename "$(dirname "$(readlink -f "$0")")")" # folder name
 
 dataset_root_path=storage/datasets/illness
-model_id_name=$model_name
+model_id=$model_name
 dataset_name=$(basename "$0" .sh) # file name
 
 seq_len=36
@@ -29,7 +29,7 @@ for pred_len in 36; do
             --use_multi_gpu $use_multi_gpu \
             --dataset_root_path $dataset_root_path \
             --dataset_file_name "national_illness.csv" \
-            --model_id $model_id_name'_'$seq_len'_'$pred_len \
+            --model_id $model_id \
             --model_name $model_name \
             --dataset_name $dataset_name \
             --features M \

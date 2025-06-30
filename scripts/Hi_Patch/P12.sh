@@ -8,7 +8,7 @@ fi
 model_name="$(basename "$(dirname "$(readlink -f "$0")")")" # folder name
 
 dataset_root_path=storage/datasets/P12
-model_id_name=$model_name
+model_id=$model_name
 dataset_name=$(basename "$0" .sh) # file name
 
 seq_len=$((36))
@@ -26,7 +26,7 @@ for pred_len in 3; do
             --patch_stride 6 \
             --use_multi_gpu $use_multi_gpu \
             --dataset_root_path $dataset_root_path \
-            --model_id $model_id_name'_'$seq_len'_'$pred_len \
+            --model_id $model_id \
             --model_name $model_name \
             --dataset_name $dataset_name \
             --features M \
