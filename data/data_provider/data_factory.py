@@ -9,6 +9,8 @@ def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, dro
     - shuffle_flag: In rare cases, it can be manually overwrite.
     - drop_last: In rare cases, it can be manually overwrite.
     '''
+    # backward compatibility
+    assert not (shuffle_flag or drop_last), "Please use --train_val_loader_shuffle 0/1 and --train_val_loader_drop_last 0/1 to set shuffle_flag and drop_last for train/val dataloader instead."
     # dynamically import the desired dataset class
     dataset_module = importlib.import_module(f"data.data_provider.datasets.{configs.dataset_name}")
     Data = dataset_module.Data
@@ -20,12 +22,12 @@ def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, dro
         collate_fn = None
 
     if flag in ["test", "test_all"]:
-        shuffle_flag = shuffle_flag or False
-        drop_last = drop_last or False
+        shuffle_flag = False
+        drop_last = False
         batch_size = configs.batch_size
     else:
-        shuffle_flag = shuffle_flag or True
-        drop_last = drop_last or True
+        shuffle_flag = configs.train_val_loader_shuffle or True
+        drop_last = configs.train_val_loader_drop_last or True
         batch_size = configs.batch_size
 
     data_set: Dataset = Data(
