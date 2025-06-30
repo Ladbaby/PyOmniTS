@@ -194,7 +194,7 @@ class Exp_Main(Exp_Basic):
     def train(self) -> None:
         logger.info('>>>>>>> training start <<<<<<<')
         # save training config file for reference
-        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / f"{self.configs.model_id}_{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
+        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
         path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
         with open(path / "configs.yaml", 'w', encoding='utf-8') as f:
@@ -436,7 +436,7 @@ class Exp_Main(Exp_Basic):
         actual_itrs = 1
         if self.configs.checkpoints_test is None:
             # by default, if checkpoints_test is not given, it tries to load the latest corresponding checkpoint
-            checkpoint_location = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name
+            checkpoint_location = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}"
             if self.configs.load_checkpoints_test:
                 try:
                     # first, find the latest one based on timestamp in name
@@ -455,7 +455,7 @@ class Exp_Main(Exp_Basic):
                     exit(1)
             else:
                 # create pseudo training directory for test results
-                train_folder = f'{self.configs.model_id}_{datetime.datetime.now().strftime("%m%d_%H%M")}'
+                train_folder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
                 path = checkpoint_location / train_folder / f"iter0"
                 path.mkdir(parents=True, exist_ok=True)
                 checkpoint_location = checkpoint_location / train_folder
@@ -502,7 +502,7 @@ class Exp_Main(Exp_Basic):
                 model_test = model_test.to(f"cuda:{self.configs.gpu_id}")
 
             # create folder for test results
-            subfolder_eval = f'eval_{datetime.datetime.now().strftime("%m%d_%H%M")}'
+            subfolder_eval = f'eval_{datetime.datetime.now().strftime("%Y_%m%d_%H%M")}'
             folder_path = checkpoint_location_itr / subfolder_eval
             folder_path.mkdir(exist_ok=True)
             logger.info(f"Testing results will be saved under {folder_path}")
