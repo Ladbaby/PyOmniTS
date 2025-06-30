@@ -194,7 +194,7 @@ class Exp_Main(Exp_Basic):
     def train(self) -> None:
         logger.info('>>>>>>> training start <<<<<<<')
         # save training config file for reference
-        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
+        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / f"{self.configs.model_id}_{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
         path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
         with open(path / "configs.yaml", 'w', encoding='utf-8') as f:
@@ -440,12 +440,12 @@ class Exp_Main(Exp_Basic):
             if self.configs.load_checkpoints_test:
                 try:
                     # first, find the latest one based on timestamp in name
-                    child_folders = [(entry.name.replace(f"{self.configs.model_id}_", ""), entry) for entry in checkpoint_location.iterdir() if entry.is_dir() and self.configs.model_id in entry.name]
+                    child_folders = [(entry.name, entry) for entry in checkpoint_location.iterdir() if entry.is_dir()]
                     if len(child_folders) == 0:
                         logger.exception(f"No folder under '{checkpoint_location}' matches the model_id '{self.configs.model_id}'.", stack_info=True)
                         logger.exception(f"Tips: Failed to infer the latest checkpoint folder. Please manually provide the checkpoints_test argument pointing to the folder of checkpoint file")
                         exit(1)
-                    latest_folder: str = sorted(child_folders, key=lambda item: datetime.datetime.strptime(item[0], "%m%d_%H%M"))[-1][1].name
+                    latest_folder: str = sorted(child_folders, key=lambda item: datetime.datetime.strptime(item[0], "%Y_%m%d_%H%M"))[-1][1].name
                     checkpoint_location = checkpoint_location / latest_folder
                     # then find the latest iter
                     actual_itrs = len([entry.name for entry in checkpoint_location.iterdir() if entry.is_dir()])

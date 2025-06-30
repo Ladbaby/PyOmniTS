@@ -48,7 +48,7 @@ def main():
         exp.test()
 
     elif configs.is_training:
-        subfolder = f'{configs.model_id}_{datetime.datetime.now().strftime("%m%d_%H%M")}'
+        subfolder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
         configs.subfolder_train = subfolder
         for i in range(configs.itr):
             configs.itr_i = i
