@@ -365,7 +365,7 @@ class Exp_Main(Exp_Basic):
             test_params_flop(
                 model=self._build_model().to(self.device), 
                 x_shape=(self.configs.seq_len,self.configs.enc_in),
-                model_name=self.configs.model_name,
+                model_id=self.configs.model_id,
                 task_key=task_key_mapping[self.configs.task_name] if self.configs.task_name in task_key_mapping.keys() else self.configs.task_name
             )
             exit(0)
@@ -378,7 +378,7 @@ class Exp_Main(Exp_Basic):
                 model=self._build_model().to(self.device), 
                 dataloader=train_loader,
                 criterion=self._select_criterion(),
-                model_name=self.configs.model_name,
+                model_id=self.configs.model_id,
                 dataset_name=self.configs.dataset_name,
                 gpu=self.configs.gpu_id,
                 seq_len=self.configs.seq_len,
@@ -398,7 +398,7 @@ class Exp_Main(Exp_Basic):
             test_gpu_memory(
                 model=model,
                 batch=batch,
-                model_name=self.configs.model_name,
+                model_id=self.configs.model_id,
                 dataset_name=self.configs.dataset_name,
                 gpu=self.configs.gpu_id,
                 seq_len=self.configs.seq_len,
