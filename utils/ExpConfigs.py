@@ -151,3 +151,5 @@ class ExpConfigs:
     seq_len_max_irr: int = None # maximum number of observations along time dimension of x, set in irregular time series datasets
     pred_len_max_irr: int = None # maximum number of observations along time dimension of y, set in irregular time series datasets
     patch_len_max_irr: int = None # maximum number of observations along time dimension in a patch of x, set in irregular time series datasets
+    subfolder_train: str = "" # timestamp of training in format %Y_%m%d_%H%M
+    itr_i: int = 0 # current training iteration. [0, itr-1]
