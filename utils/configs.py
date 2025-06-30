@@ -168,7 +168,8 @@ parser.add_argument("--f", help="a dummy argument to fool ipython", default="1")
 configs = ExpConfigs(**vars(parser.parse_args())) # enable type hints
 
 # .yaml reference file maintainance
-yaml_configs_path = Path(f"configs/{configs.model_name}/{configs.dataset_name}.yaml")
+yaml_configs_path_deprecated = Path(f"configs/{configs.model_name}/{configs.dataset_name}.yaml") # backward compatibility
+yaml_configs_path = Path(f"configs/{configs.model_name}/{configs.model_id}/{configs.dataset_name}.yaml")
 if yaml_configs_path.exists():
     with open(yaml_configs_path, 'r', encoding="utf-8") as stream:
         try:
@@ -188,7 +189,11 @@ if yaml_configs_path.exists():
             with open(yaml_configs_path, 'w', encoding='utf-8') as f:
                 yaml.dump(yaml_configs, f, default_flow_style=False)
 else:
-    # save yaml if not exist
-    Path(f"configs/{configs.model_name}").mkdir(parents=True, exist_ok=True)
-    with open(yaml_configs_path, 'w', encoding='utf-8') as f:
-        yaml.dump(asdict(configs), f, default_flow_style=False)
+    Path(f"configs/{configs.model_name}/{configs.model_id}").mkdir(parents=True, exist_ok=True)
+    if yaml_configs_path_deprecated.exists():
+        # migrate from deprecated folder structure to new one
+        yaml_configs_path_deprecated.replace(yaml_configs_path) # will overwrite if destination exists
+    else:
+        # save yaml if not exist
+        with open(yaml_configs_path, 'w', encoding='utf-8') as f:
+            yaml.dump(asdict(configs), f, default_flow_style=False)
