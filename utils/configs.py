@@ -39,6 +39,8 @@ parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', '
 parser.add_argument('--collate_fn', type=str, default="collate_fn", help='Name of the function as a custom collate_fn for dataloader. By default, datasets without collate_fn defined in data/data_provider/datasets/SOME_DATASET_NAME will use default collate_fn of Pytorch. Refer to data/data_provider/data_factory.py for implementation detail.')
 parser.add_argument('--augmentation_ratio', type=int, default=0, help="How many times to augment")
 parser.add_argument('--missing_rate', type=float, default=0., help="Manually mask out some observations.")
+parser.add_argument('--train_val_loader_shuffle', type=int, default=None, help="By default, this parameter is unset, and train and val loader is shuffled.")
+parser.add_argument('--train_val_loader_drop_last', type=int, default=None, help="By default, this parameter is unset, and train and val loader will drop the last batch if the number of samples is not sufficient.")
 
 # forecasting task
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')

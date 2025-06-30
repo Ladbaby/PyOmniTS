@@ -25,6 +25,8 @@ class ExpConfigs:
     collate_fn: str
     augmentation_ratio: int
     missing_rate: float
+    train_val_loader_shuffle: int
+    train_val_loader_drop_last: int
 
     # forecasting task
     seq_len: int
