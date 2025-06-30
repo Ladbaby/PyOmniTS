@@ -3,6 +3,8 @@ notes.md
 *.pyc
 *.pth
 .DS_Store
+*.safetensors
+pytorch.bin
 
 storage/
 log/
