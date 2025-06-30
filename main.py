@@ -27,7 +27,7 @@ def main():
         # hyperparameter search using wandb sweep
         logger.info('>>>>>>> sweeping start <<<<<<<')
 
-        subfolder = f'{configs.model_id}_{datetime.datetime.now().strftime("%m%d_%H%M")}'
+        subfolder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
         configs.subfolder_train = subfolder
         # Automatically enable wandb logging when sweeping
         configs.wandb = 1
