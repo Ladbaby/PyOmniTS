@@ -36,7 +36,7 @@ for pred_len in 300; do
             --loss "ModelProvidedLoss" \
             --use_multi_gpu $use_multi_gpu \
             --dataset_root_path $dataset_root_path \
---model_id $model_id \
+            --model_id $model_id \
             --model_name $model_name \
             --dataset_name $dataset_name \
             --features M \
