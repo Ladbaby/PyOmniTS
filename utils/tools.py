@@ -54,7 +54,7 @@ class EarlyStopping:
 def test_params_flop(
     model: torch.nn.Module,
     x_shape: tuple[int],
-    model_name: str,
+    model_id: str,
     task_key: str
 ):
     """
@@ -70,7 +70,7 @@ def test_params_flop(
             as_strings=False, 
             print_per_layer_stat=False
         )
-        logger.info(f"{model_name} with input shape {x_shape}")
+        logger.info(f"{model_id} with input shape {x_shape}")
         logger.info('{:<30}  {:<8}'.format('Computational complexity: ', macs))
         logger.info('{:<30}  {:<8}'.format('Number of parameters: ', params))
 
@@ -89,17 +89,17 @@ def test_params_flop(
 
             if input_config not in complexities.keys():
                 complexities[input_config] = {
-                    model_name: complexity
+                    model_id: complexity
                 }
             else:
-                if model_name not in complexities[input_config].keys():
-                    complexities[input_config][model_name] = complexity
+                if model_id not in complexities[input_config].keys():
+                    complexities[input_config][model_id] = complexity
                 else:
-                    if complexities[input_config][model_name] != complexity:
+                    if complexities[input_config][model_id] != complexity:
                         logger.warning(f"""
-                        Existing model complexity in metrics/{task_key}/model_complexities.json for input shape {x_shape} and model {model_name} is not the same as newly measured data.
+                        Existing model complexity in metrics/{task_key}/model_complexities.json for input shape {x_shape} and model {model_id} is not the same as newly measured data.
 
-                        Existing data: {complexities[input_config][model_name]}
+                        Existing data: {complexities[input_config][model_id]}
                         Newly measured data: {complexity}
                         
                         model_complexities.json will preserve the existing data.
@@ -107,7 +107,7 @@ def test_params_flop(
         else:
             complexities = {
                 input_config: {
-                    model_name: complexity
+                    model_id: complexity
                 }
             }
 
@@ -119,7 +119,7 @@ def test_train_time(
     model: torch.nn.Module,
     dataloader: DataLoader,
     criterion: torch.nn.Module,
-    model_name: str,
+    model_id: str,
     dataset_name: str,
     gpu: int,
     seq_len: int,
@@ -147,7 +147,7 @@ def test_train_time(
     time_end = time.time() * 1000
     train_time_mean = (time_end - time_start) / len(dataloader)
 
-    logger.info(f"{model_name} with {seq_len=} and {pred_len=}")
+    logger.info(f"{model_id} with {seq_len=} and {pred_len=}")
     logger.info(f"{train_time_mean=:.2f}")
 
     input_config = f"{seq_len}/{pred_len}"
@@ -157,25 +157,25 @@ def test_train_time(
         with open(f"metrics/{task_key}/model_train_time.json", "r") as f:
             train_time_dict: dict = json.load(f)
 
-        train_time_dict.setdefault(host_name, {}).setdefault(dataset_name, {}).setdefault(input_config, {}).setdefault(model_name, None)
+        train_time_dict.setdefault(host_name, {}).setdefault(dataset_name, {}).setdefault(input_config, {}).setdefault(model_id, None)
 
-        if train_time_dict[host_name][dataset_name][input_config][model_name] not in [train_time_mean, None]:
+        if train_time_dict[host_name][dataset_name][input_config][model_id] not in [train_time_mean, None]:
             logger.warning(f"""
-            Existing model inference speed in metrics/{task_key}/model_train_time.json on host {host_name} for seq_len/pred_len {seq_len}/{pred_len} and model {model_name} is not the same as newly measured data.
+            Existing model inference speed in metrics/{task_key}/model_train_time.json on host {host_name} for seq_len/pred_len {seq_len}/{pred_len} and model {model_id} is not the same as newly measured data.
 
-            Existing data: {train_time_dict[host_name][dataset_name][input_config][model_name]}
+            Existing data: {train_time_dict[host_name][dataset_name][input_config][model_id]}
             Newly measured data: {train_time_mean}
             
             model_train_time.json will preserve the existing data.
             """)
         else:
-            train_time_dict[host_name][dataset_name][input_config][model_name] = train_time_mean
+            train_time_dict[host_name][dataset_name][input_config][model_id] = train_time_mean
     else:
         train_time_dict = {
             host_name: {
                 dataset_name: {
                     input_config: {
-                        model_name: train_time_mean
+                        model_id: train_time_mean
                     }
                 }
             }
@@ -188,7 +188,7 @@ def test_train_time(
 def test_gpu_memory(
     model: torch.nn.Module,
     batch: dict[torch.Tensor],
-    model_name: str,
+    model_id: str,
     dataset_name: str,
     gpu: int,
     seq_len: int,
@@ -204,31 +204,31 @@ def test_gpu_memory(
         **batch
     )
     peak_memory = torch.cuda.max_memory_allocated(gpu) / (1024 ** 3)
-    logger.info(f"Peak GPU memory usage for {model_name}: {peak_memory} GB")
+    logger.info(f"Peak GPU memory usage for {model_id}: {peak_memory} GB")
 
     input_config = f"{seq_len}/{pred_len}"
     if Path(f"metrics/{task_key}/model_gpu_memories.json").exists():
         with open(f"metrics/{task_key}/model_gpu_memories.json", "r") as f:
             gpu_memory_dict = json.load(f)
 
-        gpu_memory_dict.setdefault(dataset_name, {}).setdefault(input_config, {}).setdefault(model_name, None)
+        gpu_memory_dict.setdefault(dataset_name, {}).setdefault(input_config, {}).setdefault(model_id, None)
 
-        if gpu_memory_dict[dataset_name][input_config][model_name] not in [peak_memory, None]:
+        if gpu_memory_dict[dataset_name][input_config][model_id] not in [peak_memory, None]:
             logger.warning(f"""
-            Existing model gpu memory usage in metrics/{task_key}/model_gpu_memories.json for input shape {batch["x"].shape} and model {model_name} is not the same as newly measured data.
+            Existing model gpu memory usage in metrics/{task_key}/model_gpu_memories.json for input shape {batch["x"].shape} and model {model_id} is not the same as newly measured data.
 
-            Existing data: {gpu_memory_dict[dataset_name][input_config][model_name]}
+            Existing data: {gpu_memory_dict[dataset_name][input_config][model_id]}
             Newly measured data: {peak_memory}
             
             model_gpu_memories.json will preserve the existing data.
             """)
         else:
-            gpu_memory_dict[dataset_name][input_config][model_name] = peak_memory
+            gpu_memory_dict[dataset_name][input_config][model_id] = peak_memory
     else:
         gpu_memory_dict = {
             dataset_name: {
                 input_config: {
-                    model_name: peak_memory
+                    model_id: peak_memory
                 }
             }
         }
