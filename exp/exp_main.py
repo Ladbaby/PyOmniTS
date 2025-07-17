@@ -89,7 +89,7 @@ class Exp_Main(Exp_Basic):
     def _select_criterion(self) -> Module:
         # dynamically import the desired loss function
         loss_module = importlib.import_module("loss_fns." + self.configs.loss)
-        criterion = loss_module.Loss()
+        criterion = loss_module.Loss(self.configs)
         return criterion
 
     def _get_state_dict(self, path: Path) -> OrderedDict:
@@ -179,6 +179,8 @@ class Exp_Main(Exp_Basic):
                     )
 
                     loss: Tensor = criterion(
+                        exp_stage="val",
+                        model=model_train,
                         **outputs
                     )["loss"]
                     total_loss.append(loss.item())
@@ -284,7 +286,8 @@ class Exp_Main(Exp_Basic):
                             self._check_model_outputs(batch, outputs)
                         
                         loss: Tensor = criterion(
-                            current_epoch=epoch,
+                            exp_stage="train",
+                            model=model_train,
                             **outputs
                         )["loss"]
 
