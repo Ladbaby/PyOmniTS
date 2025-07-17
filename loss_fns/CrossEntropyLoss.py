@@ -1,8 +1,10 @@
 import torch
 import torch.nn as nn
 
+from utils.ExpConfigs import ExpConfigs
+
 class Loss(nn.Module):
-    def __init__(self):
+    def __init__(self, configs:ExpConfigs):
         super(Loss, self).__init__()
         self.criterion = nn.CrossEntropyLoss()
 
