@@ -218,7 +218,7 @@ class Model(nn.Module):
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
-                "pred": dec_out[-1][:, -PRED_LEN:, f_dim:],
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
                 "true": y[:, :, f_dim:],
                 "mask": y_mask[:, :, f_dim:],
             }
