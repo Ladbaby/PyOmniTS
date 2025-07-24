@@ -302,10 +302,10 @@ class Physionet2012(BaseTask):
         # https://github.com/edebrouwer/gru_ode_bayes/blob/aaff298c0fcc037c62050c14373ad868bffff7d2/data_preproc/Climate/generate_folds.py#L10-L14
         for _ in range(num_folds):
             train_idx, test_idx = train_test_split(
-                self.IDs, test_size=self.test_size, random_state=self.RANDOM_STATE
+                self.IDs, test_size=self.test_size, random_state=self.RANDOM_STATE, shuffle=False
             )
             train_idx, valid_idx = train_test_split(
-                train_idx, test_size=self.valid_size, random_state=self.RANDOM_STATE
+                train_idx, test_size=self.valid_size, random_state=self.RANDOM_STATE, shuffle=False
             )
             fold = {
                 "train": train_idx,
