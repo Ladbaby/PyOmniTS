@@ -17,6 +17,9 @@ for pred_len in 3; do
         for i in $(seq 1 1); do
         $launch_command main.py \
             --is_training 1 \
+            --d_model 128 \
+            --n_layers 2 \
+            --n_heads 4 \
             --loss "MSE" \
             --use_multi_gpu $use_multi_gpu \
             --dataset_root_path $dataset_root_path \

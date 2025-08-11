@@ -16,6 +16,9 @@ for pred_len in 300; do
     for batch_size in 32; do
         $launch_command main.py \
             --is_training 1 \
+            --d_model 128 \
+            --n_layers 2 \
+            --n_heads 4 \
             --loss "MSE" \
             --use_multi_gpu $use_multi_gpu \
             --dataset_root_path $dataset_root_path \
