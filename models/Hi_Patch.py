@@ -250,7 +250,7 @@ class Model(nn.Module):
         target_nodes = (N * M * L * edge_ind[0] + N * L * edge_ind[1] + edge_ind[3])
         edge_index = torch.cat([source_nodes.unsqueeze(0), target_nodes.unsqueeze(0)])
 
-        edge_time = torch.squeeze(cur_x_time[source_nodes] - cur_x_time[target_nodes])
+        edge_time = torch.squeeze(cur_x_time[source_nodes] - cur_x_time[target_nodes], dim=1)
 
         edge_diff_time_same_var = ((cur_variable_indices[source_nodes] - cur_variable_indices[target_nodes]) == 0).float()
         edge_same_time_diff_var= ((cur_x_time[source_nodes] - cur_x_time[target_nodes]) == 0).float()
@@ -321,7 +321,7 @@ class Model(nn.Module):
             target_nodes = (N * T * edge_ind[0] + edge_ind[2])
             edge_index = torch.cat([source_nodes.unsqueeze(0), target_nodes.unsqueeze(0)])
 
-            edge_time = torch.squeeze(cur_x_time[source_nodes] - cur_x_time[target_nodes])
+            edge_time = torch.squeeze(cur_x_time[source_nodes] - cur_x_time[target_nodes], dim=1)
 
             edge_diff_time_same_var = (
                         (cur_variable_indices[source_nodes] - cur_variable_indices[target_nodes]) == 0).float()
@@ -365,7 +365,7 @@ class Model(nn.Module):
             mask_X = (obs_num_per_patch > 0).float()
             x = torch.sum((V * scale_attention), dim=-2)
             x_time = avg_x_time
-        return torch.squeeze(x)
+        return torch.squeeze(x, dim=2)
 
     def forecasting(self, time_steps_to_predict, X, truth_time_steps, mask=None):
         B, M, L_in, N = X.shape
