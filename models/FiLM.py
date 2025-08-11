@@ -181,7 +181,7 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        x_mark: Tensor,
+        x_mark: Tensor = None,
         y: Tensor = None,
         y_mask: Tensor = None, 
         y_class: Tensor = None, 
@@ -204,7 +204,7 @@ class Model(nn.Module):
             y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
         # END adaptor
 
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
