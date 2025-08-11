@@ -64,7 +64,7 @@ class Model(nn.Module):
             logger.exception(f"Actual patch_len {self.patch_len} is longer than MOIRAI's pretrained max patch length {self.patch_len_padded}. Please specify a smaller --patch_len, or consider retraining MOIRAI with bigger patch size.", stack_info=True)
             exit(1)
 
-        assert configs.seq_len % configs.patch_len == 0, f"seq_len {configs.seq_len} should be divisible by patch_len {configs.patch_len}"
+        assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
         self.n_patch_all: int = configs.seq_len // configs.patch_len + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
 
 
@@ -109,7 +109,7 @@ class Model(nn.Module):
             y_mask=y_mask,
             sample_ID=sample_ID,
         )
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             if exp_stage == "train":
                 return {
                     "pred": self.revert_rearrange_and_pad_multivariate_tensor(output.mean),
