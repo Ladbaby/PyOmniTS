@@ -14,34 +14,30 @@ dataset_name=$(basename "$0" .sh) # file name
 seq_len=96
 label_len=48
 for pred_len in 96; do
-    for batch_size in 32; do
-        for i in $(seq 1 1); do
-        $launch_command main.py \
-            --is_training 1 \
-            --e_layers 2 \
-            --d_layers 2 \
-            --factor 3 \
-            --loss "MSE" \
-            --task_name "long_term_forecast" \
-            --use_multi_gpu $use_multi_gpu \
-            --dataset_root_path $dataset_root_path \
-            --model_id $model_id \
-            --model_name $model_name \
-            --dataset_name $dataset_name \
-            --features M \
-            --freq 't' \
-            --seq_len $seq_len \
-            --label_len $label_len \
-            --pred_len $pred_len \
-            --enc_in 7 \
-            --dec_in 7 \
-            --c_out 7 \
-            --train_epochs 300 \
-            --patience 10 \
-            --itr 5 \
-            --batch_size $batch_size \
-            --learning_rate 0.0001
-        done
-    done
+    $launch_command main.py \
+    --is_training 1 \
+    --e_layers 2 \
+    --d_layers 2 \
+    --factor 3 \
+    --loss "MSE" \
+    --task_name "long_term_forecast" \
+    --use_multi_gpu $use_multi_gpu \
+    --dataset_root_path $dataset_root_path \
+    --model_id $model_id \
+    --model_name $model_name \
+    --dataset_name $dataset_name \
+    --features M \
+    --freq 't' \
+    --seq_len $seq_len \
+    --label_len $label_len \
+    --pred_len $pred_len \
+    --enc_in 7 \
+    --dec_in 7 \
+    --c_out 7 \
+    --train_epochs 300 \
+    --patience 10 \
+    --itr 5 \
+    --batch_size 32 \
+    --learning_rate 0.0001
 done
 

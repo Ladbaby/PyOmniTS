@@ -11,36 +11,32 @@ dataset_root_path=storage/datasets/MIMIC_IV
 model_id=$model_name
 dataset_name=$(basename "$0" .sh) # file name
 
-seq_len=$((2160))
+seq_len=2160
 for pred_len in 3; do
-    for batch_size in 32; do
-        for i in $(seq 1 1); do
-        $launch_command main.py \
-            --is_training 1 \
-            --loss "ModelProvidedLoss" \
-            --d_model 20 \
-            --latent_ode_rec_dims 40 \
-            --latent_ode_rec_layers 3 \
-            --latent_ode_gen_layers 3 \
-            --latent_ode_units 50 \
-            --latent_ode_gru_units 50 \
-            --use_multi_gpu $use_multi_gpu \
-            --dataset_root_path $dataset_root_path \
-            --model_id $model_id \
-            --model_name $model_name \
-            --dataset_name $dataset_name \
-            --features M \
-            --seq_len $seq_len \
-            --pred_len $pred_len \
-            --enc_in 100 \
-            --c_out 100 \
-            --train_epochs 300 \
-            --patience 10 \
-            --val_interval 1 \
-            --itr 5 \
-            --batch_size $batch_size \
-            --learning_rate 0.01
-        done
-    done
+    $launch_command main.py \
+    --is_training 1 \
+    --loss "ModelProvidedLoss" \
+    --d_model 20 \
+    --latent_ode_rec_dims 40 \
+    --latent_ode_rec_layers 3 \
+    --latent_ode_gen_layers 3 \
+    --latent_ode_units 50 \
+    --latent_ode_gru_units 50 \
+    --use_multi_gpu $use_multi_gpu \
+    --dataset_root_path $dataset_root_path \
+    --model_id $model_id \
+    --model_name $model_name \
+    --dataset_name $dataset_name \
+    --features M \
+    --seq_len $seq_len \
+    --pred_len $pred_len \
+    --enc_in 100 \
+    --c_out 100 \
+    --train_epochs 300 \
+    --patience 10 \
+    --val_interval 1 \
+    --itr 5 \
+    --batch_size 32 \
+    --learning_rate 0.01
 done
 

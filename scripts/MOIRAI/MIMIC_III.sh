@@ -11,33 +11,29 @@ dataset_root_path=storage/datasets/MIMIC_III
 model_id=$model_name
 dataset_name=$(basename "$0" .sh) # file name
 
-seq_len=$((72))
+seq_len=72
 for pred_len in 3; do
-    for batch_size in 32; do
-        for i in $(seq 1 1); do
-        $launch_command main.py \
-            --is_training 1 \
-            --collate_fn "collate_fn_patch" \
-            --loss "ModelProvidedLoss" \
-            --patch_len 12 \
-            --use_multi_gpu $use_multi_gpu \
-            --dataset_root_path $dataset_root_path \
-            --model_id $model_id \
-            --model_name $model_name \
-            --dataset_name $dataset_name \
-            --features M \
-            --seq_len $seq_len \
-            --pred_len $pred_len \
-            --enc_in 96 \
-            --dec_in 96 \
-            --c_out 96 \
-            --train_epochs 300 \
-            --patience 10 \
-            --val_interval 1 \
-            --itr 5 \
-            --batch_size $batch_size \
-            --learning_rate 0.0001
-        done
-    done
+    $launch_command main.py \
+    --is_training 1 \
+    --collate_fn "collate_fn_patch" \
+    --loss "ModelProvidedLoss" \
+    --patch_len 12 \
+    --use_multi_gpu $use_multi_gpu \
+    --dataset_root_path $dataset_root_path \
+    --model_id $model_id \
+    --model_name $model_name \
+    --dataset_name $dataset_name \
+    --features M \
+    --seq_len $seq_len \
+    --pred_len $pred_len \
+    --enc_in 96 \
+    --dec_in 96 \
+    --c_out 96 \
+    --train_epochs 300 \
+    --patience 10 \
+    --val_interval 1 \
+    --itr 5 \
+    --batch_size 32 \
+    --learning_rate 0.0001
 done
 
