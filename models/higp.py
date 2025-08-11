@@ -148,12 +148,15 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         u = None
-        if (edge_index or edge_weight) is None:
+        if None in [edge_index, edge_weight]:
             # We have to dynamically construct graph for input time series
             # Forward pass to get adjacency matrix
             adj_matrix = self.graph_learner().to(x.device)
             # Get edge index and weights
             edge_index, edge_weight = self.get_edge_index_and_weights(adj_matrix)
+        else:
+            edge_index = edge_index[0]
+            edge_weight = edge_weight[0]
         # END adaptor
 
         x = repeat(x, "b n f -> b n f 1")
@@ -223,7 +226,7 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
         # 1.shape = [64, 12, 20, 1]
         # 2.shape = [64, 12, 1, 1]
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             # skip connection and decoder
             for i in range(self.levels):
                 outs[i] = self.decoders[i](outs[i])
