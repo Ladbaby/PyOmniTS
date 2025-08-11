@@ -29,6 +29,7 @@ class Model(nn.Module):
         self.configs = configs
         self.seq_len = configs.seq_len_max_irr or configs.seq_len
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
+        self.patch_len = configs.patch_len_max_irr or configs.patch_len
 
         self.rec_hidden = 128
         self.embed_time = 128
@@ -52,13 +53,13 @@ class Model(nn.Module):
         )
         self.model = TimeBERTForPretrainingV2(config)
         if configs.task_name in ['long_term_forecast', 'short_term_forecast']:
-            self.loss_fn_finetune = MSE()
+            self.loss_fn_finetune = MSE(config)
         elif configs.task_name == "classification":
             '''
             used at train_stage == 2, i.e., finetuning
             '''
             # self.model = TimeBERTForClassification(config)
-            self.loss_fn_finetune = CrossEntropyLoss()
+            self.loss_fn_finetune = CrossEntropyLoss(config)
             self.decoder_classification = nn.Sequential(
                 nn.Linear(config.hidden_size, 300),
                 nn.ReLU(),
@@ -69,7 +70,7 @@ class Model(nn.Module):
         else:
             raise NotImplementedError
 
-        assert (configs.seq_len) % configs.patch_len == 0, f"seq_len {configs.seq_len} should be divisible by patch_len {configs.patch_len}"
+        assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
         self.n_patch_all: int = configs.seq_len // configs.patch_len + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
         self.patch_len = configs.patch_len_max_irr or configs.patch_len
