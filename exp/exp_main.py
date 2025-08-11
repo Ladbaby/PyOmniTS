@@ -527,7 +527,7 @@ class Exp_Main(Exp_Basic):
                     # warn if the size does not match
                     if batch[next(iter(batch))].shape[0] != self.configs.batch_size:
                         logger.warning(f"Batch No.{i} of total {len(test_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
-                        continue
+                        # continue
                     if not self.configs.use_multi_gpu:
                         batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
 
