@@ -21,9 +21,9 @@ class Model(nn.Module):
         self.configs = configs
         self.dim=configs.enc_in
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
-        self.attn_head=4
-        self.latent_dim = 128
-        self.n_layers=2
+        self.attn_head = configs.n_heads # 4
+        self.latent_dim = configs.d_model # 128
+        self.n_layers = configs.n_layers # 2
         self.enc = GraFITi_layers.Encoder(self.dim, self.latent_dim, self.n_layers, self.attn_head, self.configs.task_name, self.configs.n_classes)
 
     def get_extrapolation(self, context_x, context_w, target_x, target_y, exp_stage):
