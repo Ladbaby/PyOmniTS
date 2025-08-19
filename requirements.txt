@@ -14,4 +14,7 @@ torchdiffeq # Latent_ODE
 jaxtyping # MORAI (uni2ts)
 gluonts # MORAI (uni2ts)
 python-igraph # GNeuralFlow
+pytorch_lightning # tsl
+tables # tsl
+scikit-learn # tsl
 
