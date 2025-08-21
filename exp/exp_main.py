@@ -278,6 +278,7 @@ class Exp_Main(Exp_Basic):
                         outputs: dict[str, Tensor] = model_train(
                             exp_stage="train",
                             train_stage=train_stage,
+                            current_epoch=epoch
                             **batch
                         )
 
