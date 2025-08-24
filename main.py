@@ -76,7 +76,7 @@ if __name__ == "__main__":
             import wandb
             sweep_configuration = {
                 "method": "grid",
-                "metric": {"goal": "minimize", "name": "loss_test"},
+                "metric": {"goal": "minimize", "name": "loss_val"},
                 "parameters": {
                     "learning_rate": {"values": [0.01, 0.001, 0.0001, 0.00001]},
                     "batch_size": {"values": [16, 32, 64, 128]},
