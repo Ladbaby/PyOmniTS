@@ -27,7 +27,6 @@ for pred_len in 24 48 168 336 720; do
     --model_name $model_name \
     --dataset_name $dataset_name \
     --features M \
-    --freq 't' \
     --seq_len $seq_len \
     --label_len $label_len \
     --pred_len $pred_len \
