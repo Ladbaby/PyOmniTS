@@ -21,7 +21,7 @@ class Model(nn.Module):
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
         self.task_name = configs.task_name
         self.configs = configs
-        self.hid_dim = 64
+        self.hid_dim = configs.d_model # 64
         self.ndim = configs.enc_in
 
         assert configs.seq_len % configs.patch_len == 0, f"seq_len {configs.seq_len} should be divisible by patch_len {configs.patch_len}"
@@ -29,8 +29,8 @@ class Model(nn.Module):
 
         self.batch_size = configs.batch_size
         self.supports = None
-        self.n_layer = 1
-        dropout = 0
+        self.n_layer = configs.n_layers # 1
+        dropout = configs.dropout # 0
         self.te_dim = configs.tpatchgnn_te_dim
         self.n_heads = configs.n_heads
         self.tf_layer = 1
