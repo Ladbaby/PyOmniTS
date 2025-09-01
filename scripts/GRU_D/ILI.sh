@@ -16,6 +16,7 @@ label_len=18
 for pred_len in 36; do
     $launch_command main.py \
     --is_training 1 \
+    --d_model 100 \
     --loss "MSE" \
     --task_name "long_term_forecast" \
     --use_multi_gpu $use_multi_gpu \
