@@ -15,6 +15,8 @@ seq_len=150
 for pred_len in 3; do
     $launch_command main.py \
         --is_training 1 \
+    --n_layers 2 \
+    --dropout 0.3 \
         --d_model 32 \
         --loss "MSE" \
         --n_heads 4 \
