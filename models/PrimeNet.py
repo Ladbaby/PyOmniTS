@@ -31,7 +31,7 @@ class Model(nn.Module):
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
         self.patch_len = configs.patch_len_max_irr or configs.patch_len
 
-        self.rec_hidden = 128
+        self.rec_hidden = configs.d_model # 128
         self.embed_time = 128
         self.classify_pertp = False
 
