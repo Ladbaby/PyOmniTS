@@ -41,7 +41,7 @@ class Model(nn.Module):
         else:
             raise NotImplementedError
         n_features = configs.enc_in
-        rnn_hidden_size = 100
+        rnn_hidden_size = configs.d_model # 100
         # END adaptor
 
         self.configs = configs
