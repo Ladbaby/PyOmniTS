@@ -29,12 +29,12 @@ class Model(nn.Module):
         self.configs = configs
         self.d_ob = 4 if configs.task_name == "classification" else configs.d_model
         n_features = self.configs.enc_in
-        n_layers = 2
+        n_layers = configs.n_layers # 2
         d_model = n_features * self.d_ob
         n_heads = self.configs.n_heads
         d_ffn = 2 * d_model
         n_classes = self.configs.n_classes # warning: not implemented
-        dropout = 0.3
+        dropout = configs.dropout # 0.3
         max_len = configs.seq_len_max_irr or configs.seq_len # equal to seq_len_max_irr if not None, else seq_len
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
         d_static = 9
