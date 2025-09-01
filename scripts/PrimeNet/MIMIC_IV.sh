@@ -15,6 +15,7 @@ seq_len=2160
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
+    --d_model 128 \
     --collate_fn "collate_fn_patch" \
     --patch_len 360 \
     --n_heads 1 \

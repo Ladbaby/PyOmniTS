@@ -16,6 +16,7 @@ label_len=48
 for pred_len in 336; do
     $launch_command main.py \
     --is_training 1 \
+    --d_model 128 \
     --patch_len 3 \
     --n_heads 1 \
     --pretrained_checkpoint_root_path "storage/pretrained/PrimeNet" \
