@@ -16,6 +16,10 @@ label_len=48
 for pred_len in 336; do
     $launch_command main.py \
     --is_training 1 \
+    --d_model 64 \
+    --n_layers 1 \
+    --dropout 0.0 \
+    --node_dim 10 \
     --patch_len 12 \
     --loss "MSE" \
     --task_name "long_term_forecast" \
