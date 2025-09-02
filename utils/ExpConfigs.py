@@ -17,7 +17,7 @@ class ExpConfigs:
     # dataset & data loader
     dataset_name: str
     dataset_root_path: str
-    dataset_file_name: str
+    dataset_file_name: str | None
     features: str
     target_variable_name: str
     target_variable_index: int
@@ -40,7 +40,7 @@ class ExpConfigs:
     use_gpu: int
     gpu_id: int
     use_multi_gpu: int
-    gpu_ids: str
+    gpu_ids: str | None
 
     # training
     wandb: int
@@ -60,7 +60,7 @@ class ExpConfigs:
     retain_graph: int
 
     # testing
-    checkpoints_test: str
+    checkpoints_test: str | None
     test_all: int
     test_flop: int
     test_train_time: int
@@ -150,8 +150,8 @@ class ExpConfigs:
     f: int = 1
 
     # args not presented in argparse
-    seq_len_max_irr: int = None # maximum number of observations along time dimension of x, set in irregular time series datasets
-    pred_len_max_irr: int = None # maximum number of observations along time dimension of y, set in irregular time series datasets
-    patch_len_max_irr: int = None # maximum number of observations along time dimension in a patch of x, set in irregular time series datasets
+    seq_len_max_irr: int | None = None # maximum number of observations along time dimension of x, set in irregular time series datasets
+    pred_len_max_irr: int | None = None # maximum number of observations along time dimension of y, set in irregular time series datasets
+    patch_len_max_irr: int | None = None # maximum number of observations along time dimension in a patch of x, set in irregular time series datasets
     subfolder_train: str = "" # timestamp of training in format %Y_%m%d_%H%M
     itr_i: int = 0 # current training iteration. [0, itr-1]
