@@ -451,6 +451,7 @@ class Exp_Main(Exp_Basic):
                         exit(1)
                     latest_folder: str = sorted(child_folders, key=lambda item: datetime.datetime.strptime(item[0], "%Y_%m%d_%H%M"))[-1][1].name
                     checkpoint_location = checkpoint_location / latest_folder
+                    self.configs.subfolder_train = latest_folder
                     # then find the latest iter
                     actual_itrs = len([entry.name for entry in checkpoint_location.iterdir() if entry.is_dir()])
                 except Exception as e:
@@ -463,6 +464,7 @@ class Exp_Main(Exp_Basic):
                 path = checkpoint_location / train_folder / f"iter0"
                 path.mkdir(parents=True, exist_ok=True)
                 checkpoint_location = checkpoint_location / train_folder
+                self.configs.subfolder_train = train_folder
 
 
         # test on all iters' checkpoints
