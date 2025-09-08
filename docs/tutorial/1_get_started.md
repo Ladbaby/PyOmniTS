@@ -81,9 +81,23 @@ The following file structure will be found under `storage/datasets`, after the c
 #### 3.2.2 MIMIC III
 
 Since MIMIC III requires credentialed access:
-- request for raw data from [here](https://physionet.org/content/mimiciii/1.4/)
-- follow the processing scripts in [NeuralFlows](https://github.com/mbilos/neural-flows-experiments/blob/master/nfe/experiments/gru_ode_bayes/data_preproc/mimic_prep.ipynb) to get `complete_tensor.csv`.
-- put the result under `~/.tsdm/rawdata/MIMIC_III_DeBrouwer2019/complete_tensor.csv`
+- Request for raw data from [here](https://physionet.org/content/mimiciii/1.4/).
+- Data preprocessing
+
+    Choose one of the options:
+
+    - Option 1: Use the revised scripts in PyOmniTS.
+        - Create a new virtual environment with Python 3.7, numpy 1.21.6, and pandas 1.3.5
+
+            ```shell
+            conda create -n python37 python=3.7
+            conda activate python37
+            pip install numpy==1.21.6 pandas==1.3.5
+            ```
+        - `python data/dependencies/MIMIC_III/preprocess/0_run_all.py`
+    - Option 2: Use the original scripts in gru_ode_bayes.
+        - Follow the processing scripts in [gru_ode_bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master/data_preproc/MIMIC) to get `complete_tensor.csv`.
+        - Put the result under `~/.tsdm/rawdata/MIMIC_III_DeBrouwer2019/complete_tensor.csv`.
 
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
 ```
@@ -101,9 +115,23 @@ The following file structure will be found under `~/.tsdm`, after the code finis
 #### 3.2.2 MIMIC IV
 
 Since MIMIC IV requires credentialed access:
-- request for raw data from [here](https://physionet.org/content/mimiciv/1.0/)
-- follow the processing scripts in [NeuralFlows](https://github.com/mbilos/neural-flows-experiments/blob/master/nfe/experiments/gru_ode_bayes/data_preproc) to get `full_dataset.csv`.
-- put the result under `~/.tsdm/rawdata/MIMIC_IV_Bilos2021/full_dataset.csv`
+- Request for raw data from [here](https://physionet.org/content/mimiciv/1.0/).
+- Data preprocessing
+
+    Choose one of the options:
+
+    - Option 1: Use the revised scripts in PyOmniTS.
+        - Create a new virtual environment with Python 3.7, numpy 1.21.6, and pandas 1.3.5
+
+            ```shell
+            conda create -n python37 python=3.7
+            conda activate python37
+            pip install numpy==1.21.6 pandas==1.3.5
+            ```
+        - `python data/dependencies/MIMIC_IV/preprocess/0_run_all.py`
+    - Option 2: Use the original scripts in NeuralFlows.
+        - Follow the processing scripts in [NeuralFlows](https://github.com/mbilos/neural-flows-experiments/blob/master/nfe/experiments/gru_ode_bayes/data_preproc) to get `full_dataset.csv`.
+        - Put the result under `~/.tsdm/rawdata/MIMIC_IV_Bilos2021/full_dataset.csv`.
 
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
 ```
