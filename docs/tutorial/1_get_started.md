@@ -6,7 +6,7 @@ This tutorial guides you running existing models, datasets, and loss functions.
 
 ```shell
 cd /path/to/your/project
-git clone https://github.com/qianlima-lab/PyOmniTS.git
+git clone https://github.com/Ladbaby/PyOmniTS.git
 ```
 
 ## 2. 💿 Prepare the Environment

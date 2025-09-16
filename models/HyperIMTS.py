@@ -14,7 +14,7 @@ class Model(nn.Module):
     '''
     - paper: "HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting" (ICML 2025)
     - paper link: https://openreview.net/forum?id=u8wRbX2r2V
-    - code adapted from: https://github.com/qianlima-lab/PyOmniTS
+    - code adapted from: https://github.com/Ladbaby/PyOmniTS
 
     Note: HyperIMTS expects the unpadded input the same as SeFT and GraFITi, so we refer to some of the codes from these models when converting padded samples to unpadded ones and doing attention on flattened tensors. 
     '''
