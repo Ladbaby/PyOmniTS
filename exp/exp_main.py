@@ -97,7 +97,7 @@ class Exp_Main(Exp_Basic):
         Fix model state dict errors
         '''
         logger.info(f"Loading model checkpoint from {path}")
-        state_dict = torch.load(path)
+        state_dict = torch.load(path, map_location=f"cuda:{self.configs.gpu_id}" if self.configs.use_gpu else "cpu")
         new_state_dict = OrderedDict()
         if_fixed = False
         for key, value in state_dict.items():
