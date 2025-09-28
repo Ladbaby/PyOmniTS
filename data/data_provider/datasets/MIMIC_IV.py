@@ -15,26 +15,25 @@ from data.dependencies.tsdm.tasks.mimic_iv_bilos2021 import Sample
 warnings.filterwarnings('ignore')
 
 class Data(Dataset):
+    '''
+    wrapper for MIMIC IV Bilos2021 dataset implemented in tsdm
+    tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
+
+    - tasks: forecasting
+    - sampling rate (rounded): 1 minute
+    - max time length (padded): 971 (48 hours)
+    - seq_len -> pred_len:
+        - 2160 -> 3
+        - 2160 -> 720
+    - number of variables: 100
+    - number of samples: 17874 (14477 + 1609 + 1788)
+    '''
     def __init__(
         self, 
         configs: ExpConfigs,
         flag: str = 'train', 
         **kwargs
     ):
-        '''
-        wrapper for MIMIC IV Bilos2021 dataset implemented in tsdm
-        tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
-
-        this version of MIMIC IV does not align the timesteps among samples (but do align within sample), which means:
-        - It use custom collate_fn to pad trailing 0s in each batch
-        - Tensor length along time dimension is not fixed in different batches, which depends on the max number of timesteps in each batch
-        - time steps does not spread evenly, and the start and end time is also not fixed
-
-        - max time length: 2880
-        - number of variables: 100
-        - number of samples: 17874
-        '''
-        logger.debug(f"getting {flag} set of MIMIC_IV in tsdm format")
         self.configs = configs
         assert flag in ['train', 'test', 'val', 'test_all']
         self.flag = flag

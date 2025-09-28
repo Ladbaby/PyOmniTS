@@ -15,27 +15,24 @@ from data.dependencies.tsdm.tasks.ushcn_debrouwer2019 import Sample
 warnings.filterwarnings('ignore')
 
 class Data(Dataset):
+    '''
+    wrapper for USHCN DeBrouwer2019 dataset implemented in tsdm
+    tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
+
+    - tasks: forecasting
+    - max time length: 337 (4 year)
+    - seq_len -> pred_len:
+        - 150 -> 3
+        - 150 -> 50
+    - number of variables: 5
+    - number of samples: 1114 (902 + 100 + 112)
+    '''
     def __init__(
         self, 
         configs: ExpConfigs,
         flag: str = 'train', 
         **kwargs
     ):
-        '''
-        wrapper for USHCN DeBrouwer2019 dataset implemented in tsdm
-        tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
-
-        this version of USHCN does not align the timesteps among samples (but do align within sample), which means:
-        - It use custom collate_fn to pad trailing 0s in each batch
-        - Tensor length along time dimension is not fixed in different batches, which depends on the max number of timesteps in each batch
-        - time steps does not spread evenly, and the start and end time is also not fixed
-
-        - max time length: 200
-        - number of variables: 5
-        - number of samples: 1114
-        - actual time length: 4 year
-        '''
-        logger.debug(f"getting {flag} set of USHCN in tsdm format")
         self.configs = configs
         assert flag in ['train', 'test', 'val', 'test_all']
         self.flag = flag

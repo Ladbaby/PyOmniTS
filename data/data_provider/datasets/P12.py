@@ -15,63 +15,63 @@ from data.dependencies.tsdm.tasks.P12 import Sample
 warnings.filterwarnings('ignore')
 
 class Data(Dataset):
+    '''
+    wrapper for PhysioNet 2012 dataset implemented in tsdm
+    tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
+
+    - tasks: forecasting
+    - sampling rate (rounded): 1 hour
+    - max time length (padded): 48 (48 hours)
+    - seq_len -> pred_len:
+        - 36 -> 3
+        - 36 -> 12
+        - 24 -> 24
+    - number of variables: 36
+        
+        - 0: Albumin (g/dL)
+        - 1: ALP [Alkaline phosphatase (IU/L)]
+        - 2: ALT [Alanine transaminase (IU/L)]
+        - 3: AST [Aspartate transaminase (IU/L)]
+        - 4: Bilirubin (mg/dL)
+        - 5: BUN [Blood urea nitrogen (mg/dL)]
+        - 6: Cholesterol (mg/dL)
+        - 7: Creatinine [Serum creatinine (mg/dL)]
+        - 8: DiasABP [Invasive diastolic arterial blood pressure (mmHg)]
+        - 9: FiO2 [Fractional inspired O2 (0-1)]
+        - 10: GCS [Glasgow Coma Score (3-15)]
+        - 11: Glucose [Serum glucose (mg/dL)]
+        - 12: HCO3 [Serum bicarbonate (mmol/L)]
+        - 13: HCT [Hematocrit (%)]
+        - 14: HR [Heart rate (bpm)]
+        - 15: K [Serum potassium (mEq/L)]
+        - 16: Lactate (mmol/L)
+        - 17: Mg [Serum magnesium (mmol/L)]
+        - 18: MAP [Invasive mean arterial blood pressure (mmHg)]
+        - 19: MechVent [Mechanical ventilation respiration (0:false, or 1:true)]
+        - 20: Na [Serum sodium (mEq/L)]
+        - 21: NIDiasABP [Non-invasive diastolic arterial blood pressure (mmHg)]
+        - 22: NIMAP [Non-invasive mean arterial blood pressure (mmHg)]
+        - 23: NISysABP [Non-invasive systolic arterial blood pressure (mmHg)]
+        - 24: PaCO2 [partial pressure of arterial CO2 (mmHg)]
+        - 25: PaO2 [Partial pressure of arterial O2 (mmHg)]
+        - 26: pH [Arterial pH (0-14)]
+        - 27: Platelets (cells/nL)
+        - 28: RespRate [Respiration rate (bpm)]
+        - 29: SaO2 [O2 saturation in hemoglobin (%)]
+        - 30: SysABP [Invasive systolic arterial blood pressure (mmHg)]
+        - 31: Temp [Temperature (°C)]
+        - 32: TropI [Troponin-I (μg/L)]
+        - 33: TropT [Troponin-T (μg/L)]
+        - 34: Urine [Urine output (mL)]
+        - 35: WBC [White blood cell count (cells/nL)]
+    - number of samples: 11981 (9704 + 1078 + 1199)
+    '''
     def __init__(
         self, 
         configs: ExpConfigs,
         flag: str = 'train', 
         **kwargs
     ):
-        '''
-        wrapper for Physionet 2012 dataset implemented in tsdm
-        tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
-
-        this version of P12 does not align the timesteps among samples (but do align within sample), which means:
-        - It use custom collate_fn to pad trailing 0s in each batch
-        - Tensor length along time dimension is not fixed in different batches, which depends on the max number of timesteps in each batch
-        - time steps does not spread evenly, and the start and end time is also not fixed
-
-        - max time length: 48
-        - number of variables: 36
-            
-            - 0: Albumin (g/dL)
-            - 1: ALP [Alkaline phosphatase (IU/L)]
-            - 2: ALT [Alanine transaminase (IU/L)]
-            - 3: AST [Aspartate transaminase (IU/L)]
-            - 4: Bilirubin (mg/dL)
-            - 5: BUN [Blood urea nitrogen (mg/dL)]
-            - 6: Cholesterol (mg/dL)
-            - 7: Creatinine [Serum creatinine (mg/dL)]
-            - 8: DiasABP [Invasive diastolic arterial blood pressure (mmHg)]
-            - 9: FiO2 [Fractional inspired O2 (0-1)]
-            - 10: GCS [Glasgow Coma Score (3-15)]
-            - 11: Glucose [Serum glucose (mg/dL)]
-            - 12: HCO3 [Serum bicarbonate (mmol/L)]
-            - 13: HCT [Hematocrit (%)]
-            - 14: HR [Heart rate (bpm)]
-            - 15: K [Serum potassium (mEq/L)]
-            - 16: Lactate (mmol/L)
-            - 17: Mg [Serum magnesium (mmol/L)]
-            - 18: MAP [Invasive mean arterial blood pressure (mmHg)]
-            - 19: MechVent [Mechanical ventilation respiration (0:false, or 1:true)]
-            - 20: Na [Serum sodium (mEq/L)]
-            - 21: NIDiasABP [Non-invasive diastolic arterial blood pressure (mmHg)]
-            - 22: NIMAP [Non-invasive mean arterial blood pressure (mmHg)]
-            - 23: NISysABP [Non-invasive systolic arterial blood pressure (mmHg)]
-            - 24: PaCO2 [partial pressure of arterial CO2 (mmHg)]
-            - 25: PaO2 [Partial pressure of arterial O2 (mmHg)]
-            - 26: pH [Arterial pH (0-14)]
-            - 27: Platelets (cells/nL)
-            - 28: RespRate [Respiration rate (bpm)]
-            - 29: SaO2 [O2 saturation in hemoglobin (%)]
-            - 30: SysABP [Invasive systolic arterial blood pressure (mmHg)]
-            - 31: Temp [Temperature (°C)]
-            - 32: TropI [Troponin-I (μg/L)]
-            - 33: TropT [Troponin-T (μg/L)]
-            - 34: Urine [Urine output (mL)]
-            - 35: WBC [White blood cell count (cells/nL)]
-        - number of samples: 11981
-        '''
-        logger.debug(f"getting {flag} set of PhysioNet'12 in tsdm format")
         self.configs = configs
         assert flag in ['train', 'test', 'val', 'test_all']
         self.flag = flag

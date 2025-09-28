@@ -12,19 +12,24 @@ from utils.configs import configs
 from data.dependencies.HumanActivity.HumanActivity import HumanActivity, Activity_time_chunk
 
 class Data(Dataset):
+    '''
+    wrapper for Human Activity dataset
+
+    - tasks: forecasting
+    - sampling rate (rounded): 1 millisecond
+    - max time length (padded): 131 (4000 milliseconds)
+    - seq_len -> pred_len:
+        - 3000 -> 300
+        - 3000 -> 1000
+    - number of variables: 12
+    - number of samples: 1360 (949 + 193 + 218)
+    '''
     def __init__(
         self, 
         configs: ExpConfigs,
         flag: str = 'train', 
         **kwargs
     ):
-        '''
-        wrapper for Human Activity dataset
-
-        - number of variables: 12
-        - number of samples: 949 + 192 + 218
-        '''
-        logger.debug(f"getting {flag} set of Human Activity")
         self.configs = configs
         assert flag in ['train', 'test', 'val', 'test_all']
         self.flag = flag

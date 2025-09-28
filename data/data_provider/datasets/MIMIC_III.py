@@ -15,26 +15,26 @@ from data.dependencies.tsdm.tasks.mimic_iii_debrouwer2019 import Sample
 warnings.filterwarnings('ignore')
 
 class Data(Dataset):
+    '''
+    wrapper for MIMIC III DeBrouwer2019 dataset implemented in tsdm
+    tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
+
+    - tasks: forecasting
+    - sampling rate (rounded): 30 minutes
+    - max time length (padded): 96 (48 hours)
+    - seq_len -> pred_len:
+        - 72 -> 3
+        - 72 -> 24
+        - 48 -> 48
+    - number of variables: 96
+    - number of samples: 21250 (17212 + 1913 + 2125)
+    '''
     def __init__(
         self, 
         configs: ExpConfigs,
         flag: str = 'train', 
         **kwargs
     ):
-        '''
-        wrapper for MIMIC III DeBrouwer2019 dataset implemented in tsdm
-        tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
-
-        this version of MIMIC III does not align the timesteps among samples (but do align within sample), which means:
-        - It use custom collate_fn to pad trailing 0s in each batch
-        - Tensor length along time dimension is not fixed in different batches, which depends on the max number of timesteps in each batch
-        - time steps does not spread evenly, and the start and end time is also not fixed
-
-        - max time length: 96
-        - number of variables: 96
-        - number of samples: 21250
-        '''
-        logger.debug(f"getting {flag} set of MIMIC_III in tsdm format")
         self.configs = configs
         assert flag in ['train', 'test', 'val', 'test_all']
         self.flag = flag
