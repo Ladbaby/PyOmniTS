@@ -2,12 +2,13 @@ import importlib
 
 from torch.utils.data import Dataset, DataLoader
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
 
 def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, drop_last: bool = None) -> tuple[Dataset, DataLoader]:
     '''
     - flag: "train", "val", "test", "test_all"
-    - shuffle_flag: In rare cases, it can be manually overwrite.
-    - drop_last: In rare cases, it can be manually overwrite.
+    - shuffle_flag (DEPRECATED): In rare cases, it can be manually overwrite.
+    - drop_last (DEPRECATED): In rare cases, it can be manually overwrite.
     '''
     # backward compatibility
     assert not (shuffle_flag or drop_last), "Please use --train_val_loader_shuffle 0/1 and --train_val_loader_drop_last 0/1 to set shuffle_flag and drop_last for train/val dataloader instead."
@@ -26,10 +27,11 @@ def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, dro
         drop_last = False
         batch_size = configs.batch_size
     else:
-        shuffle_flag = configs.train_val_loader_shuffle or True
-        drop_last = configs.train_val_loader_drop_last or True
+        shuffle_flag = bool(configs.train_val_loader_shuffle)
+        drop_last = bool(configs.train_val_loader_drop_last)
         batch_size = configs.batch_size
 
+    logger.debug(f"Getting {flag} set of {configs.dataset_name}")
     data_set: Dataset = Data(
         configs=configs,
         flag=flag,
