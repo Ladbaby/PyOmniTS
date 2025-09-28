@@ -1,5 +1,10 @@
 import random
+from pathlib import Path
 import datetime
+import importlib
+import yaml
+from dataclasses import asdict
+import pprint
 
 import torch
 import numpy as np
@@ -8,6 +13,8 @@ from exp.exp_main import Exp_Main
 from utils.globals import logger, accelerator
 from utils.configs import configs
 
+hyperparameters_sweep: dict[str, dict[str, list]] = {}
+
 def main():
     # random seed
     fix_seed_list = range(2024, 2024 + configs.itr)
@@ -15,6 +22,41 @@ def main():
     configs.use_gpu = True if torch.cuda.is_available() and configs.use_gpu else False
 
     Exp = Exp_Main
+
+    def start_exp_train() -> Exp_Main:
+        # save training config file for reference
+        path = Path(configs.checkpoints) / configs.dataset_name / configs.model_name / configs.model_id / f"{configs.seq_len}_{configs.pred_len}" / configs.subfolder_train / f"iter{configs.itr_i}" # same as the one in Exp_Main.train()
+        path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Training iter{configs.itr_i} save to: {path}")
+        with open(path / "configs.yaml", 'w', encoding='utf-8') as f:
+            yaml.dump(asdict(configs), f, default_flow_style=False)
+        # init exp tracker
+        if (configs.wandb and accelerator.is_main_process) or configs.sweep:
+            import wandb
+            run = wandb.init(
+                # Set the project where this run will be logged
+                project="YOUR_PROJECT_NAME",
+                # Track hyperparameters and run metadata
+                config={
+                    "model_name": configs.model_name,
+                    "model_id": configs.model_id,
+                    "dataset_name": configs.dataset_name,
+                    "seq_len": configs.seq_len,
+                    "pred_len": configs.pred_len,
+                    "learning_rate": configs.learning_rate,
+                    "batch_size": configs.batch_size
+                },
+                dir=path
+            )
+            # overwrite model hyperparameters when sweeping
+            for attribute_name in hyperparameters_sweep.keys():
+                setattr(configs, attribute_name, getattr(wandb.config, attribute_name))
+
+        accelerator.project_configuration.set_directories(project_dir=path)
+
+        exp = Exp(configs)
+        exp.train()
+        return exp
 
     if configs.sweep:
         '''
@@ -42,12 +84,12 @@ def main():
         torch.manual_seed(fix_seed_list[configs.itr_i])
         np.random.seed(fix_seed_list[configs.itr_i])
 
-        exp = Exp(configs)
-
-        exp.train()
+        exp = start_exp_train()
         exp.test()
-
     elif configs.is_training:
+        '''
+        Normal train&test
+        '''
         subfolder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
         configs.subfolder_train = subfolder
         for i in range(configs.itr):
@@ -57,12 +99,13 @@ def main():
             torch.manual_seed(fix_seed_list[i])
             np.random.seed(fix_seed_list[i])
 
-            exp = Exp(configs)
-            exp.train()
-
+            exp = start_exp_train()
             torch.cuda.empty_cache()
         exp.test()
     else:
+        '''
+        test only
+        '''
         exp = Exp(configs)
         exp.test()
         torch.cuda.empty_cache()
@@ -73,14 +116,40 @@ if __name__ == "__main__":
         if not configs.sweep:
             main()
         else:
+            # first determine the hyperparameters actually accessed by model
+            from utils.ExpConfigs import ExpConfigsTracker
+            configs_tracker = ExpConfigsTracker(configs)
+            model_module = importlib.import_module("models." + configs.model_name)
+            model = model_module.Model(configs_tracker)
+            del model
+            accessed_configs: set[str] = configs_tracker.get_accessed_attributes()
+            max_count = 1
+            for accessed_config in accessed_configs:
+                try:
+                    ref_values = configs.get_sweep_values(accessed_config)
+                    if ref_values and (type(ref_values) is list):
+                        hyperparameters_sweep[accessed_config] = {
+                            "values": ref_values
+                        }
+                        max_count *= len(ref_values)
+                except Exception as e:
+                    continue
+
+            if hyperparameters_sweep == {}:
+                logger.error(f"No hyperparameter to be searched, stopping now..")
+                logger.debug(f"{configs.model_name} access these attributes in ExpConfigs:")
+                configs_tracker.print_access_report()
+                logger.debug("""Possible reasons: (1) The model does not access any hyperparameters in ExpConfigs; (2) The accessed hyperparameters have not set their metadata properly. Check the ExpConfigs class in utils/ExpConfigs.py. Example metadata setting:
+                d_model: int = field(metadata={"sweep": [32, 64, 128, 256]})""")
+                exit(0)
+            else:
+                logger.info(f"""{len(hyperparameters_sweep)} hyperparameters and {max_count} runs: \n{pprint.pformat(hyperparameters_sweep)}""")
+                
             import wandb
             sweep_configuration = {
                 "method": "grid",
-                "metric": {"goal": "minimize", "name": "loss_val"},
-                "parameters": {
-                    "learning_rate": {"values": [0.01, 0.001, 0.0001, 0.00001]},
-                    "batch_size": {"values": [16, 32, 64, 128]},
-                },
+                "metric": {"goal": "minimize", "name": "loss_val_best"},
+                "parameters": hyperparameters_sweep
             }
             temp_file_path = "storage/tmp.txt"
             if accelerator.is_main_process:
@@ -95,7 +164,7 @@ if __name__ == "__main__":
                 sweep_id, 
                 function=main, 
                 project="YOUR_PROJECT_NAME",
-                count=16
+                count=max_count
             )
     except KeyboardInterrupt:
         if accelerator.is_main_process:

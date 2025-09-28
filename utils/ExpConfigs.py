@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any, Optional
 
 @dataclass
 class ExpConfigs:
@@ -7,6 +8,13 @@ class ExpConfigs:
 
     Make sure to update this dataclass after adding new args in argparse
     '''
+    @classmethod
+    def get_sweep_values(cls, attr_name: str) -> Optional[list]:
+        for field_info in cls.__dataclass_fields__.values():
+            if field_info.name == attr_name:
+                return field_info.metadata.get('sweep')
+        return None
+
     # basic config
     task_name: str
     is_training: int
@@ -85,10 +93,10 @@ class ExpConfigs:
     enc_in: int
     dec_in: int
     c_out: int
-    d_model: int
+    d_model: int = field(metadata={"sweep": [32, 64, 128, 256]})
     d_timesteps: int
     n_heads: int
-    n_layers: int
+    n_layers: int = field(metadata={"sweep": [1, 2, 3, 4]})
     e_layers: int
     d_layers: int
     hidden_layers: int
@@ -155,3 +163,42 @@ class ExpConfigs:
     patch_len_max_irr: int | None = None # maximum number of observations along time dimension in a patch of x, set in irregular time series datasets
     subfolder_train: str = "" # timestamp of training in format %Y_%m%d_%H%M
     itr_i: int = 0 # current training iteration. [0, itr-1]
+
+class ExpConfigsTracker:
+    """Wrapper that tracks which ExpConfigs attributes are accessed"""
+    
+    def __init__(self, configs: ExpConfigs):
+        object.__setattr__(self, '_config', configs)
+        object.__setattr__(self, '_accessed_attrs', set())
+    
+    def __getattr__(self, name: str) -> Any:
+        if hasattr(self._config, name):
+            self._accessed_attrs.add(name)
+            return getattr(self._config, name)
+        raise AttributeError(f"'{type(self._config).__name__}' object has no attribute '{name}'")
+    
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name.startswith('_'):
+            object.__setattr__(self, name, value)
+        else:
+            self._accessed_attrs.add(name)
+            setattr(self._config, name, value)
+    
+    def get_accessed_attributes(self) -> set[str]:
+        """Return set of accessed attribute names"""
+        return self._accessed_attrs.copy()
+    
+    def get_unused_attributes(self) -> set[str]:
+        """Return set of unused attribute names"""
+        all_attrs = {field.name for field in self._config.__dataclass_fields__.values()}
+        return all_attrs - self._accessed_attrs
+    
+    def print_access_report(self):
+        """Print a report of accessed vs unused attributes"""
+        accessed = self.get_accessed_attributes()
+        unused = self.get_unused_attributes()
+        
+        print("=== ExpConfigs Access Report ===")
+        print(f"Accessed attributes ({len(accessed)}):")
+        for attr in sorted(accessed):
+            print(f"  ✓ {attr}")

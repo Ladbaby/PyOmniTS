@@ -1,11 +1,9 @@
 from pathlib import Path
 import datetime
 import warnings
-import yaml
 import json
 from collections import OrderedDict
 from typing import Generator
-from dataclasses import asdict
 import importlib
 
 import numpy as np
@@ -195,37 +193,9 @@ class Exp_Main(Exp_Basic):
 
     def train(self) -> None:
         logger.info('>>>>>>> training start <<<<<<<')
-        # save training config file for reference
         path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
-        path.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
-        with open(path / "configs.yaml", 'w', encoding='utf-8') as f:
-            yaml.dump(asdict(self.configs), f, default_flow_style=False)
-
-        accelerator.project_configuration.set_directories(project_dir=path)
-
-        # init exp tracker
         if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
             import wandb
-            run = wandb.init(
-                # Set the project where this run will be logged
-                project="YOUR_PROJECT_NAME",
-                # Track hyperparameters and run metadata
-                config={
-                    "model_name": self.configs.model_name,
-                    "model_id": self.configs.model_id,
-                    "dataset_name": self.configs.dataset_name,
-                    "seq_len": self.configs.seq_len,
-                    "pred_len": self.configs.pred_len,
-                    "learning_rate": self.configs.learning_rate,
-                    "batch_size": self.configs.batch_size
-                },
-                dir=path
-            )
-            if self.configs.sweep:
-                # overwrite default configs by wandb.config when sweeping
-                self.configs.learning_rate = wandb.config.learning_rate
-                self.configs.batch_size = wandb.config.batch_size
 
         train_data, train_loader = self._get_data(flag='train')
         vali_data, vali_loader = self._get_data(flag='val')
@@ -278,7 +248,7 @@ class Exp_Main(Exp_Basic):
                         outputs: dict[str, Tensor] = model_train(
                             exp_stage="train",
                             train_stage=train_stage,
-                            current_epoch=epoch
+                            current_epoch=epoch,
                             **batch
                         )
 
