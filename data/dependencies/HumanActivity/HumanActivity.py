@@ -90,7 +90,6 @@ class HumanActivity(object):
             self.data = self.data[:n_samples]
 
     def download(self):
-        from torchvision.datasets.utils import download_url
         if self._check_exists():
             return
 
