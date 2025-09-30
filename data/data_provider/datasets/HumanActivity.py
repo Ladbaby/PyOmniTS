@@ -38,27 +38,56 @@ class Data(Dataset):
         self.label_len = configs.label_len
         self.pred_len = configs.pred_len
 
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            assert self.seq_len + self.pred_len <= 4000, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than 4000"
+        else:
+            raise NotImplementedError
+
         self.dataset_root_path = configs.dataset_root_path
 
+        self.N_SAMPLES_ALL = None
+        self.N_SAMPLES_TRAIN = None
+        self.N_SAMPLES_VAL = None
+        self.N_SAMPLES_TEST = None
         self.preprocess()
 
+        sample_index_all = torch.arange(self.N_SAMPLES)
+        if flag == "train":
+            self.sample_index = sample_index_all[:self.N_SAMPLES_TRAIN]
+        elif flag == "val":
+            self.sample_index = sample_index_all[self.N_SAMPLES_TRAIN:self.N_SAMPLES_TRAIN+self.N_SAMPLES_VAL]
+        elif flag == "test":
+            self.sample_index = sample_index_all[self.N_SAMPLES_TRAIN+self.N_SAMPLES_VAL:]
+        elif flag == "test_all":
+            self.sample_index = sample_index_all
+        else:
+            raise NotImplementedError(f"Unknown {flag=}")
+
     def __getitem__(self, index):
-        return self.data[index]
+        sample_dict: dict[str, Tensor] = self.data[index]
+        sample_dict["sample_ID"] = self.sample_index[index]
+
+        # WARNING: this is not the final input to the model, they should be processed by any collate_fn!
+        '''
+        contains the following keys:
+        - x
+        - x_mark
+        - x_mask
+        - y
+        - y_mark
+        - y_mask
+        - sample_ID
+        '''
+        return sample_dict
 
     def __len__(self):
         return len(self.data)
 
     def preprocess(self):
-        if self.seq_len + self.pred_len > 4000:
-            logger.exception(f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than 4000")
-            exit(1)
-
-        boundary_dict = {
-            'train': (0, 0.9 * 0.9),
-            'val': (0.9 * 0.9, 0.9),
-            'test': (0.9, 1),
-            'test_all': (0, 1),
-        }
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            backbone_pred_len = self.pred_len
+        else:
+            raise NotImplementedError
 
         human_activity = HumanActivity(
             root=self.configs.dataset_root_path
@@ -68,9 +97,26 @@ class Data(Dataset):
         train_data, val_data = model_selection.train_test_split(seen_data, train_size= 0.9, random_state = 42, shuffle = False)
         # logger.info(f"Dataset n_samples: {len(human_activity)=} {len(train_data)=} {len(val_data)=} {len(test_data)=}")
 
-        train_data = Activity_time_chunk(train_data, self.configs)
-        val_data = Activity_time_chunk(val_data, self.configs)
-        test_data = Activity_time_chunk(test_data, self.configs)
+        train_data = Activity_time_chunk(
+            data=train_data, 
+            history=self.seq_len, 
+            pred_window=backbone_pred_len
+        )
+        val_data = Activity_time_chunk(
+            data=val_data,
+            history=self.seq_len, 
+            pred_window=backbone_pred_len
+        )
+        test_data = Activity_time_chunk(
+            data=test_data, 
+            history=self.seq_len, 
+            pred_window=backbone_pred_len
+        )
+
+        self.N_SAMPLES = len(train_data + val_data + test_data)
+        self.N_SAMPLES_TRAIN = len(train_data)
+        self.N_SAMPLES_VAL = len(val_data)
+        self.N_SAMPLES_TEST = len(test_data)
 
         if self.flag != "val":
             # val set will follow the setting of train set
@@ -172,7 +218,7 @@ def fix_nan_y_mark(y_mark):
     return y_mark
 
 def collate_fn(
-    batch: list[dict[str,Tensor]],
+    batch: list[dict[str, Tensor]],
 ) -> dict[str,Tensor]:
     '''
     time-aligned padding
@@ -189,15 +235,15 @@ def collate_fn(
     y_masks: list[Tensor] = []
     sample_IDs: list[int] = []
 
-    for sample in batch:
-        x_mark = sample["x_mark"]
-        x = sample["x"]
-        y_mark = sample["y_mark"]
-        y = sample["y"]
+    for sample_dict in batch:
+        x_mark = sample_dict["x_mark"]
+        x = sample_dict["x"]
+        y_mark = sample_dict["y_mark"]
+        y = sample_dict["y"]
 
-        x_mask = sample["x_mask"]
-        y_mask = sample["y_mask"]
-        sample_ID = sample["sample_ID"]
+        x_mask = sample_dict["x_mask"]
+        y_mask = sample_dict["y_mask"]
+        sample_ID = sample_dict["sample_ID"]
 
         xs.append(x)
         x_marks.append(x_mark)
@@ -229,9 +275,12 @@ def collate_fn(
     xs = xs[:-1]
     x_marks = x_marks[:-1]
     x_masks = x_masks[:-1]
-    ys = ys[:-1]
-    y_marks = y_marks[:-1]
-    y_masks = y_masks[:-1]
+    if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        ys = ys[:-1]
+        y_marks = y_marks[:-1]
+        y_masks = y_masks[:-1]
+    else:
+        raise NotImplementedError
 
     sample_IDs = torch.tensor(sample_IDs).float()
 
@@ -268,7 +317,7 @@ def collate_fn(
     }
 
 def collate_fn_patch(
-    batch: list[dict[str,Tensor]],
+    batch: list[dict[str, Tensor]],
 ) -> dict[str,Tensor]:
     '''
     '''
@@ -294,15 +343,15 @@ def collate_fn_patch(
     n_patch: int = SEQ_LEN // PATCH_LEN
     n_patch_y: int = math.ceil(configs.pred_len / PATCH_LEN)
 
-    for sample in batch:
-        x_mark = sample["x_mark"]
-        x = sample["x"]
-        y_mark = sample["y_mark"]
-        y = sample["y"]
+    for sample_dict in batch:
+        x_mark = sample_dict["x_mark"]
+        x = sample_dict["x"]
+        y_mark = sample_dict["y_mark"]
+        y = sample_dict["y"]
 
-        x_mask = sample["x_mask"]
-        y_mask = sample["y_mask"]
-        sample_ID = sample["sample_ID"]
+        x_mask = sample_dict["x_mask"]
+        y_mask = sample_dict["y_mask"]
+        sample_ID = sample_dict["sample_ID"]
 
         patch_i_end_previous = 0
 
@@ -362,9 +411,12 @@ def collate_fn_patch(
     xs = xs[:-1]
     x_marks = x_marks[:-1]
     x_masks = x_masks[:-1]
-    ys = ys[:-1]
-    y_marks = y_marks[:-1]
-    y_masks = y_masks[:-1]
+    if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        ys = ys[:-1]
+        y_marks = y_marks[:-1]
+        y_masks = y_masks[:-1]
+    else:
+        raise NotImplementedError
 
     sample_IDs = torch.tensor(sample_IDs).float()
 
@@ -402,7 +454,7 @@ def collate_fn_patch(
     }
 
 def collate_fn_tpatch(
-    batch: list[dict[str,Tensor]],
+    batch: list[dict[str, Tensor]],
 ) -> dict[str,Tensor]:
     '''
     patchify version of collate_fn for tPatchGNN

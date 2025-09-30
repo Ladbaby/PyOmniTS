@@ -253,11 +253,11 @@ def get_person_id(record_id):
     person_id = ord(person_id) - ord("A")
     return person_id
 
-def Activity_time_chunk(data, configs):
+def Activity_time_chunk(data, history, pred_window):
 
     chunk_data = []
-    history = configs.seq_len # ms
-    pred_window = configs.pred_len # ms
+    history = history # ms
+    pred_window = pred_window # ms
     sample_ID = 0
     for record_id, tt, vals, mask in data:
         t_max = int(tt.max())

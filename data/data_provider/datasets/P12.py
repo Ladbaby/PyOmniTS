@@ -5,6 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset, ConcatDataset
+from sklearn.model_selection import train_test_split
 
 from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
@@ -82,27 +83,67 @@ class Data(Dataset):
         self.label_len = configs.label_len
         self.pred_len = configs.pred_len
 
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            assert self.seq_len + self.pred_len <= 48, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than 48"
+        else:
+            raise NotImplementedError
+
         self.dataset_root_path = configs.dataset_root_path
 
         self.preprocess()
 
+        N_SAMPLES = 11981
+        sample_index_all = torch.arange(N_SAMPLES)
+        sample_index_train_val, sample_index_test = train_test_split(sample_index_all, test_size=0.1, shuffle = False)
+        sample_index_train, sample_index_val = train_test_split(sample_index_train_val, test_size=0.1, shuffle = False)
+        if flag == "train":
+            self.sample_index = sample_index_train
+        elif flag == "val":
+            self.sample_index = sample_index_val
+        elif flag == "test":
+            self.sample_index = sample_index_test
+        elif flag == "test_all":
+            self.sample_index = sample_index_all
+        else:
+            raise NotImplementedError(f"Unknown {flag=}")
+
     def __getitem__(self, index):
-        return self.dataset[index]
+        sample: Sample = self.dataset[index]
+        x_mark, x, y_mark = sample.inputs
+        y = sample.targets
+        sample_ID = sample.key
+
+        # create a mask for looking up the target values
+        y_mask = y.isfinite()
+        x_mask = x.isfinite()
+
+        # WARNING: this is not the final input to the model, they should be processed by any collate_fn!
+        return {
+            "x": x,
+            "x_mark": x_mark,
+            "x_mask": x_mask,
+            "y": y,
+            "y_mark": y_mark,
+            "y_mask": y_mask,
+            "sample_ID": self.sample_index[index]
+        }
 
     def __len__(self):
         return len(self.dataset)
 
     def preprocess(self):
-        r"""
+        """
         preprocess without time alignment
         """
-        if self.seq_len + self.pred_len > 48:
-            logger.exception(f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than 48")
-            exit(1)
+
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            backbone_pred_len = self.pred_len
+        else:
+            raise NotImplementedError
 
         task = Physionet2012(
             seq_len=self.seq_len - 0.5,
-            pred_len=self.pred_len
+            pred_len=backbone_pred_len
         )
         
         if self.flag != "val":
@@ -219,8 +260,8 @@ def fix_nan_y_mark(y_mark):
     return y_mark
 
 def collate_fn(
-    batch: list[Sample],
-) -> dict[Tensor]:
+    batch: list[dict[str, Tensor]],
+) -> dict[str, Tensor]:
     '''
     time-aligned padding
     '''
@@ -236,10 +277,14 @@ def collate_fn(
     y_masks: list[Tensor] = []
     sample_IDs: list[int] = []
 
-    for sample in batch:
-        x_mark, x, y_mark = sample.inputs
-        y = sample.targets
-        sample_ID = sample.key
+    for sample_dict in batch:
+        x = sample_dict['x']
+        x_mark = sample_dict['x_mark']
+        x_mask = sample_dict['x_mask']
+        y = sample_dict['y']
+        y_mark = sample_dict['y_mark']
+        y_mask = sample_dict['y_mask']
+        sample_ID = sample_dict["sample_ID"]
 
         # create a mask for looking up the target values
         y_mask = y.isfinite()
@@ -275,9 +320,12 @@ def collate_fn(
     xs = xs[:-1]
     x_marks = x_marks[:-1]
     x_masks = x_masks[:-1]
-    ys = ys[:-1]
-    y_marks = y_marks[:-1]
-    y_masks = y_masks[:-1]
+    if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        ys = ys[:-1]
+        y_marks = y_marks[:-1]
+        y_masks = y_masks[:-1]
+    else:
+        raise NotImplementedError
 
     sample_IDs = torch.tensor(sample_IDs).float()
 
@@ -314,8 +362,8 @@ def collate_fn(
     }
 
 def collate_fn_patch(
-    batch: list[Sample],
-) -> dict[Tensor]:
+    batch: list[dict[str, Tensor]],
+) -> dict[str, Tensor]:
     '''
     '''
     global configs
@@ -339,10 +387,14 @@ def collate_fn_patch(
     n_patch: int = SEQ_LEN // PATCH_LEN
     n_patch_y: int = math.ceil(configs.pred_len / PATCH_LEN)
 
-    for sample in batch:
-        x_mark, x, y_mark = sample.inputs
-        y = sample.targets
-        sample_ID = sample.key
+    for sample_dict in batch:
+        x = sample_dict['x']
+        x_mark = sample_dict['x_mark']
+        x_mask = sample_dict['x_mask']
+        y = sample_dict['y']
+        y_mark = sample_dict['y_mark']
+        y_mask = sample_dict['y_mask']
+        sample_ID = sample_dict["sample_ID"]
 
         patch_i_end_previous = 0
 
@@ -402,9 +454,12 @@ def collate_fn_patch(
     xs = xs[:-1]
     x_marks = x_marks[:-1]
     x_masks = x_masks[:-1]
-    ys = ys[:-1]
-    y_marks = y_marks[:-1]
-    y_masks = y_masks[:-1]
+    if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        ys = ys[:-1]
+        y_marks = y_marks[:-1]
+        y_masks = y_masks[:-1]
+    else:
+        raise NotImplementedError
 
     sample_IDs = torch.tensor(sample_IDs).float()
 
@@ -442,7 +497,7 @@ def collate_fn_patch(
     }
 
 def collate_fn_tpatch(
-    batch: list[dict[str,Tensor]],
+    batch: list[dict[str, Tensor]],
 ) -> dict[str,Tensor]:
     '''
     patchify version of collate_fn for tPatchGNN
@@ -463,10 +518,14 @@ def collate_fn_tpatch(
     n_patch: int = SEQ_LEN // PATCH_LEN
     n_patch_y: int = math.ceil(configs.pred_len / PATCH_LEN)
 
-    for sample in batch:
-        x_mark, x, y_mark = sample.inputs
-        y = sample.targets
-        sample_ID = sample.key
+    for sample_dict in batch:
+        x = sample_dict['x']
+        x_mark = sample_dict['x_mark']
+        x_mask = sample_dict['x_mask']
+        y = sample_dict['y']
+        y_mark = sample_dict['y_mark']
+        y_mask = sample_dict['y_mask']
+        sample_ID = sample_dict["sample_ID"]
 
         patch_i_end_previous = 0
 
