@@ -1,7 +1,13 @@
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import time
 import json
 import socket
 from pathlib import Path
+import os
+from typing import Optional, Literal
+import hashlib
 
 import numpy as np
 import torch
@@ -62,13 +68,15 @@ def test_params_flop(
 
     - task_key: forecasting, etc...
     """
+    logger.warning(f"Reminder: replace '*' with torch.mul, '@' with torch.matmul to get the most accurate result.")
     from ptflops import get_model_complexity_info
     with torch.cuda.device(0):
         macs, params = get_model_complexity_info(
             model.eval().cuda(), 
             x_shape, 
             as_strings=False, 
-            print_per_layer_stat=False
+            print_per_layer_stat=True,
+            verbose=True
         )
         logger.info(f"{model_id} with input shape {x_shape}")
         logger.info('{:<30}  {:<8}'.format('Computational complexity: ', macs))
@@ -96,14 +104,21 @@ def test_params_flop(
                     complexities[input_config][model_id] = complexity
                 else:
                     if complexities[input_config][model_id] != complexity:
-                        logger.warning(f"""
-                        Existing model complexity in metrics/{task_key}/model_complexities.json for input shape {x_shape} and model {model_id} is not the same as newly measured data.
+                        overwrite_choice = input(f"""Existing model complexity in metrics/{task_key}/model_complexities.json for input shape {x_shape} and model {model_id} is not the same as newly measured data.
 
-                        Existing data: {complexities[input_config][model_id]}
-                        Newly measured data: {complexity}
-                        
-                        model_complexities.json will preserve the existing data.
-                        """)
+Existing data: {complexities[input_config][model_id]}
+Newly measured data: {complexity}
+
+Do you want to overwrite the existing data? (Y/N)""")
+                        while True:
+                            if overwrite_choice.upper() == 'Y':
+                                logger.info("Newly measured data saved.")
+                                break
+                            elif overwrite_choice.upper() == 'N':
+                                logger.info("model_complexities.json will preserve the existing data.")
+                                exit(0)
+                            else:
+                                overwrite_choice = input(f"Invalid choice '{overwrite_choice}', please select between Y and N:")
         else:
             complexities = {
                 input_config: {
@@ -251,3 +266,218 @@ def linear_interpolation(x):
         x_interpolated[:, 2 * j] = x[:, j]
 
     return x_interpolated
+
+def download_file(
+    url: str, 
+    local_file_path: Path | str,
+    max_retries: int = 3,
+    chunk_size: int = 8192,
+    expected_checksum: Optional[str] = None,
+    checksum_algorithm: Literal['md5', 'sha1', 'sha256', 'sha512'] = 'sha256'
+):
+    """
+    Download a file with optional checksum validation.
+    
+    Args:
+        url: URL to download from
+        local_file_path: Path where file should be saved
+        max_retries: Maximum number of retry attempts
+        chunk_size: Size of chunks to download at a time
+        expected_checksum: Expected checksum value for validation (optional)
+        checksum_algorithm: Hashing algorithm to use ('md5', 'sha1', 'sha256', 'sha512')
+    """
+    if type(local_file_path) is str:
+        local_file_path = Path(local_file_path)
+    
+    # Check if file exists and validate checksum if provided
+    if local_file_path.exists() and expected_checksum:
+        logger.info("File exists, verifying checksum...")
+        if verify_checksum(local_file_path, expected_checksum, checksum_algorithm):
+            logger.info("File already exists and checksum matches. Skipping download.")
+            return
+        else:
+            logger.warning("File exists but checksum doesn't match. Re-downloading...")
+            local_file_path.unlink()
+    elif local_file_path.exists():
+        logger.info("File already exists and no checksum provided. Skipping download.")
+        return
+    
+    if not local_file_path.exists():
+        download_choice = input(f"{local_file_path} not found. Do you want to download it from '{url}'? (Y/N)")
+        while True:
+            if download_choice.upper() == 'Y':
+                break
+            elif download_choice.upper() == 'N':
+                logger.info("Download aborted.")
+                exit(0)
+            else:
+                download_choice = input(f"Invalid choice '{download_choice}', please select between Y and N:")
+        
+        # Read proxy settings from environment variables
+        proxies = {}
+        http_proxy = os.environ.get('HTTP_PROXY') or os.environ.get('http_proxy')
+        if http_proxy:
+            proxies['http'] = http_proxy
+        
+        https_proxy = os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy')
+        if https_proxy:
+            proxies['https'] = https_proxy
+        
+        logger.debug(f"Using proxy configs: {proxies}")
+        
+        # Create session with retry strategy
+        session = requests.Session()
+        retry_strategy = Retry(
+            total=max_retries,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
+            backoff_factor=1
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        
+        # Headers to improve compatibility
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': '*/*',
+            'Accept-Encoding': 'identity',  # Disable compression
+            'Connection': 'keep-alive'
+        }
+        
+        for attempt in range(max_retries + 1):
+            try:
+                logger.debug(f"Download attempt {attempt + 1}")
+                
+                # Make request with extended timeouts
+                response = session.get(
+                    url, 
+                    stream=True, 
+                    proxies=proxies if proxies else None,
+                    headers=headers,
+                    timeout=(30, 300)  # (connect_timeout, read_timeout)
+                )
+                response.raise_for_status()
+                
+                local_file_path.parent.mkdir(parents=True, exist_ok=True)
+                total_size = int(response.headers.get('content-length', 0))
+                logger.debug(f"Expected file size: {total_size} bytes")
+                
+                downloaded_size = 0
+                
+                # Initialize hash object if checksum validation is requested
+                hash_obj = None
+                if expected_checksum:
+                    hash_obj = hashlib.new(checksum_algorithm)
+                
+                with open(local_file_path, 'wb') as file:
+                    with tqdm(
+                        desc=f"Downloading {local_file_path.name}",
+                        total=total_size if total_size > 0 else None,
+                        unit='B',
+                        unit_scale=True,
+                        unit_divisor=1024,
+                        dynamic_ncols=True
+                    ) as bar:
+                        try:
+                            for chunk in response.iter_content(
+                                chunk_size=chunk_size, 
+                                decode_unicode=False
+                            ):
+                                if chunk:  # Filter out keep-alive chunks
+                                    file.write(chunk)
+                                    downloaded_size += len(chunk)
+                                    bar.update(len(chunk))
+                                    
+                                    # Update hash if checksum validation is enabled
+                                    if hash_obj:
+                                        hash_obj.update(chunk)
+
+                        except Exception as e:
+                            logger.warning(f"Error during download: {e}")
+                            raise
+                
+                # Verify download completeness
+                actual_size = local_file_path.stat().st_size
+                logger.info(f"Download completed: {actual_size} bytes")
+                
+                if total_size > 0 and actual_size != total_size:
+                    logger.warning(f"Size mismatch: expected {total_size}, got {actual_size}")
+                    if attempt < max_retries:
+                        logger.info("Retrying download...")
+                        local_file_path.unlink()  # Remove incomplete file
+                        time.sleep(2)  # Wait before retry
+                        continue
+                
+                # Validate checksum if provided
+                if expected_checksum:
+                    calculated_checksum = hash_obj.hexdigest().lower()
+                    expected_lower = expected_checksum.lower()
+                    
+                    logger.info(f"Verifying {checksum_algorithm} checksum...")
+                    
+                    if calculated_checksum == expected_lower:
+                        logger.info("Checksum verification passed.")
+                    else:
+                        logger.error(f"Checksum verification failed!")
+                        logger.error(f"Expected {checksum_algorithm}: {expected_lower}")
+                        logger.error(f"Calculated {checksum_algorithm}: {calculated_checksum}")
+                        
+                        if attempt < max_retries:
+                            logger.info("Retrying download due to checksum mismatch...")
+                            local_file_path.unlink()  # Remove corrupted file
+                            time.sleep(2)  # Wait before retry
+                            continue
+                        else:
+                            # Remove corrupted file and raise error
+                            local_file_path.unlink()
+                            raise ValueError(f"Checksum verification failed after {max_retries + 1} attempts")
+                
+                logger.info("Download finished successfully.")
+                break
+                
+            except (requests.exceptions.RequestException, IOError) as e:
+                logger.error(f"Download attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries:
+                    logger.info(f"Retrying in 2 seconds... ({max_retries - attempt} attempts left)")
+                    if local_file_path.exists():
+                        local_file_path.unlink()  # Remove incomplete file
+                    time.sleep(2)
+                else:
+                    logger.error("All download attempts failed.")
+                    raise
+        
+        session.close()
+
+def verify_checksum(
+    file_path: Path, 
+    expected_checksum: str, 
+    algorithm: str = 'sha256'
+) -> bool:
+    """
+    Verify the checksum of a file.
+    
+    Args:
+        file_path: Path to the file to verify
+        expected_checksum: Expected checksum value
+        algorithm: Hashing algorithm to use
+        
+    Returns:
+        True if checksum matches, False otherwise
+    """
+    try:
+        hash_obj = hashlib.new(algorithm)
+        
+        with open(file_path, 'rb') as f:
+            # Read file in chunks to handle large files efficiently
+            for chunk in iter(lambda: f.read(8192), b""):
+                hash_obj.update(chunk)
+        
+        calculated_checksum = hash_obj.hexdigest().lower()
+        expected_lower = expected_checksum.lower()
+        
+        return calculated_checksum == expected_lower
+        
+    except Exception as e:
+        logger.error(f"Error calculating checksum: {e}")
+        return False
