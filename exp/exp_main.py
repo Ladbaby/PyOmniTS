@@ -303,7 +303,8 @@ class Exp_Main(Exp_Basic):
                     if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
                         wandb.log({
                             "loss_train": np.mean(train_loss),
-                            "loss_val": vali_loss
+                            "loss_val": vali_loss,
+                            "loss_val_best": -early_stopping.best_score
                         })
                     early_stopping(vali_loss, model_train, path)
                     if early_stopping.early_stop:
