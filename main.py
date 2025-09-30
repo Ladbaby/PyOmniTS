@@ -134,6 +134,9 @@ if __name__ == "__main__":
                         max_count *= len(ref_values)
                 except Exception as e:
                     continue
+            # grid search if <=16, otherwise bayes
+            sweep_method = "grid" if max_count <= 16 else "bayes"
+            max_count = min(max_count, 16)
 
             if hyperparameters_sweep == {}:
                 logger.error(f"No hyperparameter to be searched, stopping now..")
@@ -143,11 +146,11 @@ if __name__ == "__main__":
                 d_model: int = field(metadata={"sweep": [32, 64, 128, 256]})""")
                 exit(0)
             else:
-                logger.info(f"""{len(hyperparameters_sweep)} hyperparameters and {max_count} runs: \n{pprint.pformat(hyperparameters_sweep)}""")
+                logger.info(f"""{len(hyperparameters_sweep)} hyperparameters and {max_count} runs using "{sweep_method}" as the sweep method: \n{pprint.pformat(hyperparameters_sweep)}""")
                 
             import wandb
             sweep_configuration = {
-                "method": "grid",
+                "method": sweep_method,
                 "metric": {"goal": "minimize", "name": "loss_val_best"},
                 "parameters": hyperparameters_sweep
             }
