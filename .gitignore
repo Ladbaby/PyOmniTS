@@ -5,6 +5,7 @@ notes.md
 .DS_Store
 *.safetensors
 pytorch.bin
+*.code-workspace
 
 storage/
 log/
