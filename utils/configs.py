@@ -35,12 +35,12 @@ parser.add_argument('--dataset_file_name', type=str, default=None, help='data fi
 parser.add_argument('--features', type=str, choices=['M', 'S', "MS"], default='M', help='forecasting task; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
 parser.add_argument('--target_variable_name', type=str, default="OT", help='target variable name in regular time series datasets. Originally named as --target.')
 parser.add_argument('--target_variable_index', type=int, default=0, help='target variable index in datasets. Should not be used together with target_variable_name')
-parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', 'm'], default='h', help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
+parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', 'm', 'others'], default='h', help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
 parser.add_argument('--collate_fn', type=str, default="collate_fn", help='Name of the function as a custom collate_fn for dataloader. By default, datasets without collate_fn defined in data/data_provider/datasets/SOME_DATASET_NAME will use default collate_fn of Pytorch. Refer to data/data_provider/data_factory.py for implementation detail.')
 parser.add_argument('--augmentation_ratio', type=int, default=0, help="How many times to augment")
 parser.add_argument('--missing_rate', type=float, default=0., help="Manually mask out some observations.")
-parser.add_argument('--train_val_loader_shuffle', type=int, default=None, help="By default, this parameter is unset, and train and val loader is shuffled.")
-parser.add_argument('--train_val_loader_drop_last', type=int, default=None, help="By default, this parameter is unset, and train and val loader will drop the last batch if the number of samples is not sufficient.")
+parser.add_argument('--train_val_loader_shuffle', type=int, default=1, help="By default, train and val loader are shuffled.")
+parser.add_argument('--train_val_loader_drop_last', type=int, default=1, help="By default, train and val loader will drop the last batch if the number of samples is not sufficient.")
 
 # forecasting task
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
@@ -68,6 +68,7 @@ parser.add_argument('--patience', type=int, default=5, help='early stopping pati
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='initial learning rate')
 parser.add_argument('--loss', type=str, default='MSE', help='loss function, should be exactly the same as the file name under loss_fns directory')
 parser.add_argument('--lr_scheduler', type=str, choices=["ExponentialDecayLR", "ManualMilestonesLR", "DelayedStepDecayLR", "CosineAnnealingLR", "MultiStepLR"], default='DelayedStepDecayLR', help='learning rate scheduler. Originally named as --lradj')
+parser.add_argument('--lr_scheduler_gamma', type=float, default=0.1, help='gamma for StepLR and MultiStepLR.')
 parser.add_argument('--pretrained_checkpoint_root_path', type=str, default="", help="Path to folder containing pretrained model's checkpoints")
 parser.add_argument('--pretrained_checkpoint_file_name', type=str, default="", help="file name of pretrained model's checkpoints, including file type extension")
 parser.add_argument('--n_train_stages', type=int, default=1, help="Some models have multiple training stages, like pretraining + finetuning. e.g., --n_train_stages 2 will pass train_stage=1 and train_stage=2 to model during training.")
@@ -80,8 +81,8 @@ parser.add_argument('--test_flop', type=int, default=0, help='Test model flops. 
 parser.add_argument('--test_train_time', type=int, default=0, help="Test model's training time. See utils/tools for usage")
 parser.add_argument('--test_gpu_memory', type=int, default=0, help="Test model's gpu memory usage. See utils/tools for usage")
 parser.add_argument('--test_dataset_statistics', type=int, default=0, help="Test dataset's statistics.")
-parser.add_argument('--test_zero_shot', type=int, default=0, help='Test zero-shot performance. i.e., without training.')
 parser.add_argument('--save_arrays', type=int, default=0, help='whether to save model input and output as .npy files, for later visualization')
+parser.add_argument('--save_cache_arrays', type=int, default=0, help='whether to save model output (not input) as cache .npy files during every test iteration, such that the testing can recover from interruption. Designed for extremely slow models like diffusion models.')
 parser.add_argument('--load_checkpoints_test', type=int, default=1, help='whether to load checkpoint during testing')
 
 # model configs

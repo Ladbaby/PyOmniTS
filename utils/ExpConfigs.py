@@ -62,6 +62,7 @@ class ExpConfigs:
     learning_rate: float
     loss: str
     lr_scheduler: str
+    lr_scheduler_gamma: float
     pretrained_checkpoint_root_path: str
     pretrained_checkpoint_file_name: str
     n_train_stages: str
@@ -73,9 +74,9 @@ class ExpConfigs:
     test_flop: int
     test_train_time: int
     test_gpu_memory: int
-    test_zero_shot: int
     test_dataset_statistics: int
     save_arrays: int
+    save_cache_arrays: int
     load_checkpoints_test: int
 
     # model configs
@@ -84,26 +85,26 @@ class ExpConfigs:
     patch_stride: int
     revin: int
     revin_affine: int
-    kernel_size: int
+    kernel_size: int = field(metadata={"sweep": [2, 3, 4, 5]})
     individual: int
     channel_independence: int
     scale_factor: int
-    top_k: int
+    top_k: int = field(metadata={"sweep": [3, 5]})
     embed_type: int
     enc_in: int
     dec_in: int
     c_out: int
-    d_model: int = field(metadata={"sweep": [32, 64, 128, 256]})
+    d_model: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512]})
     d_timesteps: int
-    n_heads: int
+    n_heads: int = field(metadata={"sweep": [1, 4, 8]})
     n_layers: int = field(metadata={"sweep": [1, 2, 3, 4]})
-    e_layers: int
-    d_layers: int
+    e_layers: int = field(metadata={"sweep": [1, 2, 3, 4, 8]})
+    d_layers: int = field(metadata={"sweep": [1, 2]})
     hidden_layers: int
-    d_ff: int
+    d_ff: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512, 2048]})
     moving_avg: int
     factor: int
-    dropout: float
+    dropout: float = field(metadata={"sweep": [0.0, 0.1, 0.3, 0.4, 0.5]})
     embed: str
     activation: str
     output_attention: int
@@ -118,37 +119,37 @@ class ExpConfigs:
     mamba_d_conv: int
     mamba_expand: int
     # Latent ODE
-    latent_ode_units: int
-    latent_ode_gen_layers: int
-    latent_ode_rec_layers: int
+    latent_ode_units: int = field(metadata={"sweep": [50, 300, 500]})
+    latent_ode_gen_layers: int = field(metadata={"sweep": [2, 3]})
+    latent_ode_rec_layers: int = field(metadata={"sweep": [2, 3, 4]})
     latent_ode_z0_encoder: str
-    latent_ode_rec_dims: int
-    latent_ode_gru_units: int
+    latent_ode_rec_dims: int = field(metadata={"sweep": [30, 40, 100]})
+    latent_ode_gru_units: int = field(metadata={"sweep": [50, 100]})
     latent_ode_classif: int
     latent_ode_linear_classif: int
     # CRU
     cru_num_basis: int
     cru_bandwidth: int
-    cru_ts: float
+    cru_ts: float = field(metadata={"sweep": [0.2, 0.3]})
     # NeuralFlows
     neuralflows_flow_model: str
-    neuralflows_flow_layers: int
-    neuralflows_latents: int
+    neuralflows_flow_layers: int = field(metadata={"sweep": [1, 2, 4, 16]})
+    neuralflows_latents: int = field(metadata={"sweep": [15, 20]})
     neuralflows_time_net: str
     neuralflows_time_hidden_dim: int
     # PrimeNet
     primenet_pooling: str
     # mTAN
-    mtan_num_ref_points: int
-    mtan_alpha: float
+    mtan_num_ref_points: int = field(metadata={"sweep": [8, 16, 32, 64, 128]})
+    mtan_alpha: float = field(metadata={"sweep": [5., 100.]})
     # TimeMixer
     timemixer_decomp_method: str
     timemixer_use_norm: int
-    timemixer_down_sampling_layers: int
+    timemixer_down_sampling_layers: int = field(metadata={"sweep": [1, 3]})
     timemixer_down_sampling_method: str
     # Nonstationary Transformer
-    nonstationarytransformer_p_hidden_dims: list
-    nonstationarytransformer_p_hidden_layers: int
+    nonstationarytransformer_p_hidden_dims: list = field(metadata={"sweep": [[8, 8], [16, 16], [32, 32], [64, 64], [128, 128], [256, 256]]})
+    nonstationarytransformer_p_hidden_layers: int = field(metadata={"sweep": [2, 4]})
     # Informer
     informer_distil: int
     # tPatchGNN
