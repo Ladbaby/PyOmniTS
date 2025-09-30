@@ -76,7 +76,7 @@ class Exp_Main(Exp_Basic):
             Configured following CSDI
             '''
             scheduler = torch.optim.lr_scheduler.MultiStepLR(
-                optimizer, milestones=[0.75 * self.configs.train_epochs, 0.9 * self.configs.train_epochs], gamma=0.1
+                optimizer, milestones=[0.75 * self.configs.train_epochs, 0.9 * self.configs.train_epochs], gamma=self.configs.lr_scheduler_gamma
             )
         else:
             logger.exception(f"Unknown lr scheduler '{self.configs.lr_scheduler}'", stack_info=True)
@@ -224,6 +224,7 @@ class Exp_Main(Exp_Basic):
         if not self.configs.use_multi_gpu:
             model_train = model_train.to(f"cuda:{self.configs.gpu_id}")
 
+        if_nan_loss = False # break nested loop without using for...else...
         for train_stage in range(1, self.configs.n_train_stages + 1):
             early_stopping = EarlyStopping(patience=self.configs.patience, verbose=True)
             logger.info(f"Train stage {train_stage}/{self.configs.n_train_stages} starts.")
@@ -271,7 +272,8 @@ class Exp_Main(Exp_Basic):
                                 elif type(value).__name__ != "Tensor" and torch.any(torch.isnan(value)):
                                     logger.error(f"Nan value found in model's output tensor '{key}' of shape {value.shape}: {value}")
                             logger.info("Hint: possible cause for nan loss: 1. large learning rate; 2. sqrt(0); 3. ReLU->LeakyReLU")
-                            exit(1)
+                            if_nan_loss = True
+                            break
 
                         train_loss.append(loss.item())
 
@@ -286,6 +288,11 @@ class Exp_Main(Exp_Basic):
                             accelerator.backward(loss, retain_graph=self.configs.retain_graph)
                         model_optim.step()
 
+                if if_nan_loss:
+                    accelerator.set_trigger()
+                    if accelerator.check_trigger():
+                        accelerator.wait_for_everyone()
+                        break
                 # DEBUG: state saving is disabled to minimize disk write time
                 # save the state of optimizer
                 # if not self.configs.sweep:
@@ -300,13 +307,13 @@ class Exp_Main(Exp_Basic):
                         current_epoch=epoch,
                         train_stage=train_stage
                     )
+                    early_stopping(vali_loss, model_train, path)
                     if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
                         wandb.log({
                             "loss_train": np.mean(train_loss),
                             "loss_val": vali_loss,
                             "loss_val_best": -early_stopping.best_score
                         })
-                    early_stopping(vali_loss, model_train, path)
                     if early_stopping.early_stop:
                         logger.info("Early stopping")
                         accelerator.set_trigger()
@@ -485,7 +492,7 @@ class Exp_Main(Exp_Basic):
             logger.info(f"Testing results will be saved under {folder_path}")
 
             # dictionary holding input and output data
-            array_dict = {}
+            array_dict: dict[str, list[np.ndarray] | np.ndarray] = {}
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 input_tensor_names = ["x", "y", "x_mask", "y_mask", "sample_ID"]
                 output_tensor_names = ["pred"]
@@ -494,10 +501,36 @@ class Exp_Main(Exp_Basic):
 
             for tensor_name in input_tensor_names + output_tensor_names:
                 array_dict[tensor_name] = []
+
+            # try to recover from cache saved by save_cache_arrays, if any
+            cache_folder = checkpoint_location_itr / "cache"
+            n_cache_batches = 0
+            if cache_folder.exists():
+                logger.warning(f"Trying to recover the testing process using cache files in {cache_folder}")
+                for tensor_name in output_tensor_names:
+                    cache_file_path = cache_folder / f"output_{tensor_name}.npy"
+                    if cache_file_path.exists():
+                        cache_array = np.load(cache_file_path)
+                        n_cache_samples = cache_array.shape[0]
+                        # overwrite init content with cache
+                        array_dict[tensor_name] = [cache_array[i:i + self.configs.batch_size] for i in range(0, n_cache_samples, self.configs.batch_size)] # ndarray -> list[ndarray]
+                    else:
+                        logger.error(f"Cache file for {tensor_name} not found. You may encounter unexpected error if proceed!")
+                n_cache_batches = len(array_dict[tensor_name])
+
             
             with torch.no_grad():
                 batch: dict[str, Tensor] # type hints
                 for i, batch in tqdm(enumerate(test_loader), total=len(test_loader), leave=False, desc="Testing"):
+                    if n_cache_batches > 0:
+                        # recovering from cache. append input batch and skip it, such that model don't have to inference again.
+                        batch_all: list[dict] = accelerator.gather_for_metrics([batch])
+                        batch_all: dict = self._merge_gathered_dicts(batch_all)
+                        for tensor_name in input_tensor_names:
+                            if tensor_name in batch_all.keys():
+                                array_dict[tensor_name].append(batch_all[tensor_name].detach().cpu().numpy())
+                        n_cache_batches -= 1
+                        continue
                     # warn if the size does not match
                     if batch[next(iter(batch))].shape[0] != self.configs.batch_size:
                         logger.warning(f"Batch No.{i} of total {len(test_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
@@ -525,6 +558,17 @@ class Exp_Main(Exp_Basic):
                     for tensor_name in output_tensor_names:
                         if tensor_name in outputs_all.keys():
                             array_dict[tensor_name].append(outputs_all[tensor_name].detach().cpu().numpy())
+
+                    if self.configs.save_cache_arrays:
+                        # save intermediate model outputs, to enable recovery from interruption
+                        cache_folder.mkdir(exist_ok=True)
+                        for tensor_name in output_tensor_names:
+                            if len(array_dict[tensor_name]) > 0:
+                                np.save(
+                                    cache_folder / f"output_{tensor_name}.npy",
+                                    np.concatenate(array_dict[tensor_name], axis=0)
+                                )
+                        logger.debug(f"Model outputs saved into cache folder {cache_folder}")
 
             for tensor_name in input_tensor_names + output_tensor_names:
                 if len(array_dict[tensor_name]) > 0:
