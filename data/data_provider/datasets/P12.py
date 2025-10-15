@@ -20,6 +20,8 @@ class Data(Dataset):
     wrapper for PhysioNet 2012 dataset implemented in tsdm
     tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
+    - title: "Predicting In-Hospital Mortality of ICU Patients: The PhysioNet/Computing in Cardiology Challenge 2012"
+    - paper link: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3965265/
     - tasks: forecasting
     - sampling rate (rounded): 1 hour
     - max time length (padded): 48 (48 hours)

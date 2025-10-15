@@ -20,6 +20,8 @@ class Data(Dataset):
     wrapper for USHCN DeBrouwer2019 dataset implemented in tsdm
     tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
+    - title: "Long-Term Daily and Monthly Climate Records from Stations Across the Contiguous United States (U.S. Historical Climatology Network)"
+    - dataset link: https://www.osti.gov/biblio/1394920
     - tasks: forecasting
     - max time length: 337 (4 year)
     - seq_len -> pred_len:

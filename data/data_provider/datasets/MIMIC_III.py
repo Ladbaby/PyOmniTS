@@ -20,6 +20,8 @@ class Data(Dataset):
     wrapper for MIMIC III DeBrouwer2019 dataset implemented in tsdm
     tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
+    - title: "MIMIC-III, a freely accessible critical care database"
+    - paper link: https://www.nature.com/articles/sdata201635
     - tasks: forecasting
     - sampling rate (rounded): 30 minutes
     - max time length (padded): 96 (48 hours)

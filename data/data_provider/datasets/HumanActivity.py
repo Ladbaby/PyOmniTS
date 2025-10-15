@@ -15,6 +15,8 @@ class Data(Dataset):
     '''
     wrapper for Human Activity dataset
 
+    - title: "Localization Data for Person Activity"
+    - dataset link: https://archive.ics.uci.edu/dataset/196/localization+data+for+person+activity
     - tasks: forecasting
     - sampling rate (rounded): 1 millisecond
     - max time length (padded): 131 (4000 milliseconds)

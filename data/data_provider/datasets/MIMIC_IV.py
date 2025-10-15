@@ -20,6 +20,8 @@ class Data(Dataset):
     wrapper for MIMIC IV Bilos2021 dataset implemented in tsdm
     tsdm: https://openreview.net/forum?id=a-bD9-0ycs0
 
+    - title: "MIMIC-IV, a freely accessible electronic health record dataset"
+    - paper link: https://www.nature.com/articles/s41597-022-01899-x
     - tasks: forecasting
     - sampling rate (rounded): 1 minute
     - max time length (padded): 971 (48 hours)
