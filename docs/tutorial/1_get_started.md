@@ -99,7 +99,7 @@ Since MIMIC III requires credentialed access:
         - Follow the processing scripts in [gru_ode_bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master/data_preproc/MIMIC) to get `complete_tensor.csv`.
         - Put the result under `~/.tsdm/rawdata/MIMIC_III_DeBrouwer2019/complete_tensor.csv`.
 
-The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
+The following file structure will be found under `~/.tsdm`, after the code finish preprocessing (Note: `.parquet` files will be generated automatically after training any model on this dataset):
 ```
 .
 ├── datasets
@@ -133,7 +133,7 @@ Since MIMIC IV requires credentialed access:
         - Follow the processing scripts in [NeuralFlows](https://github.com/mbilos/neural-flows-experiments/blob/master/nfe/experiments/gru_ode_bayes/data_preproc) to get `full_dataset.csv`.
         - Put the result under `~/.tsdm/rawdata/MIMIC_IV_Bilos2021/full_dataset.csv`.
 
-The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
+The following file structure will be found under `~/.tsdm`, after the code finish preprocessing (Note: `.parquet` files will be generated automatically after training any model on this dataset):
 ```
 .
 ├── datasets
