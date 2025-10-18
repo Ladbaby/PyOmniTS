@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 from data.dependencies.MTS_Dataset.ETT_hour import Data as MTSData
 
 __all__ = ['Data']

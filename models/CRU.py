@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 # Modeling Irregular Time Series with Continuous Recurrent Units (CRUs)
 # Copyright (c) 2022 Robert Bosch GmbH
 # This program is free software: you can redistribute it and/or modify

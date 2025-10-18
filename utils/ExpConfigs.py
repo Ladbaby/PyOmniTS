@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 from dataclasses import dataclass, field
 from typing import Any, Optional
 

@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 from datetime import timedelta
 import sys
 

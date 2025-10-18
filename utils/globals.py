@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 # distributed training
 
 from accelerate import Accelerator

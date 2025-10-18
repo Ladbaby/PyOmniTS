@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 from typing import Sequence, Dict, List, Tuple
 from collections.abc import Sequence as SequenceType
 

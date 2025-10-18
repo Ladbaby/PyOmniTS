@@ -1,3 +1,4 @@
+# Code from: https://github.com/Ladbaby/PyOmniTS
 from einops import *
 import torch
 import torch.nn as nn
