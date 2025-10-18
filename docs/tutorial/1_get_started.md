@@ -81,7 +81,7 @@ The following file structure will be found under `storage/datasets`, after the c
 #### 3.2.2 MIMIC III
 
 Since MIMIC III requires credentialed access:
-- Request for raw data from [here](https://physionet.org/content/mimiciii/1.4/). Extract all `.gz` files as `.csv` files. Files can be put wherever you like.
+- Request for raw data from [here](https://physionet.org/content/mimiciii/1.4/). Files can be put wherever you like, and you don't have to extract `.csv.gz` as `.csv`.
 - Data preprocessing
 
     Choose one of the options:
@@ -115,7 +115,7 @@ The following file structure will be found under `~/.tsdm`, after the code finis
 #### 3.2.2 MIMIC IV
 
 Since MIMIC IV requires credentialed access:
-- Request for raw data from [here](https://physionet.org/content/mimiciv/1.0/). Files can be put wherever you like.
+- Request for raw data from [here](https://physionet.org/content/mimiciv/1.0/). Files can be put wherever you like, and you don't have to extract `.csv.gz` as `.csv`.
 - Data preprocessing
 
     Choose one of the options:
