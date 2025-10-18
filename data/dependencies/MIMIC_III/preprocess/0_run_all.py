@@ -60,7 +60,7 @@ def main():
         }
     }
 
-    raw_file_path = input("Enter the folder path to MIMIC-III raw files (i.e., the folder path containing many .csv files): ")
+    raw_file_path = input("Enter the folder path to MIMIC-III raw files (i.e., the folder path containing many .csv.gz files): ")
     if not raw_file_path.endswith('/'):
         raw_file_path += '/'
     raw_file_path = raw_file_path.replace("\\", '/')

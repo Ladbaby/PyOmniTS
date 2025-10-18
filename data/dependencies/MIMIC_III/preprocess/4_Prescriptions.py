@@ -7,7 +7,10 @@ file_path = sys.argv[1]
 adm=pd.read_csv(file_path+"Admissions_processed.csv")
 
 # We now consider the prescriptions dataset. We select only the patients present in the cleaned admission file
-presc=pd.read_csv(file_path+"PRESCRIPTIONS.csv")
+try:
+    presc=pd.read_csv(file_path+"PRESCRIPTIONS.csv")
+except:
+    presc=pd.read_csv(file_path+"PRESCRIPTIONS.csv.gz", compression="gzip")
 
 #Restrict the dataset to the previously selected admission ids only.
 adm_ids=list(adm["HADM_ID"])

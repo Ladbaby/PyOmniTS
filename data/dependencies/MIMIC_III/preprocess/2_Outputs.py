@@ -7,7 +7,10 @@ file_path = sys.argv[1]
 adm=pd.read_csv(file_path+"Admissions_processed.csv")
 
 # We now consider the outputevents dataset. We select only the patients with the same criteria as above.
-outputs=pd.read_csv(file_path+"OUTPUTEVENTS.csv")
+try:
+    outputs=pd.read_csv(file_path+"OUTPUTEVENTS.csv")
+except:
+    outputs=pd.read_csv(file_path+"OUTPUTEVENTS.csv.gz", compression="gzip")
 
 #Some checks
 assert(len(outputs.loc[outputs["ISERROR"].notnull()].index)==0) #No entry with iserror==TRUE
@@ -21,7 +24,10 @@ print(f"Patients after admission id filter: {outputs['SUBJECT_ID'].nunique()}")
 # We load the D_ITEMS dataframe which contains the name of the ITEMID. And we merge both tables together.
 
 #item_id 
-item_id=pd.read_csv(file_path+"D_ITEMS.csv")
+try:
+    item_id=pd.read_csv(file_path+"D_ITEMS.csv")
+except:
+    item_id=pd.read_csv(file_path+"D_ITEMS.csv.gz", compression="gzip")
 item_id_1=item_id[["ITEMID","LABEL"]]
 
 #We merge the name of the item administrated.

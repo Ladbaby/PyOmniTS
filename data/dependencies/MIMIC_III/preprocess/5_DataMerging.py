@@ -172,7 +172,10 @@ complete_df["UNIQUE_ID"] = complete_df["HADM_ID"].map(d)
 
 
 #ICD9 codes
-ICD_diag=pd.read_csv(file_path+"DIAGNOSES_ICD.csv")
+try:
+    ICD_diag=pd.read_csv(file_path+"DIAGNOSES_ICD.csv")
+except:
+    ICD_diag=pd.read_csv(file_path+"DIAGNOSES_ICD.csv.gz", compression="gzip")
 
 main_diag=ICD_diag.loc[(ICD_diag["SEQ_NUM"]==1)]
 complete_tensor=pd.merge(complete_df,main_diag[["HADM_ID","ICD9_CODE"]],on="HADM_ID")

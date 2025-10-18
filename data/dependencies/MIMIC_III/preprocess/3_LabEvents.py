@@ -8,7 +8,10 @@ adm=pd.read_csv(file_path+"Admissions_processed.csv")
 
 
 # We now consider the labevents dataset. We select only the patients with the same criteria as above.
-lab=pd.read_csv(file_path+"LABEVENTS.csv")
+try:
+    lab=pd.read_csv(file_path+"LABEVENTS.csv")
+except:
+    lab=pd.read_csv(file_path+"LABEVENTS.csv.gz", compression="gzip")
 
 #Restrict the dataset to the previously selected admission ids only.
 adm_ids=list(adm["HADM_ID"])
@@ -19,7 +22,10 @@ print(f"Patients after admission id filter: {lab['SUBJECT_ID'].nunique()}")
 # We load the D_ITEMS dataframe which contains the name of the ITEMID. And we merge both tables together.
 
 #item_id
-item_id=pd.read_csv(file_path+"D_LABITEMS.csv")
+try:
+    item_id=pd.read_csv(file_path+"D_LABITEMS.csv")
+except:
+    item_id=pd.read_csv(file_path+"D_LABITEMS.csv.gz", compression="gzip")
 item_id_1=item_id[["ITEMID","LABEL"]]
 
 #We merge the name of the item administrated.

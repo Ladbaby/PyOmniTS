@@ -12,10 +12,16 @@ import numpy as np
 
 file_path = sys.argv[1]
 
-adm=pd.read_csv(file_path+"ADMISSIONS.csv")
+try:
+    adm=pd.read_csv(file_path+"ADMISSIONS.csv")
+except:
+    adm=pd.read_csv(file_path+"ADMISSIONS.csv.gz", compression="gzip")
 
 #Load the patients data base and add the Date of birth to the admission dataset.
-patients_df=pd.read_csv(file_path+"PATIENTS.csv")
+try:
+    patients_df=pd.read_csv(file_path+"PATIENTS.csv")
+except:
+    patients_df=pd.read_csv(file_path+"PATIENTS.csv.gz", compression="gzip")
 patients_df["DOBTIME"]=pd.to_datetime(patients_df["DOB"], format='%Y-%m-%d')
 patients_df[["SUBJECT_ID","DOBTIME"]].head()
 adm_dob=pd.merge(patients_df[["SUBJECT_ID","DOBTIME"]],adm,on="SUBJECT_ID")
@@ -77,7 +83,10 @@ print(f'{file_path}Admissions_processed.csv saved')
 # ## INPUTS EVENTS DATA
 # 
 # We now consider the inputevents dataset. We select only the patients in the metavision system and with the same criteria as above.
-inputs=pd.read_csv(file_path+"INPUTEVENTS_MV.csv")
+try:
+    inputs=pd.read_csv(file_path+"INPUTEVENTS_MV.csv")
+except:
+    inputs=pd.read_csv(file_path+"INPUTEVENTS_MV.csv.gz", compression="gzip")
 #Restrict the dataset to the previously selected admission ids only.
 adm_ids=list(adm_3["HADM_ID"])
 inputs=inputs.loc[inputs["HADM_ID"].isin(adm_ids)]
@@ -88,7 +97,10 @@ inputs_small=inputs[["SUBJECT_ID","HADM_ID","STARTTIME","ENDTIME","ITEMID","AMOU
 # We load the D_ITEMS dataframe which contains the name of the ITEMID. And we merge both tables together.
 
 #item_id 
-item_id=pd.read_csv(file_path+"D_ITEMS.csv")
+try:
+    item_id=pd.read_csv(file_path+"D_ITEMS.csv")
+except:
+    item_id=pd.read_csv(file_path+"D_ITEMS.csv.gz", compression='gzip')
 item_id_1=item_id[["ITEMID","LABEL"]]
 
 #We merge the name of the item administrated.
