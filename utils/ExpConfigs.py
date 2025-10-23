@@ -204,3 +204,7 @@ class ExpConfigsTracker:
         print(f"Accessed attributes ({len(accessed)}):")
         for attr in sorted(accessed):
             print(f"  ✓ {attr}")
+
+    @property
+    def __dict__(self):
+        return self._config.__dict__
