@@ -1,4 +1,4 @@
-use_multi_gpu=1
+use_multi_gpu=0
 if [ $use_multi_gpu -eq 0 ]; then
     launch_command="python"
 else

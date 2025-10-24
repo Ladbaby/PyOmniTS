@@ -1,4 +1,4 @@
-use_multi_gpu=1
+use_multi_gpu=0
 if [ $use_multi_gpu -eq 0 ]; then
     launch_command="python"
 else
@@ -36,7 +36,7 @@ for pred_len in 3; do
     --patience 5 \
     --val_interval 1 \
     --itr 5 \
-    --batch_size 8 \
+    --batch_size 32 \
     --learning_rate 0.001
 done
 
