@@ -59,6 +59,23 @@ def main():
         exp.train()
         return exp
 
+    def train_with_auto_batch_reduction():
+        """
+        invoke start_exp_train(), and automatically reduce batch size on CUDA OOM errors.
+        """
+        while configs.batch_size >= 1:
+            try:
+                return start_exp_train()
+            except torch.cuda.OutOfMemoryError as e:
+                torch.cuda.empty_cache()
+                if configs.batch_size == 1:
+                    logger.exception("CUDA OOM error even with batch_size=1. Training aborted.")
+                    exit(1)
+                # Reduce batch size by half
+                new_batch_size = max(1, configs.batch_size // 2)
+                logger.error(f"CUDA OOM error! Reducing batch_size from {configs.batch_size} to {new_batch_size} and try again...")
+                configs.batch_size = new_batch_size
+
     if configs.sweep:
         '''
         Currently, wandb sweep with huggingface accelerate multi GPU is tricky, use at your own risk.
@@ -85,7 +102,7 @@ def main():
         torch.manual_seed(fix_seed_list[configs.itr_i])
         np.random.seed(fix_seed_list[configs.itr_i])
 
-        exp = start_exp_train()
+        exp = train_with_auto_batch_reduction()
         exp.test()
     elif configs.is_training:
         '''
@@ -100,7 +117,7 @@ def main():
             torch.manual_seed(fix_seed_list[i])
             np.random.seed(fix_seed_list[i])
 
-            exp = start_exp_train()
+            exp = train_with_auto_batch_reduction()
             torch.cuda.empty_cache()
         exp.test()
     else:
