@@ -81,13 +81,22 @@ class Model(nn.Module):
         _, PRED_LEN, _ = y.shape
         L = SEQ_LEN + PRED_LEN
 
-        x_zeros = torch.zeros_like(y, dtype=x.dtype, device=x.device) # fill unknown forecast targets with zeros for input
-        y_zeros = torch.zeros_like(x, dtype=y.dtype, device=y.device)
-        x_y_mark = torch.cat([x_mark, y_mark], dim=1) # (BATCH_SIZE, L, 1)
-        x_L = torch.cat([x, x_zeros], dim=1)
-        x_y_mask = torch.cat([x_mask, y_mask], dim=1)
-        y_L = torch.cat([y_zeros, y], dim=1)
-        y_mask_L = torch.cat([y_zeros, y_mask], dim=1)
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "classification", "representation_learning"]:
+            x_zeros = torch.zeros_like(y, dtype=x.dtype, device=x.device) # fill unknown forecast targets with zeros for input
+            y_zeros = torch.zeros_like(x, dtype=y.dtype, device=y.device)
+            x_y_mark = torch.cat([x_mark, y_mark], dim=1) # (BATCH_SIZE, L, 1)
+            x_L = torch.cat([x, x_zeros], dim=1)
+            x_y_mask = torch.cat([x_mask, y_mask], dim=1)
+            y_L = torch.cat([y_zeros, y], dim=1)
+            y_mask_L = torch.cat([y_zeros, y_mask], dim=1)
+        elif self.configs.task_name in ["imputation"]:
+            x_y_mark = x_mark
+            x_L = x
+            x_y_mask = x_mask + y_mask
+            y_L = y
+            y_mask_L = y_mask
+        else:
+            raise NotImplementedError
         # END adaptor
 
         time_indices = torch.cumsum(torch.ones_like(x_L).to(torch.int64), dim=1) - 1  # (BATCH_SIZE, L, ENC_IN) init for time indices. 0, 1, 2...
@@ -97,23 +106,36 @@ class Model(nn.Module):
         # adaptor for extensibility, if the input is padded (e.g., MTS), we flatten it
         # BEGIN adaptor
 
+        # get total number of observations in each sample, and take max
+        N_OBSERVATIONS_MAX = torch.max(x_y_mask.sum((1, 2))).to(torch.int64)
+        N_OBSERVATIONS_MIN = torch.min(x_y_mask.sum((1, 2))).to(torch.int64)
+        is_regular = (N_OBSERVATIONS_MAX == N_OBSERVATIONS_MIN == L * ENC_IN) # determine if input is fully observed. Fully observed data can use faster implementation when flattening
+
         # to enable batch learning for multiple samples, not meant for alignment within sample
         def pad(v): return F.pad(v, [0, N_OBSERVATIONS_MAX - len(v)], value=0)
         if (x_L_flattened or x_y_mask_flattened or y_L_flattened or y_mask_L_flattened) is None:
-            # get total number of observations in each sample, and take max
-            N_OBSERVATIONS_MAX = torch.max(x_y_mask.sum((1, 2))).to(torch.int64)
+            if is_regular:
+                # regular time series input
+                x_L_flattened = x_L.reshape(BATCH_SIZE, L * ENC_IN)
+                x_y_mask_flattened = x_y_mask.reshape(BATCH_SIZE, L * ENC_IN)
+                y_L_flattened = y_L.reshape(BATCH_SIZE, L * ENC_IN)
+                y_mask_L_flattened = y_mask_L.reshape(BATCH_SIZE, L * ENC_IN)
+            else:
+                # flatten everything, from (L, ENC_IN) to (N_OBSERVATIONS_MAX), where observations belonging to the same timestep are nearby
+                # note that r[m] won't keep the original tensor shape by default, thus flattened
+                x_L_flattened = torch.stack([pad(r[m]) for r, m in zip(x_L, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+                x_y_mask_flattened = torch.stack([pad(r[m]) for r, m in zip(x_y_mask, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
 
-            # flatten everything, from (L, ENC_IN) to (N_OBSERVATIONS_MAX), where observations belonging to the same timestep are nearby
-            # note that r[m] won't keep the original tensor shape by default, thus flattened
-            x_L_flattened = torch.stack([pad(r[m]) for r, m in zip(x_L, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-            x_y_mask_flattened = torch.stack([pad(r[m]) for r, m in zip(x_y_mask, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-
-            y_L_flattened = torch.stack([pad(r[m]) for r, m in zip(y_L, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-            y_mask_L_flattened = torch.stack([pad(r[m]) for r, m in zip(y_mask_L, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+                y_L_flattened = torch.stack([pad(r[m]) for r, m in zip(y_L, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+                y_mask_L_flattened = torch.stack([pad(r[m]) for r, m in zip(y_mask_L, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
         # END adaptor
 
-        time_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(time_indices, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-        variable_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(variable_indices, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        if is_regular:
+            time_indices_flattened = time_indices.reshape(BATCH_SIZE, L * ENC_IN)
+            variable_indices_flattened = variable_indices.reshape(BATCH_SIZE, L * ENC_IN)
+        else:
+            time_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(time_indices, x_y_mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+            variable_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(variable_indices, x_y_mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
 
         # IMTS to hypergraph
         (
@@ -150,42 +172,48 @@ class Model(nn.Module):
             y_mask_L_flattened=y_mask_L_flattened
         )
 
-        # hypergraph to IMTS
-        pred_flattened = self.hypergraph_decoder(
-            torch.cat([
-                observation_nodes, 
-                temporal_hyperedges.gather(dim=1, index=repeat(
-                    time_indices_flattened,
-                    "BATCH_SIZE N_OBSERVATIONS_MAX -> BATCH_SIZE N_OBSERVATIONS_MAX D",
-                    D=self.d_model
-                )), 
-                variable_hyperedges.gather(dim=1, index=repeat(
-                    variable_indices_flattened,
-                    "BATCH_SIZE N_OBSERVATIONS_MAX -> BATCH_SIZE N_OBSERVATIONS_MAX D",
-                    D=self.d_model
-                )),
-            ], dim=-1)
-        ).squeeze(-1)
-
-        if exp_stage in ["train", "val"]:
-            return {
-                "pred": pred_flattened,
-                "true": y_L_flattened,
-                "mask": y_mask_L_flattened
-            }
+        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast', "imputation", "representation_learning"]:
+            # hypergraph to IMTS
+            pred_flattened = self.hypergraph_decoder(
+                torch.cat([
+                    observation_nodes, 
+                    temporal_hyperedges.gather(dim=1, index=repeat(
+                        time_indices_flattened,
+                        "BATCH_SIZE N_OBSERVATIONS_MAX -> BATCH_SIZE N_OBSERVATIONS_MAX D",
+                        D=self.d_model
+                    )), 
+                    variable_hyperedges.gather(dim=1, index=repeat(
+                        variable_indices_flattened,
+                        "BATCH_SIZE N_OBSERVATIONS_MAX -> BATCH_SIZE N_OBSERVATIONS_MAX D",
+                        D=self.d_model
+                    )),
+                ], dim=-1)
+            ).squeeze(-1)
+            if exp_stage in ["train", "val"]:
+                return {
+                    "pred": pred_flattened,
+                    "true": y_L_flattened,
+                    "mask": y_mask_L_flattened
+                }
+            else:
+                # convert unpadded tensor back to shape [batch_size, seq_len + pred_len, enc_in] to align with the pipeline's unified api when testing
+                pred = self.unpad_and_reshape(
+                    tensor_flattened=pred_flattened,
+                    original_mask=torch.cat([x_mask, y_mask], dim=1),
+                    original_shape=(BATCH_SIZE, SEQ_LEN + PRED_LEN, ENC_IN)
+                )
+                f_dim = -1 if self.configs.features == 'MS' else 0
+                return {
+                    "pred": pred[:, -PRED_LEN:, f_dim:],
+                    "true": y[:, :, f_dim:],
+                    "mask": y_mask[:, :, f_dim:],
+                    "pred_repr_time": temporal_hyperedges,
+                    "pred_repr_var": variable_hyperedges,
+                    "pred_repr_obs": self.get_pred_repr_obs(observation_nodes, x_y_mask)
+                }
         else:
-            # convert unpadded tensor back to shape [batch_size, seq_len + pred_len, enc_in] to align with the pipeline's unified api when testing
-            pred = self.unpad_and_reshape(
-                tensor_flattened=pred_flattened,
-                original_mask=torch.cat([x_mask, y_mask], dim=1),
-                original_shape=(BATCH_SIZE, SEQ_LEN + PRED_LEN, ENC_IN)
-            )
-            f_dim = -1 if self.configs.features == 'MS' else 0
-            return {
-                "pred": pred[:, -PRED_LEN:, f_dim:],
-                "true": y[:, :, f_dim:],
-                "mask": y_mask[:, :, f_dim:]
-            }
+            raise NotImplementedError
+
 
     def unpad_and_reshape(
         self, 
@@ -202,6 +230,22 @@ class Model(nn.Module):
             result[i].view(-1)[masked_indices] = unpadded_sequence
             
         return result
+
+    def get_pred_repr_obs(
+        self, 
+        tensor_flattened: Tensor, 
+        original_mask: Tensor, 
+    ):
+        BATCH_SIZE, L, ENC_IN = original_mask.shape
+        D_MODEL = tensor_flattened.shape[-1]
+        result = torch.zeros((BATCH_SIZE, L, ENC_IN, D_MODEL), dtype=tensor_flattened.dtype, device=tensor_flattened.device)
+
+        for i in range(BATCH_SIZE):
+            masked_indices = original_mask[i].unsqueeze(-1).repeat(1, 1, 1, D_MODEL).view(-1).nonzero(as_tuple=True)[0]
+            tensor_flattened_viewed = tensor_flattened.reshape(BATCH_SIZE, -1)[i][:len(masked_indices)]
+            result[i].view(-1)[masked_indices] = tensor_flattened_viewed
+
+        return result # (B L ENC_IN D_MODEL)
     
 class HypergraphEncoder(nn.Module):
     '''
