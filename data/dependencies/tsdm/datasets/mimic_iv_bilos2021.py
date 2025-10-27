@@ -59,7 +59,7 @@ class MIMIC_IV_Bilos2021(SingleFrameDataset):
         if not self.rawdata_paths.exists():
             raise RuntimeError(
                 f"Please apply the preprocessing code found at {self.GITHUB_URL}."
-                f"\nPut the resulting file 'complete_tensor.csv' in {self.RAWDATA_DIR}."
+                f"\nPut the resulting file '{self.rawdata_files}' in {self.RAWDATA_DIR}."
             )
 
         # self.validate_filehash(key, self.rawdata_paths, reference=self.RAWDATA_SHA256)
@@ -91,5 +91,5 @@ class MIMIC_IV_Bilos2021(SingleFrameDataset):
         if not self.rawdata_paths.exists():
             raise RuntimeError(
                 f"Please apply the preprocessing code found at {self.GITHUB_URL}."
-                f"\nPut the resulting file 'complete_tensor.csv' in {self.rawdata_paths}."
+                f"\nPut the resulting file '{self.rawdata_files}' in {self.rawdata_paths}."
             )
