@@ -31,6 +31,102 @@ class Data(Dataset):
         - 72 -> 24
         - 48 -> 48
     - number of variables: 96
+        - 0: Anion Gap
+        - 1: Bicarbonate
+        - 2: Calcium, Total
+        - 3: Chloride
+        - 4: Creatinine
+        - 5: Glucose
+        - 6: Magnesium
+        - 7: Phosphate
+        - 8: Potassium
+        - 9: Sodium
+        - 10: Alkaline Phosphatase
+        - 11: Asparate Aminotransferase (AST)
+        - 12: Bilirubin, Total
+        - 13: Urea Nitrogen
+        - 14: Basophils
+        - 15: Eosinophils
+        - 16: Hematocrit
+        - 17: Hemoglobin
+        - 18: Lymphocytes
+        - 19: MCH
+        - 20: MCHC
+        - 21: MCV
+        - 22: Monocytes
+        - 23: Neutrophils
+        - 24: Platelet Count
+        - 25: RDW
+        - 26: Red Blood Cells
+        - 27: White Blood Cells
+        - 28: PTT
+        - 29: Base Excess
+        - 30: Calculated Total CO2
+        - 31: Lactate
+        - 32: pCO2
+        - 33: pH
+        - 34: pO2
+        - 35: PT
+        - 36: Alanine Aminotransferase (ALT)
+        - 37: Specific Gravity
+        - 38: Sodium Chloride 0.9%  Flush Drug
+        - 39: D5W Drug
+        - 40: Magnesium Sulfate Drug
+        - 41: Potassium Chloride Drug
+        - 42: Potassium Chloride
+        - 43: Calcium Gluconate
+        - 44: Magnesium Sulfate
+        - 45: Furosemide (Lasix)
+        - 46: Insulin - Regular
+        - 47: PO Intake
+        - 48: Insulin - Humalog
+        - 49: OR Crystalloid Intake
+        - 50: Morphine Sulfate
+        - 51: Insulin - Glargine
+        - 52: OR Cell Saver Intake
+        - 53: Sterile Water
+        - 54: Dextrose 5%
+        - 55: LR
+        - 56: Piggyback
+        - 57: Solution
+        - 58: KCL (Bolus)
+        - 59: Magnesium Sulfate (Bolus)
+        - 60: Nitroglycerin
+        - 61: Albumin
+        - 62: Foley
+        - 63: Chest Tube #1
+        - 64: Metoprolol Tartrate Drug
+        - 65: Bisacodyl Drug
+        - 66: Docusate Sodium Drug
+        - 67: Aspirin Drug
+        - 68: Packed Red Blood Cells
+        - 69: Phenylephrine
+        - 70: Gastric Meds
+        - 71: GT Flush
+        - 72: Hydralazine
+        - 73: Midazolam (Versed)
+        - 74: Metoprolol
+        - 75: D5 1/2NS
+        - 76: Void
+        - 77: TF Residual
+        - 78: OR EBL
+        - 79: Albumin 5%
+        - 80: Lorazepam (Ativan)
+        - 81: Jackson Pratt #1
+        - 82: Pre-Admission
+        - 83: Pantoprazole Drug
+        - 84: Humulin-R Insulin Drug
+        - 85: Stool Out Stool
+        - 86: Ultrafiltrate Ultrafiltrate
+        - 87: Chest Tube #2
+        - 88: Heparin Sodium
+        - 89: K Phos
+        - 90: Norepinephrine
+        - 91: Urine Out Incontinent
+        - 92: Ostomy (output)
+        - 93: Fecal Bag
+        - 94: Gastric Gastric Tube
+        - 95: Condom Cath
     - number of samples: 21250 (17212 + 1913 + 2125)
     '''
     def __init__(
