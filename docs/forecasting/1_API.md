@@ -32,7 +32,7 @@ e.g., when training model Transformer on dataset Human Activity:
     }
     ```
 
-    > Tips: `collate_fn` will be called after the `__getitem__` function of dataset, separately processing each batch.
+    > Tips: `collate_fn` will be called after the `__getitem__` function of dataset, processing each batch separately.
 
 Comparing the input arguments of the model's `forward` and the keys in return value of the dataset, they have common parts (`x`, `x_mark`, `y`, `y_mark`, `y_mask`) and different ones (`y_class` in model; `x_mask`, `sample_ID` in dataset).
 
@@ -81,7 +81,7 @@ Thereby, any model can train on any dataset without raising errors.
 
     Existing arguments can be found in `utils/args.py`, and `utils/ExpConfigs.py` is used to support pylint checking.
 
-    > ❗️The global configuration should be treated as **read only**.
+    > ❗️The best practice is to treat global configuration as **read only**.
 
 - `forward()` input arguments
 
@@ -152,7 +152,7 @@ Thereby, any model can train on any dataset without raising errors.
 
     Existing arguments can be found in `utils/args.py`, and `utils/ExpConfigs.py` is used to support pylint checking.
 
-    > ❗️The global configuration should be treated as **read only**.
+    > ❗️The best practice is to treat global configuration as **read only**
 
 - `__getitem__()` return value
 
@@ -187,6 +187,21 @@ Thereby, any model can train on any dataset without raising errors.
     ```python
     class Loss(nn.Module):
     ```
+
+- `__init__()`
+
+    Minimal example:
+
+    ```python
+    def __init__(
+        self, 
+        configs: ExpConfigs
+    ):
+    ```
+
+    Existing arguments can be found in `utils/args.py`, and `utils/ExpConfigs.py` is used to support pylint checking.
+
+    > ❗️The best practice is to treat global configuration as **read only**
 
 - `forward()` input arguments
 
