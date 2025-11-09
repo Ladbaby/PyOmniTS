@@ -1,6 +1,7 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch
 import torch.nn as nn
+from torch import Tensor
 
 from utils.ExpConfigs import ExpConfigs
 
@@ -11,11 +12,20 @@ class Loss(nn.Module):
         '''
         super(Loss, self).__init__()
 
-    def forward(self, pred, true, mask=None, loss2=None, **kwargs):
+    def forward(
+        self, 
+        pred: Tensor, 
+        true: Tensor, 
+        mask: Tensor | None = None, 
+        loss2: Tensor | None = None, 
+        **kwargs
+    ) -> dict[str, Tensor]:
+        # BEGIN adaptor
         if mask is None:
             mask = torch.ones_like(true, device=true.device)
         if loss2 is None:
             raise ValueError
+        # END adaptor
 
         residual = (pred - true) * mask
         num_eval = mask.sum()

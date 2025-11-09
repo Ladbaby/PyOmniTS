@@ -1,5 +1,6 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch.nn as nn
+from torch import Tensor
 
 from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
@@ -12,7 +13,11 @@ class Loss(nn.Module):
     def __init__(self, configs:ExpConfigs):
         super(Loss, self).__init__()
 
-    def forward(self, loss=None, **kwargs):
+    def forward(
+        self, 
+        loss: Tensor | None = None, 
+        **kwargs
+    ):
         if loss is None:
             logger.exception(f"--loss ModelProvidedLoss expects key 'loss' in the returned dictionary of model's forward(). The model is supposed to calculate the loss itself in forward function", stack_info=True)
             exit(1)
