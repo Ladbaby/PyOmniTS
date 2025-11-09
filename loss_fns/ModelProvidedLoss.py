@@ -14,7 +14,8 @@ class Loss(nn.Module):
 
     def forward(self, loss=None, **kwargs):
         if loss is None:
-            logger.exception(f"ModelProvidedLoss expects key 'loss' in model's returned dictionary. The model is supposed to calculate the loss itself in forward function", stack_info=True)
+            logger.exception(f"--loss ModelProvidedLoss expects key 'loss' in the returned dictionary of model's forward(). The model is supposed to calculate the loss itself in forward function", stack_info=True)
+            exit(1)
 
         return {
             "loss": loss
