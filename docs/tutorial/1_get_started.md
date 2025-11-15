@@ -14,10 +14,10 @@ git clone https://github.com/Ladbaby/PyOmniTS.git
 - Create a new Python virtual environment via the tool of your choice, and activate it. For example, using [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/):
 
     ```
-    conda create -n pyomnits python=3.11
+    conda create -n pyomnits python=3.12
     conda activate pyomnits
     ```
-    Python 3.10~3.11 have been tested.
+    Python 3.10~3.12 have been tested.
 
 - Install dependencies.
 
@@ -87,7 +87,7 @@ Since MIMIC III requires credentialed access:
     Choose one of the options:
 
     - Option 1: Use the revised scripts in PyOmniTS.
-        - Create a new virtual environment with Python 3.7, numpy 1.21.6, and pandas 1.3.5
+        - Create a new virtual environment (only used in data preprocessing, not subsequent training) with Python 3.7, numpy 1.21.6, and pandas 1.3.5
 
             ```shell
             conda create -n python37 python=3.7
@@ -121,12 +121,12 @@ Since MIMIC IV requires credentialed access:
     Choose one of the options:
 
     - Option 1: Use the revised scripts in PyOmniTS.
-        - Create a new virtual environment with Python 3.7, numpy 1.21.6, and pandas 1.3.5
+        - Create a new virtual environment (only used in data preprocessing, not subsequent training) with Python 3.8, numpy 1.24.4, and pandas 2.0.3
 
             ```shell
-            conda create -n python37 python=3.7
-            conda activate python37
-            pip install numpy==1.21.6 pandas==1.3.5
+            conda create -n python38 python=3.8
+            conda activate python38
+            pip install numpy==1.24.4 pandas==2.0.3
             ```
         - `python data/dependencies/MIMIC_IV/preprocess/0_run_all.py`
     - Option 2: Use the original scripts in NeuralFlows.
