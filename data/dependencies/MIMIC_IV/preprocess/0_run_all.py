@@ -24,10 +24,10 @@ def check_package_version():
     import numpy
     import pandas
 
-    if numpy.__version__ != "1.21.6":
-        print(f"WARNING: numpy==1.21.6 is strongly recommended. Current version is {numpy.__version__}. You may get incorrect results!")
-    if pandas.__version__ != "1.3.5":
-        print(f"WARNING: pandas==1.3.5 is strongly recommended. Current version is {pandas.__version__}. You may get incorrect results!")
+    if numpy.__version__ != "1.24.4":
+        print(f"WARNING: numpy==1.24.4 is strongly recommended. Current version is {numpy.__version__}. You may get incorrect results!")
+    if pandas.__version__ != "2.0.3":
+        print(f"WARNING: pandas==2.0.3 is strongly recommended. Current version is {pandas.__version__}. You may get incorrect results!")
 
 
 def main():
@@ -57,10 +57,10 @@ def main():
             "PRESCRIPTIONS_processed.csv": "fc62c4e13c28c1dc095327a32b6011c4af3da52b2114d9a2e82af8838bf13242"
         },
         5: {
-            "INPUTS_processed.csv": "e9d58e237c42786fef9d73ac6dce80c3e1fbaad2614c5944e935da2854287e69"
+            "INPUTS_processed.csv": "9b363af5a6049e76ce71c38e67240ff465877a0ceed99424f1997b23d4b4e46c"
         },
         6: {
-            "full_dataset.csv": "cb90e0cef16d50011aaff7059e73d3f815657e10653a882f64f99003e64c70f5"
+            "full_dataset.csv": "f2b09be20b021a681783d92a0091a49dcd23d8128011cb25990a61b1c2c1210f"
         }
     }
 

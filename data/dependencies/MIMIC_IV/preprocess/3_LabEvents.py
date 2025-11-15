@@ -8,10 +8,10 @@ file_path = sys.argv[1]
 adm = pd.read_csv(f"{file_path}processed/Admissions_processed.csv")
 
 df = pd.DataFrame()
-for chunk in pd.read_csv(f"{file_path}hosp/labevents.csv.gz", chunksize=500000):
+for chunk in pd.read_csv(f"{file_path}hosp/labevents.csv.gz", chunksize=500000, low_memory=False):
     adm_ids=list(adm["hadm_id"])
     chunk=chunk.loc[chunk["hadm_id"].isin(adm_ids)]
-    df = df.append(chunk[["subject_id","hadm_id","charttime","valuenum","itemid"]])
+    df = pd.concat([df, chunk[["subject_id","hadm_id","charttime","valuenum","itemid"]]])
 
 # only choose previously selected admission ids.
 print(f'Patients after admission id filter: {df["subject_id"].nunique()}')

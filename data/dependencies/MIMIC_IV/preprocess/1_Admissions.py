@@ -37,7 +37,7 @@ print(f"Patients after age filter: {len(adm_2_15.index)}")
 
 # workaround:
 ids = np.array([])
-for chunk in pd.read_csv(file_path + 'icu/chartevents.csv.gz', chunksize=1000000):
+for chunk in pd.read_csv(file_path + 'icu/chartevents.csv.gz', chunksize=1000000, low_memory=False):
     ids = np.append(ids, chunk['hadm_id'].unique())
     ids = np.unique(ids)
 

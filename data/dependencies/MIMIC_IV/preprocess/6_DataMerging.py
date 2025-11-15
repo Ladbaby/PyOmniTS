@@ -33,10 +33,10 @@ outputs_df["Origin"]="Outputs"
 presc_df["Origin"]="Prescriptions"
 
 #merge both dfs.
-merged_df1=(inputs_df.append(lab_df)).reset_index()
-merged_df2=(merged_df1.append(outputs_df)).reset_index()
+merged_df1=(pd.concat([inputs_df, lab_df])).reset_index()
+merged_df2=(pd.concat([merged_df1, outputs_df])).reset_index()
 merged_df2.drop(columns="level_0",inplace=True)
-merged_df=(merged_df2.append(presc_df)).reset_index()
+merged_df=(pd.concat([merged_df2, presc_df])).reset_index()
 
 #Check that all labels have different names.
 assert(merged_df["label"].nunique()==(inputs_df["label"].nunique()+lab_df["label"].nunique()+outputs_df["label"].nunique()+presc_df["label"].nunique()))

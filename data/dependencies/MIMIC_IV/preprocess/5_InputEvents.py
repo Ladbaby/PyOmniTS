@@ -213,7 +213,7 @@ df_temp2["charttime"]=df_temp2["starttime"]
 df_temp4["charttime"]=df_temp4["starttime"]
 
 #Eventually, we merge all 4splits into one.
-inputs_small_4=df_new1.append([df_temp2,df_new3,df_temp4])
+inputs_small_4=pd.concat([df_new1, df_temp2, df_new3, df_temp4], ignore_index=True)
 #The result is a dataset with discrete inputs for each treatment.
 
 inputs_small_4.to_csv(f"{file_path}processed/INPUTS_processed.csv")
