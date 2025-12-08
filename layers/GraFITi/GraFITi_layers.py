@@ -45,7 +45,6 @@ class Encoder(nn.Module):
     def __init__(self, dim=41, nkernel=128, n_layers=3, attn_head=4, task_name="short_term_forecast", n_classes=2):
         super(Encoder, self).__init__()
         self.task_name = task_name
-        self.dim = dim+2
         self.nheads = attn_head
         self.nkernel = nkernel
         self.edge_init = nn.Linear(2, nkernel)
