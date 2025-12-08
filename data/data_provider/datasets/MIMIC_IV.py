@@ -141,7 +141,7 @@ class Data(Dataset):
         **kwargs
     ):
         self.configs = configs
-        assert flag in ['train', 'test', 'val', 'test_all']
+        assert flag in ["train", "val", "test", "test_all"]
         self.flag = flag
 
         self.cache = True

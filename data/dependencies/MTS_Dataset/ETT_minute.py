@@ -24,7 +24,7 @@ class Data(Dataset):
         self.label_len = configs.label_len
         self.pred_len = configs.pred_len
         # init
-        assert flag in ['train', 'test', 'val', 'test_all']
+        assert flag in ["train", "val", "test", "test_all"]
         type_map = {'train': 0, 'val': 1, 'test': 2, 'test_all': 3}
         self.set_type = type_map[flag]
 
