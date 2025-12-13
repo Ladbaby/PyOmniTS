@@ -102,6 +102,7 @@ class Model(nn.Module):
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
+        x_mark[x_mark == 1] = 0.9999 # cannot process value == 1 in mark
 
         # concat x and x_mark along the 4th dimension
         # since BigTS assumes input having week timesteps, we append extra zeros for D_TIMESTEPS == 1 case
