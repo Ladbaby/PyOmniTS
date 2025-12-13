@@ -21,6 +21,8 @@ def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, dro
     try:
         collate_fn = getattr(dataset_module, configs.collate_fn)
     except:
+        logger.warning(f"--collate_fn {configs.collate_fn} not implemented for dataset {configs.dataset_name}. Fall back to None.")
+        logger.warning(f"Hint: You can implement the {configs.collate_fn}() function in data/data_provider/datasets/{configs.dataset_name}.py")
         collate_fn = None
 
     if flag in ["test", "test_all"]:
