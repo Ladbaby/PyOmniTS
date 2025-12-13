@@ -9,6 +9,7 @@ from pathlib import Path
 import os
 from typing import Optional, Literal
 import hashlib
+import signal
 
 import numpy as np
 import torch
@@ -303,16 +304,33 @@ def download_file(
         logger.info("File already exists and no checksum provided. Skipping download.")
         return
     
+    def timeout_handler(signum, frame):
+        raise TimeoutError()
+
     if not local_file_path.exists():
-        download_choice = input(f"{local_file_path} not found. Do you want to download it from '{url}'? (Y/N)")
+        try:
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(30)
+            download_choice = input(f"{local_file_path} not found. Do you want to download it from '{url}'? (y/n, default y): ")
+            signal.alarm(0)  # Cancel the alarm
+        except TimeoutError:
+            print("\nNo response received. Defaulting to 'y'.")
+            download_choice = 'y'
+
+        # Default to 'y' if user just pressed Enter
+        if download_choice.strip() == '':
+            download_choice = 'y'
+        
         while True:
-            if download_choice.upper() == 'Y':
+            if download_choice.lower() == 'y':
                 break
-            elif download_choice.upper() == 'N':
+            elif download_choice.lower() == 'n':
                 logger.info("Download aborted.")
                 exit(0)
             else:
-                download_choice = input(f"Invalid choice '{download_choice}', please select between Y and N:")
+                download_choice = input(f"Invalid choice '{download_choice}', please select between y and n: ")
+                if download_choice.strip() == '':
+                    download_choice = 'y'
         
         # Read proxy settings from environment variables
         proxies = {}
