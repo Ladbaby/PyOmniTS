@@ -132,7 +132,7 @@ class Model(nn.Module):
         lengths2 = lengths.unsqueeze(1).to(device) # (BATCH_SIZE, 1)
         mask2 = mask.permute(1, 0).unsqueeze(2).long() # (SEQ_LEN, BATCH_SIZE, 1)
         if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
-            output = representation.mean(0).squeeze(0)
+            output = representation.mean(0)
         elif self.configs.task_name == "classification":
             if self.sensor_wise_mask:
                 output = torch.zeros([BATCH_SIZE, self.n_features, self.d_ob + self.d_pe], device=device)
