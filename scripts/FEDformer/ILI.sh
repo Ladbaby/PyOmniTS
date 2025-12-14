@@ -37,6 +37,6 @@ for pred_len in 36; do
     --patience 10 \
     --itr 5 \
     --batch_size 32 \
-    --learning_rate 0.0001
+    --learning_rate 1e-4
 done
 

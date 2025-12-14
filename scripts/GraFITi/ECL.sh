@@ -39,6 +39,6 @@ for pred_len in 336; do
     --val_interval 1 \
     --itr 5 \
     --batch_size 1 \
-    --learning_rate 0.001
+    --learning_rate 1e-3
 done
 
