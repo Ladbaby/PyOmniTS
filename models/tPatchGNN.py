@@ -28,14 +28,13 @@ class Model(nn.Module):
         assert configs.seq_len % configs.patch_len == 0, f"seq_len {configs.seq_len} should be divisible by patch_len {configs.patch_len}"
         self.n_patch: int = configs.seq_len // configs.patch_len
 
-        self.batch_size = configs.batch_size
         self.supports = None
         self.n_layer = configs.n_layers # 1
         dropout = configs.dropout # 0
         self.te_dim = configs.tpatchgnn_te_dim
         self.n_heads = configs.n_heads
         self.tf_layer = 1
-        self.node_dim = configs.node_dim
+        self.node_dim = configs.node_dim # 10
         self.hop = 1
         self.outlayer = "Linear"
 
@@ -122,39 +121,39 @@ class Model(nn.Module):
             raise NotImplementedError
         
     def LearnableTE(self, tt):
-        # tt: (N*M*B, L, 1)
+        # tt: (ENC_IN*n_patch*BATCH_SIZE, L, 1)
         out1 = self.te_scale(tt)
         out2 = torch.sin(self.te_periodic(tt))
         return torch.cat([out1, out2], -1)
     
     def TTCN(self, X_int, mask_X):
-        # X_int: shape (B*N*M, L, F)
-        # mask_X: shape (B*N*M, L, 1)
+        # X_int: shape (BATCH_SIZE*ENC_IN*n_patch, SEQ_LEN_IN_PATCH, hid_dim-1)
+        # mask_X: shape (BATCH_SIZE*ENC_IN*n_patch, SEQ_LEN_IN_PATCH, 1)
 
-        N, Lx, _ = mask_X.shape
-        Filter = self.Filter_Generators(X_int) # (N, Lx, F_in*ttcn_dim)
+        N, SEQ_LEN_IN_PATCH, _ = mask_X.shape
+        Filter = self.Filter_Generators(X_int) # (BATCH_SIZE * ENC_IN * n_patch, SEQ_LEN_IN_PATCH, F_in*(hid_dim-1))
         Filter_mask = Filter * mask_X + (1 - mask_X) * (-1e8)
         # normalize along with sequence dimension
-        Filter_seqnorm = F.softmax(Filter_mask, dim=-2)  # (N, Lx, F_in*ttcn_dim)
-        Filter_seqnorm = Filter_seqnorm.view(N, Lx, self.ttcn_dim, -1) # (N, Lx, ttcn_dim, F_in)
+        Filter_seqnorm = F.softmax(Filter_mask, dim=-2)  # (BATCH_SIZE * ENC_IN * n_patch, SEQ_LEN_IN_PATCH, F_in*(hid_dim-1))
+        Filter_seqnorm = Filter_seqnorm.view(N, SEQ_LEN_IN_PATCH, self.ttcn_dim, -1) # (BATCH_SIZE * ENC_IN * n_patch, SEQ_LEN_IN_PATCH, hid_dim-1, F_in)
         X_int_broad = X_int.unsqueeze(dim=-2).repeat(1, 1, self.ttcn_dim, 1)
-        ttcn_out = torch.sum(torch.sum(X_int_broad * Filter_seqnorm, dim=-3), dim=-1) # (N, ttcn_dim)
-        h_t = torch.relu(ttcn_out + self.T_bias) # (N, ttcn_dim)
+        ttcn_out = torch.sum(torch.sum(X_int_broad * Filter_seqnorm, dim=-3), dim=-1) # (BATCH_SIZE * ENC_IN * n_patch, hid_dim-1)
+        h_t = torch.relu(ttcn_out + self.T_bias) # (BATCH_SIZE * ENC_IN * n_patch, hid_dim-1)
         return h_t
 
-    def IMTS_Model(self, x, mask_X):
+    def IMTS_Model(self, x: Tensor, mask_X: Tensor):
         """
-        x (B*N*M, L, F)
-        mask_X (B*N*M, L, 1)
+        - x: (BATCH_SIZE * ENC_IN * n_patch, SEQ_LEN_IN_PATCH, te_dim+1)
+        - mask_X (BATCH_SIZE * ENC_IN * n_patch, SEQ_LEN_IN_PATCH, 1)
         """
         # mask for the patch
-        mask_patch = (mask_X.sum(dim=1) > 0) # (B*N*M, 1)
+        mask_patch = (mask_X.sum(dim=1) > 0) # (BATCH_SIZE * ENC_IN * n_patch, 1)
 
         ### TTCN for patch modeling ###
-        x_patch = self.TTCN(x, mask_X) # (B*N*M, hid_dim-1)
-        x_patch = torch.cat([x_patch, mask_patch],dim=-1) # (B*N*M, hid_dim)
-        x_patch = x_patch.view(self.batch_size, self.ndim, self.n_patch, -1) # (B, N, M, hid_dim)
-        B, N, M, D = x_patch.shape
+        x_patch = self.TTCN(x, mask_X) # (BATCH_SIZE * ENC_IN * n_patch, hid_dim-1)
+        x_patch = torch.cat([x_patch, mask_patch],dim=-1) # (BATCH_SIZE * ENC_IN * n_patch, hid_dim)
+        x_patch = x_patch.view(-1, self.ndim, self.n_patch, self.hid_dim) # (BATCH_SIZE, ENC_IN, n_patch, hid_dim)
+        BATCH_SIZE, ENC_IN, N_PATCH, HID_DIM = x_patch.shape
 
         x = x_patch
         for layer in range(self.n_layer):
@@ -163,40 +162,40 @@ class Model(nn.Module):
                 x_last = x.clone()
                 
             ### Transformer for temporal modeling ###
-            x = x.reshape(B*N, M, -1) # (B*N, M, F)
+            x = x.reshape(BATCH_SIZE*ENC_IN, N_PATCH, -1) # (BATCH_SIZE*ENC_IN, N_PATCH, hid_dim)
             x = self.ADD_PE(x)
-            x = self.transformer_encoder[layer](x).view(x_patch.shape) # (B, N, M, F)
+            x = self.transformer_encoder[layer](x).view(x_patch.shape) # (BATCH_SIZE, ENC_IN, N_PATCH, hid_dim)
 
             ### GNN for inter-time series modeling ###
             ### time-adaptive graph structure learning ###
-            nodevec1 = self.nodevec1.view(1, 1, N, self.nodevec_dim).repeat(B, M, 1, 1)
-            nodevec2 = self.nodevec2.view(1, 1, self.nodevec_dim, N).repeat(B, M, 1, 1)
+            nodevec1 = self.nodevec1.view(1, 1, ENC_IN, self.nodevec_dim).repeat(BATCH_SIZE, N_PATCH, 1, 1)
+            nodevec2 = self.nodevec2.view(1, 1, self.nodevec_dim, ENC_IN).repeat(BATCH_SIZE, N_PATCH, 1, 1)
             x_gate1 = self.nodevec_gate1[layer](torch.cat([x, nodevec1.permute(0, 2, 1, 3)], dim=-1))
             x_gate2 = self.nodevec_gate2[layer](torch.cat([x, nodevec2.permute(0, 3, 1, 2)], dim=-1))
-            x_p1 = x_gate1 * self.nodevec_linear1[layer](x) # (B, M, N, 10)
-            x_p2 = x_gate2 * self.nodevec_linear2[layer](x) # (B, M, N, 10)
-            nodevec1 = nodevec1 + x_p1.permute(0,2,1,3) # (B, M, N, 10)
-            nodevec2 = nodevec2 + x_p2.permute(0,2,3,1) # (B, M, 10, N)
+            x_p1 = x_gate1 * self.nodevec_linear1[layer](x) # (BATCH_SIZE, N_PATCH, ENC_IN, 10)
+            x_p2 = x_gate2 * self.nodevec_linear2[layer](x) # (BATCH_SIZE, N_PATCH, ENC_IN, 10)
+            nodevec1 = nodevec1 + x_p1.permute(0,2,1,3) # (BATCH_SIZE, N_PATCH, ENC_IN, 10)
+            nodevec2 = nodevec2 + x_p2.permute(0,2,3,1) # (BATCH_SIZE, N_PATCH, 10, ENC_IN)
 
-            adp = F.softmax(F.relu(torch.matmul(nodevec1, nodevec2)), dim=-1) # (B, M, N, N) used
+            adp = F.softmax(F.relu(torch.matmul(nodevec1, nodevec2)), dim=-1) # (BATCH_SIZE, N_PATCH, ENC_IN, ENC_IN) used
             new_supports = self.supports + [adp]
 
-            # input x shape (B, F, N, M)
-            x = self.gconv[layer](x.permute(0,3,1,2), new_supports) # (B, F, N, M)
-            x = x.permute(0, 2, 3, 1) # (B, N, M, F)
+            # input x shape (BATCH_SIZE, hid_dim, ENC_IN, N_PATCH)
+            x = self.gconv[layer](x.permute(0,3,1,2), new_supports) # (BATCH_SIZE, hid_dim, ENC_IN, N_PATCH)
+            x = x.permute(0, 2, 3, 1) # (BATCH_SIZE, ENC_IN, N_PATCH, hid_dim)
 
             if(layer > 0): # residual addition
                 x = x_last + x 
 
         ### Output layer ###
         if(self.outlayer == "CNN"):
-            x = x.reshape(self.batch_size*self.ndim, self.n_patch, -1).permute(0, 2, 1) # (B*N, F, M)
-            x = self.temporal_agg(x) # (B*N, F, M) -> (B*N, F, 1)
-            x = x.view(self.batch_size, self.ndim, -1) # (B, N, F)
+            x = x.reshape(BATCH_SIZE*self.ndim, self.n_patch, -1).permute(0, 2, 1) # (BATCH_SIZE*ENC_IN, hid_dim, N_PATCH)
+            x = self.temporal_agg(x) # (BATCH_SIZE*ENC_IN, hid_dim, N_PATCH) -> (BATCH_SIZE*ENC_IN, hid_dim, 1)
+            x = x.view(BATCH_SIZE, self.ndim, -1) # (BATCH_SIZE, ENC_IN, hid_dim)
 
         elif(self.outlayer == "Linear"):
-            x = x.reshape(self.batch_size, self.ndim, -1) # (B, N, M*F)
-            x = self.temporal_agg(x) # (B, N, hid_dim)
+            x = x.reshape(BATCH_SIZE, self.ndim, -1) # (BATCH_SIZE, ENC_IN, N_PATCH*hid_dim)
+            x = self.temporal_agg(x) # (BATCH_SIZE, ENC_IN, hid_dim)
 
         return x
 
@@ -227,50 +226,47 @@ class Model(nn.Module):
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
 
         # reshape tensors to align with tPatchGNN's desired input shape
-        # x_enc: [B, npatch, seq_len // npatch, enc_in]
-        # x_mark_enc: [B, npatch, seq_len // npatch, enc_in]
-        # x_mark_dec: [B, pred_len]
-        # x_mask_enc: [B, npatch, seq_len // npatch, enc_in]
+        # x: [B, n_patch, seq_len // n_patch, enc_in]
+        # x_mark: [B, n_patch, seq_len // n_patch, enc_in]
+        # y_mark: [B, pred_len]
+        # y_mask: [B, n_patch, seq_len // n_patch, enc_in]
         x_mark = repeat(x_mark[:, :, 0], "b l -> b l f", f=x.shape[-1])
         y_mark = repeat(y_mark[:, :, 0], "b l -> b l f", f=y.shape[-1])
-        B, seq_len, enc_in = x_mark.shape
-        B, pred_len, c_out = y_mark.shape
-        if seq_len % self.n_patch != 0:
-            logger.exception(f"Error in tPatchGNN forward(): seq_len must be divisible by number of patches {self.n_patch}. Try changing the self.npatch value.", stack_info=True)
+        if SEQ_LEN % self.n_patch != 0:
+            logger.exception(f"Error in tPatchGNN forward(): seq_len must be divisible by number of patches {self.n_patch}. Try changing --patch_len", stack_info=True)
             exit(1)
-        x = x.reshape(B, self.n_patch, seq_len // self.n_patch, -1)
-        x_mark = x_mark.reshape(B, self.n_patch, seq_len // self.n_patch, -1)
-        x_mask = x_mask.reshape(B, self.n_patch, seq_len // self.n_patch, -1)
+        x = x.reshape(BATCH_SIZE, self.n_patch, SEQ_LEN // self.n_patch, -1)
+        x_mark = x_mark.reshape(BATCH_SIZE, self.n_patch, SEQ_LEN // self.n_patch, -1)
+        x_mask = x_mask.reshape(BATCH_SIZE, self.n_patch, SEQ_LEN // self.n_patch, -1)
         y_mark = y_mark[:, :, 0]
         # END adaptor
 
         # original codes below
 
-        B, npatch, seq_len_in_patch, enc_in = x.shape
-        x = x.permute(0, 3, 1, 2).reshape(-1, seq_len_in_patch, 1) # (B * enc_in * npatch, seq_len_in_patch, 1)
-        x_mark = x_mark.permute(0, 3, 1, 2).reshape(-1, seq_len_in_patch, 1)  # (B * enc_in * npatch, seq_len_in_patch, 1)
-        x_mask = x_mask.permute(0, 3, 1, 2).reshape(-1, seq_len_in_patch, 1)  # (B * enc_in * npatch, seq_len_in_patch, 1)
-        te_his = self.LearnableTE(x_mark) # (B * enc_in * npatch, seq_len_in_patch, F_te)
+        BATCH_SIZE, N_PATCH, SEQ_LEN_IN_PATCH, ENC_IN = x.shape
+        x = x.permute(0, 3, 1, 2).reshape(-1, SEQ_LEN_IN_PATCH, 1) # (B * enc_in * n_patch, seq_len_in_patch, 1)
+        x_mark = x_mark.permute(0, 3, 1, 2).reshape(-1, SEQ_LEN_IN_PATCH, 1)  # (B * enc_in * n_patch, seq_len_in_patch, 1)
+        x_mask = x_mask.permute(0, 3, 1, 2).reshape(-1, SEQ_LEN_IN_PATCH, 1)  # (B * enc_in * n_patch, seq_len_in_patch, 1)
+        te_his = self.LearnableTE(x_mark) # (B * enc_in * n_patch, seq_len_in_patch, te_dim)
 
-        x = torch.cat([x, te_his], dim=-1)  # (B * enc_in * npatch, seq_len_in_patch, F)
+        x = torch.cat([x, te_his], dim=-1)  # (B * enc_in * n_patch, seq_len_in_patch, te_dim+1)
 
         ### *** an encoder to model irregular time series
-        h = self.IMTS_Model(x, x_mask) # (B, enc_in, hid_dim)
+        h = self.IMTS_Model(x, x_mask) # h: (B, enc_in, hid_dim)
 
 
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             """ Decoder """
-            L_pred = y_mark.shape[-1]
-            h = h.unsqueeze(dim=-2).repeat(1, 1, L_pred, 1) # (B, enc_in, Lp, F)
-            y_mark = y_mark.view(B, 1, L_pred, 1).repeat(1, enc_in, 1, 1) # (B, enc_in, Lp, 1)
-            te_pred = self.LearnableTE(y_mark) # (B, enc_in, Lp, F_te)
+            PRED_LEN = y.shape[1]
+            h = h.unsqueeze(dim=-2).repeat(1, 1, PRED_LEN, 1) # (B, enc_in, PRED_LEN, hid_dim)
+            y_mark = y_mark.view(BATCH_SIZE, 1, PRED_LEN, 1).repeat(1, ENC_IN, 1, 1) # (B, enc_in, PRED_LEN, 1)
+            te_pred = self.LearnableTE(y_mark) # (B, enc_in, PRED_LEN, te_dim)
 
-            h = torch.cat([h, te_pred], dim=-1) # (B, enc_in, Lp, F)
+            h = torch.cat([h, te_pred], dim=-1) # (B, enc_in, PRED_LEN, hid_dim+te_dim)
 
-            # (B, enc_in, Lp, F) -> (B, enc_in, Lp, 1) -> (B, Lp, enc_in)
+            # (B, enc_in, PRED_LEN, hid_dim+te_dim) -> (B, enc_in, PRED_LEN, 1) -> (B, PRED_LEN, enc_in)
             outputs = self.decoder(h).squeeze(dim=-1).permute(0, 2, 1) 
             f_dim = -1 if self.configs.features == 'MS' else 0
-            PRED_LEN = y.shape[1]
             return {
                 "pred": outputs[:, -PRED_LEN:, f_dim:],
                 "true": y[:, :, f_dim:],
@@ -288,7 +284,6 @@ class nconv(nn.Module):
         # x (B, F, N, M)
         # A (B, M, N, N)
         x = torch.einsum('bfnm,bmnv->bfvm',(x,A)) # used
-        # print(x.shape)
         return x.contiguous() # (B, F, N, M)
 
 class linear(nn.Module):
