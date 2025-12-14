@@ -113,7 +113,7 @@ class Model(nn.Module):
         if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             if exp_stage == "train":
                 return {
-                    "pred": self.revert_rearrange_and_pad_multivariate_tensor(output.mean),
+                    "pred": self.revert_rearrange_and_pad_multivariate_tensor(tensor=output.mean, batch_size=BATCH_SIZE),
                     "true": torch.cat([x, y], dim=1),
                     "mask": torch.cat([x_mask, y_mask], dim=1),
                     "loss": loss
@@ -122,7 +122,7 @@ class Model(nn.Module):
                 f_dim = -1 if self.configs.features == 'MS' else 0
                 PRED_LEN = y.shape[1]
                 return {
-                    "pred": self.revert_rearrange_and_pad_multivariate_tensor(output.mean)[:, -PRED_LEN:, f_dim:],
+                    "pred": self.revert_rearrange_and_pad_multivariate_tensor(tensor=output.mean, batch_size=BATCH_SIZE)[:, -PRED_LEN:, f_dim:],
                     "true": y,
                     "mask": y_mask,
                     "loss": loss
@@ -267,19 +267,18 @@ class Model(nn.Module):
         return rearrange(
             tensor,
             "BATCH_SIZE (N_PATCH PATCH_LEN) -> BATCH_SIZE N_PATCH PATCH_LEN",
-            BATCH_SIZE=self.configs.batch_size,
             N_PATCH=self.n_patch_all
         )
 
     def rearrange_and_pad_multivariate_tensor(
         self,
-        tensor
+        tensor: Tensor
     ):
         BATCH_SIZE, L, ENC_IN = tensor.shape
         tensor_rearranged = rearrange(
             tensor,
             "BATCH_SIZE (N_PATCH PATCH_LEN) N -> (BATCH_SIZE N) N_PATCH PATCH_LEN",
-            BATCH_SIZE=self.configs.batch_size,
+            BATCH_SIZE=BATCH_SIZE,
             N_PATCH=self.n_patch_all
         )
         padded_tensor = torch.zeros(BATCH_SIZE * ENC_IN, L // self.patch_len, self.patch_len_padded).to(tensor.device)
@@ -288,12 +287,13 @@ class Model(nn.Module):
 
     def revert_rearrange_and_pad_multivariate_tensor(
         self,
-        tensor
+        tensor: Tensor,
+        batch_size: int
     ):
         return rearrange(
             tensor[:, :, :self.patch_len],
             "(BATCH_SIZE N) N_PATCH PATCH_LEN -> BATCH_SIZE (N_PATCH PATCH_LEN) N",
-            BATCH_SIZE=self.configs.batch_size,
+            BATCH_SIZE=batch_size,
         )
 
 
