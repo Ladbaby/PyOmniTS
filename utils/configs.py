@@ -70,8 +70,8 @@ parser.add_argument('--lr_scheduler_gamma', type=float, default=0.1, help='gamma
 parser.add_argument('--n_train_stages', type=int, default=1, help="Some models have multiple training stages, like pretraining + finetuning. e.g., --n_train_stages 2 will pass train_stage=1 and train_stage=2 to model during training.")
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
 parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
-parser.add_argument('--pretrained_checkpoint_root_path', type=str, default="", help="Path to folder containing pretrained model's checkpoints")
 parser.add_argument('--pretrained_checkpoint_file_name', type=str, default="", help="file name of pretrained model's checkpoints, including file type extension")
+parser.add_argument('--pretrained_checkpoint_root_path', type=str, default="", help="Path to folder containing pretrained model's checkpoints")
 parser.add_argument('--retain_graph', type=int, default=0, help='whether to retain compute graph in back propagation. Used in special models like HD_TTS.')
 parser.add_argument('--sweep', type=int, default=0, help='whether to use weight & bias for hyperparameter searching')
 parser.add_argument('--train_epochs', type=int, default=300, help='train epochs')
@@ -119,48 +119,48 @@ parser.add_argument('--revin_affine', type=int, default=0, help='RevIN-affine; T
 parser.add_argument('--scale_factor', type=int, default=2, help='scale factor for upsample. Only used in some regular time series forecasting models.')
 parser.add_argument('--top_k', type=int, default=5, help='top k selection')
 # CRU
-parser.add_argument('--cru_num_basis', type=int, default=15, help="Number of basis matrices to use in transition model for locally-linear transitions. K in paper")
 parser.add_argument('--cru_bandwidth', type=int, default=3, help="Bandwidth for basis matrices A_k. b in paper")
+parser.add_argument('--cru_num_basis', type=int, default=15, help="Number of basis matrices to use in transition model for locally-linear transitions. K in paper")
 parser.add_argument('--cru_ts', type=float, default=1.0, help="Scaling factor of timestamps for numerical stability.")
 # Informer
 parser.add_argument('--informer_distil', type=int, default=1, help='whether to use distilling in encoder, using this argument means not using distilling')
 # Latent ODE
-parser.add_argument('--latent_ode_units', type=int, default=100, help="Number of units per layer in ODE func")
-parser.add_argument('--latent_ode_gen_layers', type=int, default=1, help="Number of layers in ODE func in generative ODE")
-parser.add_argument('--latent_ode_rec_layers', type=int, default=1, help="Number of layers in ODE func in recognition ODE")
-parser.add_argument('--latent_ode_z0_encoder', type=str, default='odernn', help="Type of encoder for Latent ODE model: odernn or rnn")
-parser.add_argument('--latent_ode_rec_dims', type=int, default=20, help="Dimensionality of the recognition model (ODE or RNN).")
-parser.add_argument('--latent_ode_gru_units', type=int, default=100, help="Number of units per layer in each of GRU update networks")
 parser.add_argument('--latent_ode_classif', type=int, default=0, help="Include binary classification loss -- used for Physionet dataset for hospiral mortality")
+parser.add_argument('--latent_ode_gen_layers', type=int, default=1, help="Number of layers in ODE func in generative ODE")
+parser.add_argument('--latent_ode_gru_units', type=int, default=100, help="Number of units per layer in each of GRU update networks")
 parser.add_argument('--latent_ode_linear_classif', type=int, default=0, help="If using a classifier, use a linear classifier instead of 1-layer NN")
+parser.add_argument('--latent_ode_rec_dims', type=int, default=20, help="Dimensionality of the recognition model (ODE or RNN).")
+parser.add_argument('--latent_ode_rec_layers', type=int, default=1, help="Number of layers in ODE func in recognition ODE")
+parser.add_argument('--latent_ode_units', type=int, default=100, help="Number of units per layer in ODE func")
+parser.add_argument('--latent_ode_z0_encoder', type=str, default='odernn', help="Type of encoder for Latent ODE model: odernn or rnn")
 # Mamba
 parser.add_argument('--mamba_d_conv', type=int, default=4, help='conv kernel size for Mamba')
 parser.add_argument('--mamba_expand', type=int, default=2, help='expansion factor for Mamba')
 # mTAN
-parser.add_argument('--mtan_num_ref_points', type=int, default=8, help='number of reference points, originally chosen in [8, 16, 32, 64, 128]')
 parser.add_argument('--mtan_alpha', type=float, default=100., help='In classification task, loss is calculated as recon_loss + self.alpha * ce_loss')
+parser.add_argument('--mtan_num_ref_points', type=int, default=8, help='number of reference points, originally chosen in [8, 16, 32, 64, 128]')
 # NeuralFlows
-parser.add_argument('--neuralflows_flow_model', type=str, default='coupling', help='Type of NeuralFlows model', choices=['coupling', 'resnet', 'gru'])
 parser.add_argument('--neuralflows_flow_layers', type=int, default=1, help='Number of flow layers')
+parser.add_argument('--neuralflows_flow_model', type=str, default='coupling', help='Type of NeuralFlows model', choices=['coupling', 'resnet', 'gru'])
 parser.add_argument('--neuralflows_latents', type=int, default=20, help='Size of the latent state')
-parser.add_argument('--neuralflows_time_net', type=str, default='TimeLinear', help='Name of time net', choices=['TimeFourier', 'TimeFourierBounded', 'TimeLinear', 'TimeTanh'])
 parser.add_argument('--neuralflows_time_hidden_dim', type=int, default=1, help='Number of time features (only for Fourier)')
+parser.add_argument('--neuralflows_time_net', type=str, default='TimeLinear', help='Name of time net', choices=['TimeFourier', 'TimeFourierBounded', 'TimeLinear', 'TimeTanh'])
 # Nonstationary Transformer
 parser.add_argument('--nonstationarytransformer_p_hidden_dims', type=int, nargs='+', default=[128, 128], help='hidden layer dimensions of projector (List)')
 parser.add_argument('--nonstationarytransformer_p_hidden_layers', type=int, default=2, help='number of hidden layers in projector')
 # PatchTST
+parser.add_argument('--patchtst_decomposition', type=int, default=0, help='decomposition; True 1 False 0')
 parser.add_argument('--patchtst_fc_dropout', type=float, default=0.05, help='fully connected dropout')
 parser.add_argument('--patchtst_head_dropout', type=float, default=0.0, help='head dropout')
 parser.add_argument('--patchtst_padding_patch', default='end', help='None: None; end: padding on the end')
 parser.add_argument('--patchtst_subtract_last', type=int, default=0, help='0: subtract mean; 1: subtract last')
-parser.add_argument('--patchtst_decomposition', type=int, default=0, help='decomposition; True 1 False 0')
 # PrimeNet
 parser.add_argument('--primenet_pooling', type=str, default='ave', help='[ave, att, bert]: What pooling to use to aggregate the model output sequence representation for different tasks.')
 # TimeMixer
 parser.add_argument('--timemixer_decomp_method', type=str, default='moving_avg', help='method of series decompsition, only support moving_avg or dft_decomp')
-parser.add_argument('--timemixer_use_norm', type=int, default=1, help='whether to use normalize; True 1 False 0')
 parser.add_argument('--timemixer_down_sampling_layers', type=int, default=0, help='num of down sampling layers')
 parser.add_argument('--timemixer_down_sampling_method', type=str, default="avg", help='down sampling method, only support avg, max, conv')
+parser.add_argument('--timemixer_use_norm', type=int, default=1, help='whether to use normalize; True 1 False 0')
 # tPatchGNN
 parser.add_argument('--tpatchgnn_te_dim', type=int, default=10, help="Number of units for time encoding")
 
