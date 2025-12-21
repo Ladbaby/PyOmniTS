@@ -32,7 +32,7 @@ class ExpConfigs:
     target_variable_name: str
     target_variable_index: int
     freq: str
-    collate_fn: str
+    collate_fn: str | None
     augmentation_ratio: int
     missing_rate: float
     train_val_loader_shuffle: int
