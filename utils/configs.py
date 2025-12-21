@@ -25,7 +25,7 @@ Note: Models and datasets only access the arguments they need.
 parser = argparse.ArgumentParser(description='PyOmniTS')
 
 # basic config
-parser.add_argument('--checkpoints', type=str, default='storage/results/', help='where to save model checkpoints in training. By default, results are organized under storage/results/DATASET_NAME/MODEL_NAME/MODEL_ID/SEQ_LEN_PRED_LEN/%Y_%m%d_%H%M/iter0')
+parser.add_argument('--checkpoints', type=str, default='storage/results/', help='where to save model checkpoints in training. By default, results are organized under storage/results/DATASET_NAME/MODEL_NAME/MODEL_ID/SEQ_LEN_PRED_LEN/Y_md_HM/iter0')
 parser.add_argument('--is_training', type=int, default=1, help='training or testing')
 parser.add_argument('--model_id', type=str, default='GRU_D', help='By default, model_id is the same as model_name. However, if the model has multiple variants, then model_id will additionally contain more detailed information (backbone name, model size, etc). Unlike model_name, model_id only affects the storage location of experiment results (refer to --checkpoints) and yaml configs, so you can change it to whatever you like (e.g., GRU_D_d_model_512).')
 parser.add_argument('--model_name', type=str, default='GRU_D', help='model name. PyOmniTS will try to construct the model from class Model in models/MODEL_NAME.py')
