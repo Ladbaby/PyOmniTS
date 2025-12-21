@@ -18,12 +18,13 @@ def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, dro
     Data = dataset_module.Data
 
     # try to load custom collate_fn for the dataset, if present
-    try:
-        collate_fn = getattr(dataset_module, configs.collate_fn)
-    except:
-        logger.warning(f"--collate_fn {configs.collate_fn} not implemented for dataset {configs.dataset_name}. Fall back to None.")
-        logger.warning(f"Hint: You can implement the {configs.collate_fn}() function in data/data_provider/datasets/{configs.dataset_name}.py")
-        collate_fn = None
+    collate_fn = None
+    if configs.collate_fn is not None:
+        try:
+            collate_fn = getattr(dataset_module, configs.collate_fn)
+        except:
+            logger.warning(f"--collate_fn {configs.collate_fn} not implemented for dataset {configs.dataset_name}. Fall back to None.")
+            logger.warning(f"Hint: You can implement the {configs.collate_fn}() function in data/data_provider/datasets/{configs.dataset_name}.py")
 
     if flag in ["test", "test_all"]:
         shuffle_flag = False
