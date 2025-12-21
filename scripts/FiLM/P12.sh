@@ -15,6 +15,7 @@ seq_len=36
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
+    --collate_fn "collate_fn" \
     --e_layers 2 \
     --d_layers 1 \
     --factor 3 \

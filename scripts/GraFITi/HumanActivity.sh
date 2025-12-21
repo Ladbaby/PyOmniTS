@@ -15,6 +15,7 @@ seq_len=3000
 for pred_len in 300; do
     $launch_command main.py \
         --is_training 1 \
+        --collate_fn "collate_fn" \
         --d_model 128 \
         --n_layers 2 \
         --n_heads 4 \

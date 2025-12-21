@@ -15,6 +15,7 @@ seq_len=2160
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
+    --collate_fn "collate_fn" \
     --patch_len 360 \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \

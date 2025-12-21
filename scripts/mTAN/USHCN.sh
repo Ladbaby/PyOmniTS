@@ -15,6 +15,7 @@ seq_len=150
 for pred_len in 3; do
     $launch_command main.py \
         --is_training 1 \
+        --collate_fn "collate_fn" \
         --loss "ModelProvidedLoss" \
         --use_multi_gpu $use_multi_gpu \
         --dataset_root_path $dataset_root_path \

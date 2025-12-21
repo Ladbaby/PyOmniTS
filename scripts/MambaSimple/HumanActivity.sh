@@ -15,6 +15,7 @@ seq_len=3000
 for pred_len in 300; do
     $launch_command main.py \
         --is_training 1 \
+        --collate_fn "collate_fn" \
         --loss "MSE" \
         --d_ff 16 \
         --d_model 128 \

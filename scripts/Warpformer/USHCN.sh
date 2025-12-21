@@ -15,6 +15,7 @@ seq_len=150
 for pred_len in 3; do
     $launch_command main.py \
         --is_training 1 \
+        --collate_fn "collate_fn" \
         --loss "MSE" \
         --d_model 64 \
         --n_heads 1 \
