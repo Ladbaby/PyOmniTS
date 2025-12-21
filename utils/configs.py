@@ -33,7 +33,7 @@ parser.add_argument('--task_name', type=str, choices=["long_term_forecast", "sho
 
 # dataset & data loader
 parser.add_argument('--augmentation_ratio', type=int, default=0, help="How many times to augment in regular time series forecasting datasets.")
-parser.add_argument('--collate_fn', type=str, default="collate_fn", help='Name of the function as a custom collate_fn for dataloader. By default, datasets without collate_fn defined in data/data_provider/datasets/SOME_DATASET_NAME will use default collate_fn of Pytorch. Refer to data/data_provider/data_factory.py for implementation detail.')
+parser.add_argument('--collate_fn', type=str, default=None, help='Name of the function as a custom collate_fn for dataloader. By default, datasets without collate_fn defined in data/data_provider/datasets/SOME_DATASET_NAME will use the default collate_fn of Pytorch. Refer to data/data_provider/data_factory.py for implementation detail.')
 parser.add_argument('--dataset_file_name', type=str, default=None, help='Some datasets contains more than one files, then this argument may be ignored.')
 parser.add_argument('--dataset_name', type=str, default='ETTm1', help='dataset name')
 parser.add_argument('--dataset_root_path', type=str, default='storage/datasets/ETT-small/', help='root path of the data file')
