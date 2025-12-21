@@ -18,41 +18,44 @@ variable `configs` are ONLY determined by argparse, not .yaml files.
 - *.yaml in "configs" folder
 
     Reference default configs for each model and dataset combination. Only automatically updated if new argument are added in argparse.
+
+Note: Models and datasets only access the arguments they need.
 '''
 
-parser = argparse.ArgumentParser(description='Irregular Time Series Forecasting')
+parser = argparse.ArgumentParser(description='PyOmniTS')
 
 # basic config
 parser.add_argument('--task_name', type=str, choices=["long_term_forecast", "short_term_forecast", "imputation", "classification", "anomaly_detection", "representation_learning"], default='short_term_forecast', help='task name')
 parser.add_argument('--is_training', type=int, default=1, help='training or testing')
-parser.add_argument('--model_id', type=str, default='LSTM', help='model id')
-parser.add_argument('--model_name', type=str, default='LSTM', help='model name')
-parser.add_argument('--checkpoints', type=str, default='storage/results/', help='where to save model checkpoints in training')
+parser.add_argument('--model_id', type=str, default='GRU_D', help='In most cases, model_id is the same as model_name. However, if the model has multiple variants, then model_id will additionally contain more detailed information (backbone name, model size, etc).')
+parser.add_argument('--model_name', type=str, default='GRU_D', help='model name')
+parser.add_argument('--checkpoints', type=str, default='storage/results/', help='where to save model checkpoints in training. By default, results are organized under storage/results/DATASET_NAME/MODEL_NAME/MODEL_ID/SEQ_LEN_PRED_LEN/%Y_%m%d_%H%M/iter0')
 
 # dataset & data loader
-parser.add_argument('--dataset_name', type=str, default='ETTm1', help='dataset type')
-parser.add_argument('--dataset_root_path', type=str, default='storage/datasets/ETT/', help='root path of the data file')
-parser.add_argument('--dataset_file_name', type=str, default=None, help='data file name')
-parser.add_argument('--features', type=str, choices=['M', 'S', "MS"], default='M', help='forecasting task; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
-parser.add_argument('--target_variable_name', type=str, default="OT", help='target variable name in regular time series datasets. Originally named as --target.')
-parser.add_argument('--target_variable_index', type=int, default=0, help='target variable index in datasets. Should not be used together with target_variable_name')
-parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', 'm', 'others'], default='h', help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
+parser.add_argument('--dataset_name', type=str, default='ETTm1', help='dataset name')
+parser.add_argument('--dataset_root_path', type=str, default='storage/datasets/ETT-small/', help='root path of the data file')
+parser.add_argument('--dataset_file_name', type=str, default=None, help='Some datasets contains more than one files, then this argument may be ignored.')
+parser.add_argument('--embed', type=str, choices=["timeF", "fixed", "learned"], default='timeF', help='time features encoding. Only used in some regular time series datasets.')
+parser.add_argument('--features', type=str, choices=['M', 'S', "MS"], default='M', help='M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate. WARNING: not thoroughly tested yet.')
+parser.add_argument('--target_variable_name', type=str, default="OT", help='target variable name in regular time series forecasting datasets. Originally named as --target.')
+parser.add_argument('--target_variable_index', type=int, default=0, help='target variable index in datasets. Should not be used together with target_variable_name. WARNING: not thoroughly tested yet.')
+parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', 'm', 'others'], default='h', help='freq for time features encoding in regular time series forecasting datasets, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
 parser.add_argument('--collate_fn', type=str, default="collate_fn", help='Name of the function as a custom collate_fn for dataloader. By default, datasets without collate_fn defined in data/data_provider/datasets/SOME_DATASET_NAME will use default collate_fn of Pytorch. Refer to data/data_provider/data_factory.py for implementation detail.')
-parser.add_argument('--augmentation_ratio', type=int, default=0, help="How many times to augment")
-parser.add_argument('--missing_rate', type=float, default=0., help="Manually mask out some observations.")
+parser.add_argument('--augmentation_ratio', type=int, default=0, help="How many times to augment in regular time series forecasting datasets.")
+parser.add_argument('--missing_rate', type=float, default=0., help="Manually mask out some observations. WARNING: not thoroughly tested yet.")
 parser.add_argument('--train_val_loader_shuffle', type=int, default=1, help="By default, train and val loader are shuffled.")
 parser.add_argument('--train_val_loader_drop_last', type=int, default=1, help="By default, train and val loader will drop the last batch if the number of samples is not sufficient.")
 
 # forecasting task
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
-parser.add_argument('--label_len', type=int, default=0, help='start token length. Should be zero for tasks other than forecasting')
+parser.add_argument('--label_len', type=int, default=0, help='start token length. In other words, the length prepanded to the input of decoder. Only used in some regular time series forecasting models.')
 parser.add_argument('--pred_len', type=int, default=0, help='prediction sequence length. Should be zero for tasks other than forecasting')
 
 # classification task
 parser.add_argument('--n_classes', type=int, default=2, help='number of classes')
 
 # GPU
-parser.add_argument('--use_gpu', type=int, default=1, help='use gpu')
+parser.add_argument('--use_gpu', type=int, default=1, help='Whether to use gpu.')
 parser.add_argument('--gpu_id', type=int, default=0, help='primary gpu id, will be overwritten when use_multi_gpu is 1. Originally named as --gpu.')
 parser.add_argument('--use_multi_gpu', type=int, help='use multiple gpus, via huggingface accelerate library', default=0)
 parser.add_argument('--gpu_ids', type=str, default=None, help='string of device ids for multile gpus. Originally named as --devices.')
@@ -62,7 +65,7 @@ parser.add_argument('--wandb', type=int, default=0, help='whether to use weight 
 parser.add_argument('--sweep', type=int, default=0, help='whether to use weight & bias for hyperparameter searching')
 parser.add_argument('--val_interval', type=int, default=1, help='validation interval relative to training epochs')
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
-parser.add_argument('--itr', type=int, default=5, help='experiments times')
+parser.add_argument('--itr', type=int, default=5, help='Number of runs for each experiment setting. By default, we run every experiment setting for 5 times using 5 different random seeds (2024~2028), then calculate the average and std of these 5 metrics.')
 parser.add_argument('--train_epochs', type=int, default=300, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
 parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
@@ -76,13 +79,13 @@ parser.add_argument('--n_train_stages', type=int, default=1, help="Some models h
 parser.add_argument('--retain_graph', type=int, default=0, help='whether to retain compute graph in back propagation. Used in special models like HD_TTS.')
 
 # testing
-parser.add_argument('--checkpoints_test', type=str, default=None, help='folder where model checkpoint file is saved, for testing')
-parser.add_argument('--test_all', type=int, default=0, help='whether to test on all train, val, and test sets')
-parser.add_argument('--test_flop', type=int, default=0, help='Test model flops. See utils/tools for usage')
-parser.add_argument('--test_train_time', type=int, default=0, help="Test model's training time. See utils/tools for usage")
-parser.add_argument('--test_gpu_memory', type=int, default=0, help="Test model's gpu memory usage. See utils/tools for usage")
-parser.add_argument('--test_dataset_statistics', type=int, default=0, help="Test dataset's statistics.")
-parser.add_argument('--save_arrays', type=int, default=0, help='whether to save model input and output as .npy files, for later visualization')
+parser.add_argument('--checkpoints_test', type=str, default=None, help='folder where model checkpoint file is saved, for testing. If not given, Exp_Main.test() in exp/exp_main.py will try to find the latest checkpoint.')
+parser.add_argument('--test_all', type=int, default=0, help='By default, we test the model on test set only. Setting this option to 1 will test the model on all samples from train, val, and test sets.')
+parser.add_argument('--test_flop', type=int, default=0, help='Test model flops. See utils/tools for implementation details.')
+parser.add_argument('--test_train_time', type=int, default=0, help="Test model's training time. See utils/tools for implementation details.")
+parser.add_argument('--test_gpu_memory', type=int, default=0, help="Test model's gpu memory usage. See utils/tools for implementation details.")
+parser.add_argument('--test_dataset_statistics', type=int, default=0, help="Test dataset's statistics. See function Exp_Main.test() in exp/exp_main.py for implementation details.")
+parser.add_argument('--save_arrays', type=int, default=0, help='whether to save model input and output as .npy files during testing, for later visualization')
 parser.add_argument('--save_cache_arrays', type=int, default=0, help='whether to save model output (not input) as cache .npy files during every test iteration, such that the testing can recover from interruption. Designed for extremely slow models like diffusion models.')
 parser.add_argument('--load_checkpoints_test', type=int, default=1, help='whether to load checkpoint during testing')
 
@@ -93,28 +96,27 @@ parser.add_argument('--patch_stride', type=int, default=12, help='stride when sp
 parser.add_argument('--revin', type=int, default=1, help='RevIN; True 1 False 0')
 parser.add_argument('--revin_affine', type=int, default=0, help='RevIN-affine; True 1 False 0. Originally named as --affine.')
 parser.add_argument('--kernel_size', type=int, default=25, help='kernel size')
-parser.add_argument('--individual', type=int, default=0, help='individual head; True 1 False 0')
+parser.add_argument('--individual', type=int, default=0, help='individual head; True 1 False 0. Only used in some regular time series forecasting models.')
 parser.add_argument('--channel_independence', type=int, default=1, help='0: channel dependence 1: channel independence for FreTS/TimeMixer model')
-parser.add_argument('--scale_factor', type=int, default=2, help='scale factor for upsample')
+parser.add_argument('--scale_factor', type=int, default=2, help='scale factor for upsample. Only used in some regular time series forecasting models.')
 parser.add_argument('--top_k', type=int, default=5, help='top k selection')
-parser.add_argument('--embed_type', type=int, choices=[0, 1, 2, 3, 4], default=0, help='0: default 1: value embedding + temporal embedding + positional embedding 2: value embedding + temporal embedding 3: value embedding + positional embedding 4: value embedding')
-parser.add_argument('--enc_in', type=int, default=2, help='encoder input size / input time series number of variables. In most cases, it should be adjusted per dataset') 
-parser.add_argument('--dec_in', type=int, default=2, help='decoder input size. Usually it is the same as --enc_in')
+parser.add_argument('--embed_type', type=int, choices=[0, 1, 2, 3, 4], default=0, help='0: default 1: value embedding + temporal embedding + positional embedding 2: value embedding + temporal embedding 3: value embedding + positional embedding 4: value embedding; Only used in some regular time series forecasting models.')
+parser.add_argument('--enc_in', type=int, default=2, help='Number of variables in input time series (of encoder). In most cases, it should be adjusted per dataset.') 
+parser.add_argument('--dec_in', type=int, default=2, help='Number of variables in input time series (of decoder). Usually it is the same as --enc_in')
 parser.add_argument('--c_out', type=int, default=2, help='output size. Usually it is the same as --enc_in')
 parser.add_argument('--d_model', type=int, default=512, help='dimension of model')
 parser.add_argument('--d_timesteps', type=int, default=1, help='UNUSED. Size of last dimension of `x_mark`/`y_mark`. Many Regular/Spatiotemporal datasets stack time in day, day in week, etc. along the last dimension. Others default to size 1.')
 parser.add_argument('--n_heads', type=int, default=8, help='num of heads (in attention)')
 parser.add_argument('--n_layers', type=int, default=1, help='num of layers')
-parser.add_argument('--e_layers', type=int, default=2, help='num of encoder layers')
-parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers')
-parser.add_argument('--hidden_layers', type=int, default=1, help='Number of hidden layers')
+parser.add_argument('--e_layers', type=int, default=2, help='num of encoder layers. Used to replace n_layers in some model encoders.')
+parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers. Used to replace n_layers in some model decoders.')
+parser.add_argument('--hidden_layers', type=int, default=1, help='Number of hidden layers. WARNING: Will be replaced by --n_layers in the future, due to duplicated meaning.')
 parser.add_argument('--d_ff', type=int, default=2048, help='dimension of fcn')
 parser.add_argument('--moving_avg', type=int, default=25, help='window size of moving average')
 parser.add_argument('--factor', type=int, default=1, help='attn factor')
 parser.add_argument('--dropout', type=float, default=0.05, help='dropout')
-parser.add_argument('--embed', type=str, choices=["timeF", "fixed", "learned"], default='timeF', help='time features encoding')
 parser.add_argument('--activation', type=str, default='gelu', help='activation')
-parser.add_argument('--output_attention', type=int, default=0, help='output attention weight')
+parser.add_argument('--output_attention', type=int, default=0, help='DEPRECATED. output attention weight')
 parser.add_argument('--node_dim', type=int, default=10, help='hidden dimension of nodes used in a few GNNs, like tPatchGNN')
 # PatchTST
 parser.add_argument('--patchtst_fc_dropout', type=float, default=0.05, help='fully connected dropout')
