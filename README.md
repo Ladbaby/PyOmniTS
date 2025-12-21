@@ -18,7 +18,7 @@ This is also the official repository for the following paper:
 - **Extensibility**: Adapt your model/dataset **once**, train almost **any combination** of "model" $\times$ "dataset" $\times$ "loss function".
 - **Compatibility**: Accept models with any number/type of arguments in `forward`; Accept datasets with any number/type of return values in `__getitem__`; Accept tailored loss calculation for specific models.
 - **Maintainability**: No need to worry about breaking the training codes of existing models/datasets/loss functions when adding new ones.
-- **Reproducibility**: Minimal library dependencies for core components. Try the best to get rid of fancy third-party libraries (e.g., Pytorch Lightning, EasyTorch).
+- **Reproducibility**: Minimal library dependencies for core components. Try the best to get rid of fancy third-party libraries (e.g., PyTorch Lightning, EasyTorch).
 - **Efficiency**: Multi-GPU parallel training; Python built-in logger; structured experimental result saving (json)...
 - **Transferability**: Even if you don't like our framework, you can still easily find and copy the models/datasets you want. No overwhelming encapsulation.
 

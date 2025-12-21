@@ -37,7 +37,7 @@ class Exp_Basic(object):
             logger.debug(f'Primary GPU: {self.configs.gpu_id}')
         else:
             device = torch.device('cpu')
-            logger.warning("GPU is not available. Check your Pytorch installation.")
+            logger.warning("GPU is not available. Check your PyTorch installation.")
         return device
 
     def _get_data(self):

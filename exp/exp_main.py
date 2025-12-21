@@ -134,7 +134,7 @@ class Exp_Main(Exp_Basic):
         for d in dicts:
             for key, tensor in d.items():
                 if type(tensor).__name__ != "Tensor":
-                    # skip value that is not Pytorch Tensor
+                    # skip value that is not PyTorch Tensor
                     if key not in keys_not_returned:
                         keys_not_returned.append(key)
                         logger.warning(f"{key=} will not be gathered for metric calculation in test, since its value has data type '{type(tensor).__name__}', which is not 'Tensor'")

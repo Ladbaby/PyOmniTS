@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-# This source code is derived from Pytorch RKN Implementation (https://github.com/ALRhub/rkn_share)
+# This source code is derived from PyTorch RKN Implementation (https://github.com/ALRhub/rkn_share)
 # Copyright (c) 2021 Philipp Becker (Autonomous Learning Robots Lab @ KIT)
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.

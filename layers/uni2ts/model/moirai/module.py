@@ -206,7 +206,7 @@ class MoiraiModule(
         **model_kwargs,
     ):
         PYTORCH_WEIGHTS_NAME = "model.safetensors"
-        """Load Pytorch pretrained weights and return the loaded model."""
+        """Load PyTorch pretrained weights and return the loaded model."""
         if os.path.isdir(model_id):
             print("Loading weights from local directory")
             model_file = os.path.join(model_id, PYTORCH_WEIGHTS_NAME)
