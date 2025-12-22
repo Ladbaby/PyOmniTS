@@ -43,7 +43,7 @@ parser.add_argument('--freq', type=str, choices=['s', 't', 'h', 'd', 'b', 'w', '
 parser.add_argument('--missing_rate', type=float, default=0., help="Manually mask out some observations. WARNING: not thoroughly tested yet.")
 parser.add_argument('--target_variable_index', type=int, default=0, help='target variable index in datasets. Should not be used together with target_variable_name. WARNING: not thoroughly tested yet.')
 parser.add_argument('--target_variable_name', type=str, default="OT", help='target variable name in regular time series forecasting datasets. Originally named as --target.')
-parser.add_argument('--train_val_loader_drop_last', type=int, default=1, help="By default, train and val loader will drop the last batch if the number of samples is not sufficient.")
+parser.add_argument('--train_val_loader_drop_last', type=int, default=0, help="By default, train and val loader will not drop the last batch if the number of samples is not sufficient.")
 parser.add_argument('--train_val_loader_shuffle', type=int, default=1, help="By default, train and val loader are shuffled.")
 
 # forecasting task
