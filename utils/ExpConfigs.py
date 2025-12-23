@@ -65,8 +65,8 @@ class ExpConfigs:
     loss: str
     lr_scheduler: str
     lr_scheduler_gamma: float
-    pretrained_checkpoint_root_path: str
-    pretrained_checkpoint_file_name: str
+    pretrained_checkpoint_root_path: str | None
+    pretrained_checkpoint_file_name: str | None
     n_train_stages: str
     retain_graph: int
 
