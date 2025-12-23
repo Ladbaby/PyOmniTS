@@ -58,8 +58,8 @@ class Data(Dataset):
 
         N_SAMPLES = 1114
         sample_index_all = torch.arange(N_SAMPLES)
-        sample_index_train_val, sample_index_test = train_test_split(sample_index_all, test_size=0.1, shuffle = False)
-        sample_index_train, sample_index_val = train_test_split(sample_index_train_val, test_size=0.1, shuffle = False)
+        sample_index_train_val, sample_index_test = train_test_split(sample_index_all, test_size=0.1, random_state=1)
+        sample_index_train, sample_index_val = train_test_split(sample_index_train_val, test_size=0.1, random_state=1)
         if flag == "train":
             self.sample_index = sample_index_train
         elif flag == "val":
