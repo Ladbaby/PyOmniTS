@@ -25,8 +25,7 @@ class Model(nn.Module):
         self.hid_dim = configs.d_model # 64
         self.ndim = configs.enc_in
 
-        assert configs.seq_len % configs.patch_len == 0, f"seq_len {configs.seq_len} should be divisible by patch_len {configs.patch_len}"
-        self.n_patch: int = configs.seq_len // configs.patch_len
+        self.n_patch: int = math.ceil(configs.seq_len / configs.patch_len)
 
         self.supports = None
         self.n_layer = configs.n_layers # 1
