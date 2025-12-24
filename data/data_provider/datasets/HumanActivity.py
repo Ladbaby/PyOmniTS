@@ -140,10 +140,9 @@ class Data(Dataset):
                 if sample["y"].shape[0] > self.pred_len_max_irr:
                     self.pred_len_max_irr = sample["y"].shape[0]
 
-                if self.configs.collate_fn == "collate_fn_patch":
-                    assert SEQ_LEN % PATCH_LEN == 0, f"seq_len {SEQ_LEN} should be divisible by patch_len {PATCH_LEN}"
-                    n_patch: int = SEQ_LEN // PATCH_LEN
-                    n_patch_y: int = math.ceil(self.configs.pred_len / PATCH_LEN)
+                if self.configs.collate_fn in ["collate_fn_patch", "collate_fn_tpatch"]:
+                    n_patch: int = math.ceil(SEQ_LEN / PATCH_LEN)
+                    n_patch_y: int = math.ceil(PRED_LEN / PATCH_LEN)
 
                     patch_i_end_previous = 0
                     for i in range(n_patch):
@@ -158,7 +157,7 @@ class Data(Dataset):
 
                     patch_j_end_previous = 0
                     for j in range(n_patch_y):
-                        observations = sample["y_mark"] < (((n_patch + j + 1) * PATCH_LEN) / (SEQ_LEN + PRED_LEN))
+                        observations = sample["y_mark"] < ((SEQ_LEN + (j + 1) * PATCH_LEN) / (SEQ_LEN + PRED_LEN))
                         patch_j_end = observations.sum()
                         sample_mask = slice(patch_j_end_previous, patch_j_end)
                         y_patch_j = sample["y"][sample_mask]
@@ -167,9 +166,9 @@ class Data(Dataset):
 
                         patch_j_end_previous = patch_j_end
 
-            if self.configs.collate_fn == "collate_fn_patch":
-                n_patch: int = SEQ_LEN // PATCH_LEN
-                n_patch_y: int = math.ceil(self.configs.pred_len / PATCH_LEN)
+            if self.configs.collate_fn in ["collate_fn_patch", "collate_fn_tpatch"]:
+                n_patch: int = math.ceil(SEQ_LEN / PATCH_LEN)
+                n_patch_y: int = math.ceil(PRED_LEN / PATCH_LEN)
                 self.seq_len_max_irr = max(self.seq_len_max_irr, self.patch_len_max_irr * n_patch)
                 self.pred_len_max_irr = max(self.pred_len_max_irr, self.patch_len_max_irr * n_patch_y)
 
