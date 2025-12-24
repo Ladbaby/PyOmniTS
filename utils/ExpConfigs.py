@@ -17,99 +17,101 @@ class ExpConfigs:
         return None
 
     # basic config
-    task_name: str
+    checkpoints: str
     is_training: int
     model_id: str
     model_name: str
-    checkpoints: str
+    task_name: str
 
     # dataset & data loader
+    augmentation_ratio: int
+    collate_fn: str | None
+    dataset_file_name: str | None
+    dataset_id: str
     dataset_name: str
     dataset_root_path: str
-    dataset_file_name: str | None
+    dataset_subset_name: str | None
     embed: str
     features: str
-    target_variable_name: str
-    target_variable_index: int
     freq: str
-    collate_fn: str | None
-    augmentation_ratio: int
     missing_rate: float
-    train_val_loader_shuffle: int
+    target_variable_index: int
+    target_variable_name: str
     train_val_loader_drop_last: int
+    train_val_loader_shuffle: int
 
     # forecasting task
-    seq_len: int
     label_len: int
     pred_len: int
+    seq_len: int
 
     # classification task
     n_classes: int
 
     # GPU
-    use_gpu: int
     gpu_id: int
-    use_multi_gpu: int
     gpu_ids: str | None
+    use_gpu: int
+    use_multi_gpu: int
 
     # training
-    wandb: int
-    sweep: int
-    val_interval: int
-    num_workers: int
-    itr: int
-    train_epochs: int
     batch_size: int
-    patience: int
+    itr: int
     learning_rate: float
     loss: str
     lr_scheduler: str
     lr_scheduler_gamma: float
-    pretrained_checkpoint_root_path: str | None
-    pretrained_checkpoint_file_name: str | None
     n_train_stages: str
+    num_workers: int
+    patience: int
+    pretrained_checkpoint_file_name: str | None
+    pretrained_checkpoint_root_path: str | None
     retain_graph: int
+    sweep: int
+    train_epochs: int
+    val_interval: int
+    wandb: int
 
     # testing
     checkpoints_test: str | None
-    test_all: int
-    test_flop: int
-    test_train_time: int
-    test_gpu_memory: int
-    test_dataset_statistics: int
+    load_checkpoints_test: int
     save_arrays: int
     save_cache_arrays: int
-    load_checkpoints_test: int
+    test_all: int
+    test_dataset_statistics: int
+    test_flop: int
+    test_gpu_memory: int
+    test_train_time: int
 
     # model configs
     # common
+    activation: str
+    c_out: int
+    channel_independence: int
+    d_ff: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512, 2048]})
+    d_layers: int = field(metadata={"sweep": [1, 2]})
+    d_model: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512]})
+    d_timesteps: int
+    dec_in: int
+    dropout: float = field(metadata={"sweep": [0.0, 0.1, 0.3, 0.4, 0.5]})
+    e_layers: int = field(metadata={"sweep": [1, 2, 3, 4, 8]})
+    embed_type: int
+    enc_in: int
+    factor: int
+    output_attention: int
+    hidden_layers: int
+    individual: int
+    kernel_size: int = field(metadata={"sweep": [2, 3, 4, 5]})
+    moving_avg: int
+    n_heads: int = field(metadata={"sweep": [1, 4, 8]})
+    n_layers: int = field(metadata={"sweep": [1, 2, 3, 4]})
+    node_dim: int
     patch_len: int
     patch_stride: int
     revin: int
     revin_affine: int
-    kernel_size: int = field(metadata={"sweep": [2, 3, 4, 5]})
-    individual: int
-    channel_independence: int
     scale_factor: int
     top_k: int = field(metadata={"sweep": [3, 5]})
-    embed_type: int
-    enc_in: int
-    dec_in: int
-    c_out: int
-    d_model: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512]})
-    d_timesteps: int
-    n_heads: int = field(metadata={"sweep": [1, 4, 8]})
-    n_layers: int = field(metadata={"sweep": [1, 2, 3, 4]})
-    e_layers: int = field(metadata={"sweep": [1, 2, 3, 4, 8]})
-    d_layers: int = field(metadata={"sweep": [1, 2]})
-    hidden_layers: int
-    d_ff: int = field(metadata={"sweep": [16, 32, 64, 128, 256, 512, 2048]})
-    moving_avg: int
-    factor: int
-    dropout: float = field(metadata={"sweep": [0.0, 0.1, 0.3, 0.4, 0.5]})
-    activation: str
-    output_attention: int
-    node_dim: int
     # CRU
     cru_bandwidth: int
     cru_num_basis: int
