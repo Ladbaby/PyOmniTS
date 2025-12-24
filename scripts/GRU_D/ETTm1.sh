@@ -5,11 +5,15 @@ else
     launch_command="accelerate launch"
 fi
 
-model_name="$(basename "$(dirname "$(readlink -f "$0")")")" # folder name
+. "$(dirname "$(readlink -f "$0")")/../globals.sh" # Import shared information from scripts/globals.sh
 
-dataset_root_path=storage/datasets/ETT-small
-model_id=$model_name
 dataset_name=$(basename "$0" .sh) # file name
+dataset_subset_name=""
+dataset_id=$dataset_name
+get_dataset_info "$dataset_name" "$dataset_subset_name" # Get dataset information from scripts/globals.sh
+
+model_name="$(basename "$(dirname "$(readlink -f "$0")")")" # folder name
+model_id=$model_name
 
 seq_len=96
 label_len=48
@@ -24,14 +28,15 @@ for pred_len in 96; do
     --model_id $model_id \
     --model_name $model_name \
     --dataset_name $dataset_name \
+    --dataset_id $dataset_id \
     --features M \
     --freq 't' \
     --seq_len $seq_len \
     --label_len $label_len \
     --pred_len $pred_len \
-    --enc_in 7 \
-    --dec_in 7 \
-    --c_out 7 \
+    --enc_in $n_variables \
+    --dec_in $n_variables \
+    --c_out $n_variables \
     --train_epochs 300 \
     --patience 10 \
     --itr 5 \
