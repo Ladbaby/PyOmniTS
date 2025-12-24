@@ -114,6 +114,7 @@ Newly measured data: {complexity}
 Do you want to overwrite the existing data? (Y/N)""")
                         while True:
                             if overwrite_choice.upper() == 'Y':
+                                complexities[input_config][model_id] = complexity
                                 logger.info("Newly measured data saved.")
                                 break
                             elif overwrite_choice.upper() == 'N':
