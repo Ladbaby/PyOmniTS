@@ -161,11 +161,11 @@ class Exp_Main(Exp_Basic):
                 for i, batch in enumerate(vali_loader):
                     # warn if the size does not match
                     if batch[next(iter(batch))].shape[0] != self.configs.batch_size and current_epoch == 0:
-                        logger.warning(f"Batch No.{i} of total {len(vali_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
+                        logger.warning(f"Exp_Main.vali(): Batch No.{i} out of [0~{len(vali_loader) - 1}] has an actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
                     if "y_mask" in batch.keys():
                         if torch.sum(batch["y_mask"]).item() == 0:
                             if current_epoch == 0:
-                                logger.warning(f"Batch No.{i} of total {len(vali_loader)} has no evaluation point (inferred from y_mask), thus skipping")
+                                logger.warning(f"Exp_Main.vali(): Batch No.{i} out of [0~{len(vali_loader) - 1}] has no evaluation point (inferred from y_mask), thus skipping")
                             continue
                     if not self.configs.use_multi_gpu:
                         batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
@@ -237,11 +237,11 @@ class Exp_Main(Exp_Basic):
                     for i, batch in enumerate(train_loader):
                         # warn if the size does not match
                         if batch[next(iter(batch))].shape[0] != self.configs.batch_size and epoch == 0:
-                            logger.warning(f"Batch No.{i} of total {len(train_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
+                            logger.warning(f"Exp_Main.train(): Batch No.{i} out of [0~{len(train_loader) - 1}] has an actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
                         if "y_mask" in batch.keys():
                             if torch.sum(batch["y_mask"]).item() == 0:
                                 if epoch == 0:
-                                    logger.warning(f"Batch No.{i} of total {len(train_loader)} has no evaluation point (inferred from y_mask), thus skipping")
+                                    logger.warning(f"Exp_Main.train(): Batch No.{i} out of [0~{len(train_loader) - 1}] has no evaluation point (inferred from y_mask), thus skipping")
                                 continue
                         model_optim.zero_grad()
                         if not self.configs.use_multi_gpu:
@@ -534,7 +534,7 @@ class Exp_Main(Exp_Basic):
                         continue
                     # warn if the size does not match
                     if batch[next(iter(batch))].shape[0] != self.configs.batch_size:
-                        logger.warning(f"Batch No.{i} of total {len(test_loader)} has actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
+                        logger.warning(f"Exp_Main.test(): Batch No.{i} out of [0~{len(test_loader) - 1}] has an actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size={self.configs.batch_size}")
                         # continue
                     if not self.configs.use_multi_gpu:
                         batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
