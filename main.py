@@ -26,7 +26,7 @@ def main():
 
     def start_exp_train() -> Exp_Main:
         # save training config file for reference
-        path = Path(configs.checkpoints) / configs.dataset_name / configs.model_name / configs.model_id / f"{configs.seq_len}_{configs.pred_len}" / configs.subfolder_train / f"iter{configs.itr_i}" # same as the one in Exp_Main.train()
+        path = Path(configs.checkpoints) / configs.dataset_name / configs.dataset_id / configs.model_name / configs.model_id / f"{configs.seq_len}_{configs.pred_len}" / configs.subfolder_train / f"iter{configs.itr_i}" # same as the one in Exp_Main.train()
         path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Training iter{configs.itr_i} save to: {path}")
         with open(path / "configs.yaml", 'w', encoding='utf-8') as f:

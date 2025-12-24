@@ -194,7 +194,7 @@ class Exp_Main(Exp_Basic):
 
     def train(self) -> None:
         logger.info('>>>>>>> training start <<<<<<<')
-        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
+        path = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.dataset_id / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}" / self.configs.subfolder_train / f"iter{self.configs.itr_i}"
         if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
             import wandb
 
@@ -419,7 +419,7 @@ class Exp_Main(Exp_Basic):
         actual_itrs = 1
         if self.configs.checkpoints_test is None:
             # by default, if checkpoints_test is not given, it tries to load the latest corresponding checkpoint
-            checkpoint_location = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}"
+            checkpoint_location = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.dataset_id / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}"
             if self.configs.load_checkpoints_test:
                 try:
                     # first, find the latest one based on timestamp in name
