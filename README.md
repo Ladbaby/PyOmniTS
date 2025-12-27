@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="images/icon_dark.png#gh-dark-mode-only" height=200>
-  <img src="images/icon_light.png#gh-light-mode-only" height=200>
+  <img src="docs/images/icon_dark.png#gh-dark-mode-only" height=200>
+  <img src="docs/images/icon_light.png#gh-light-mode-only" height=200>
   <h3><b> A Researcher-Friendly Framework for Time Series Analysis. </b></h3>
   <h4><b> Train Any Model on Any Dataset. </b></h4>
 </div>
@@ -13,7 +13,7 @@ This is also the official repository for the following paper:
 
 ## 1. ✨ Hightlighted Features
 
-![](images/overview.png)
+![](docs/images/overview.png)
 
 - **Extensibility**: Adapt your model/dataset **once**, train almost **any combination** of "model" $\times$ "dataset" $\times$ "loss function".
 - **Compatibility**: Accept models with any number/type of arguments in `forward`; Accept datasets with any number/type of return values in `__getitem__`; Accept tailored loss calculation for specific models.
