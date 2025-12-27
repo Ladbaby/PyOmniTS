@@ -11,12 +11,13 @@ import torch
 import yaml
 
 from exp.exp_main import Exp_Main
-from utils.configs import configs
+from utils.configs import get_configs
+from utils.ExpConfigs import ExpConfigs
 from utils.globals import accelerator, logger
 
 hyperparameters_sweep: dict[str, dict[str, list]] = {}
 
-def main():
+def main(configs: ExpConfigs):
     # random seed
     fix_seed_list = range(2024, 2024 + configs.itr)
 
@@ -130,9 +131,10 @@ def main():
 
 if __name__ == "__main__":
     # warp the codes, such that errors will only be outputted from the main process
+    configs: ExpConfigs = get_configs() # parse command line args
     try:
         if not configs.sweep:
-            main()
+            main(configs)
         else:
             # first determine the hyperparameters actually accessed by model
             from utils.ExpConfigs import ExpConfigsTracker
