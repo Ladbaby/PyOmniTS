@@ -71,10 +71,11 @@ class Model(nn.Module):
         else:
             raise NotImplementedError
 
-        assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
-        self.pred_len = configs.pred_len_max_irr or configs.pred_len
-        self.n_patch_all: int = configs.seq_len // configs.patch_len + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
-        self.patch_len = configs.patch_len_max_irr or configs.patch_len
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
+            self.n_patch_all: int = math.ceil(configs.seq_len / configs.patch_len) + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
+        else:
+            raise NotImplementedError
 
     def forward(
         self, 
@@ -108,10 +109,13 @@ class Model(nn.Module):
                 logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
             y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
 
-        observed_data = torch.cat([x, torch.zeros_like(y).to(y.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
-        observed_tp = torch.cat([x_mark, y_mark], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)[:, :, :, 0]
-        observed_mask = torch.cat([x_mask, torch.zeros_like(y_mask).to(y_mask.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
-        interp_mask = torch.cat([torch.zeros_like(x_mask).to(x_mask.device), y_mask], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            observed_data = torch.cat([x, torch.zeros_like(y).to(y.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+            observed_tp = torch.cat([x_mark, y_mark], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)[:, :, :, 0]
+            observed_mask = torch.cat([x_mask, torch.zeros_like(y_mask).to(y_mask.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+            interp_mask = torch.cat([torch.zeros_like(x_mask).to(x_mask.device), y_mask], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+        else:
+            raise NotImplementedError
         # END adaptor
 
         out = self.model(
