@@ -19,7 +19,7 @@ seq_len=3000
 for pred_len in 300; do
     $launch_command main.py \
         --is_training 1 \
-        --collate_fn "collate_fn" \
+        --collate_fn "collate_fn_patch" \
         --patch_len 500 \
         --loss "MSE" \
         --use_multi_gpu $use_multi_gpu \
