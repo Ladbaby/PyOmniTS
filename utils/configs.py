@@ -51,7 +51,7 @@ parser.add_argument('--train_val_loader_shuffle', type=int, default=1, help="By 
 
 # forecasting task
 parser.add_argument('--label_len', type=int, default=0, help='start token length. In other words, the length prepanded to the input of decoder. Only used in some regular time series forecasting models.')
-parser.add_argument('--pred_len', type=int, default=0, help='prediction sequence length. Should be zero for tasks other than forecasting')
+parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length. Should be zero for tasks other than forecasting')
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
 
 # classification task
