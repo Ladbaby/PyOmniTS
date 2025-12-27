@@ -137,7 +137,7 @@ PyOmniTS is continously evolving:
 - [ ] More tutorials.
 - [ ] Classification support in core components.
 - [ ] Imputation support in core components.
-- [ ] Optional python package management via [uv](https://github.com/astral-sh/uv).
+- [x] Optional python package management via [uv](https://github.com/astral-sh/uv).
 
 ## Yet Another Code Framework?
 
