@@ -7,7 +7,9 @@ from utils.configs import get_configs
 class TestUSHCN(unittest.TestCase):
 
     def test_dataset(self):
-        configs = get_configs(args=[])
+        configs = get_configs(args=[
+            "--collate_fn", "collate_fn"
+        ])
 
         ds = Data(configs)
         self.assertGreater(len(ds), 0)
