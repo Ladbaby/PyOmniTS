@@ -11,7 +11,7 @@ git clone https://github.com/Ladbaby/PyOmniTS.git
 
 ## 2. 💿 Prepare the Environment
 
-- Create a new Python virtual environment via the tool of your choice, and activate it. For example, using [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/):
+1. Create a new Python virtual environment via the tool of your choice, and activate it. For example, using [Miniconda](https://docs.conda.io/en/latest/miniconda.html)/[Anaconda](https://www.anaconda.com/):
 
     ```
     conda create -n pyomnits python=3.12
@@ -19,11 +19,27 @@ git clone https://github.com/Ladbaby/PyOmniTS.git
     ```
     Python 3.10~3.12 have been tested.
 
-- Install dependencies.
+2. Install dependencies.
 
-    ```shell
-    pip install -r requirements.txt
-    ```
+    Choose one of the options:
+
+    - Option 1: Fuzzy package versions, the legacy way.
+
+        ```shell
+        pip install -r requirements.txt
+        ```
+
+        > 💡 For faster installation speed, consider installing [uv](https://github.com/astral-sh/uv) and run `uv pip install -r requirements.txt` instead.
+    - Option 2: Exact package versions, the aggressive way.
+
+        > [!CAUTION]
+        > It assumes your Linux server to have cuda version 12, which can be less flexible than option 1.
+
+        Install [uv](https://github.com/astral-sh/uv), then:
+
+        ```shell
+        uv pip sync requirements.lock
+        ```
 
     > 🔥Note: some packages are only used by a few models/datasets, which are optional. See comments in `requirements.txt`.
 
