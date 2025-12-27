@@ -1,5 +1,6 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import os
+from abc import abstractmethod
 
 import torch
 
@@ -11,10 +12,6 @@ class Exp_Basic(object):
     def __init__(self, configs: ExpConfigs):
         self.configs = configs
         self.device = self._acquire_device()
-        self.retain_graph = False
-
-    def _build_model(self):
-        raise NotImplementedError
 
     def _acquire_device(self):
         if self.configs.use_gpu:
@@ -40,15 +37,23 @@ class Exp_Basic(object):
             device = torch.device('cpu')
             logger.warning("GPU is not available. Check your PyTorch installation.")
         return device
+    
+    @abstractmethod
+    def _build_model(self):
+        ...
 
+    @abstractmethod
     def _get_data(self):
-        pass
+        ...
 
+    @abstractmethod
     def vali(self):
-        pass
+        ...
 
+    @abstractmethod
     def train(self):
-        pass
+        ...
 
+    @abstractmethod
     def test(self):
-        pass
+        ...
