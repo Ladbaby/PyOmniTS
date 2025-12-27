@@ -13,6 +13,7 @@ logs/
 wandb/
 test*.py
 test*.ipynb
+!tests/**
 *.npy
 *.csv
 *.pkl
