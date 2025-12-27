@@ -29,7 +29,7 @@ git clone https://github.com/Ladbaby/PyOmniTS.git
         pip install -r requirements.txt
         ```
 
-        > 💡 For faster installation speed, consider installing [uv](https://github.com/astral-sh/uv) and run `uv pip install -r requirements.txt` instead.
+        > 💡 For faster installation speed, consider installing [uv](https://github.com/astral-sh/uv) and running `uv pip install -r requirements.txt` instead.
     - Option 2: Exact package versions, the aggressive way.
 
         > ⚠️ It assumes your Linux server to have cuda version 12, which can be less flexible than option 1.
