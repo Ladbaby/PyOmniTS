@@ -65,8 +65,9 @@ class Model(nn.Module):
             logger.exception(f"Actual patch_len {self.patch_len} is longer than MOIRAI's pretrained max patch length {self.patch_len_padded}. Please specify a smaller --patch_len, or consider retraining MOIRAI with bigger patch size.", stack_info=True)
             exit(1)
 
-        assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
-        self.n_patch_all: int = configs.seq_len // configs.patch_len + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
+            assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
+            self.n_patch_all: int = math.ceil(configs.seq_len / configs.patch_len) + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
 
 
     def forward(
