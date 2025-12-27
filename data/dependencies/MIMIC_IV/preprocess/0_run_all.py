@@ -5,10 +5,10 @@ Launcher script that invokes all MIMIC-IV preprocessing scripts sequentially.
 sha256 checksums of output files are also checked.
 '''
 
-import os
-import sys
-import subprocess
 import hashlib
+import os
+import subprocess
+import sys
 import warnings
 
 warnings.filterwarnings('ignore')

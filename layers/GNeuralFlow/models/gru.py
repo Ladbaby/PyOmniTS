@@ -5,10 +5,10 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn import Module
 
-from layers.GNeuralFlow.models import ODEModel
 import layers.GNeuralFlow.models as mods
-from layers.GNeuralFlow.models.mlp import *
 import layers.GNeuralFlow.models.mlp as mlps
+from layers.GNeuralFlow.models import ODEModel
+from layers.GNeuralFlow.models.mlp import *
 
 
 class GRUODENet(Module):

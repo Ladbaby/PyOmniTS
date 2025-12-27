@@ -7,21 +7,29 @@
 
 
 import math
-from typing import Tuple, Any, Union, Optional
+from typing import (
+    Any,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Linear
-from torch.nn import init
+from torch.nn import Linear, init
 from torch.nn.parameter import Parameter
 
 try:
     from torch_geometric.nn.conv import MessagePassing
     from torch_geometric.nn.inits import glorot
-    from torch_geometric.typing import PairTensor, Adj, OptTensor
+    from torch_geometric.typing import (
+        Adj,
+        OptTensor,
+        PairTensor,
+    )
     from torch_geometric.utils import softmax
     from torch_scatter import scatter
     from torch_sparse import SparseTensor

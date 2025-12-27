@@ -1,15 +1,20 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-from einops import *
 import torch
 import torch.nn as nn
+from einops import *
 from torch import Tensor
 from torch.distributions.normal import Normal
 
-from utils.globals import logger
-from utils.ExpConfigs import ExpConfigs
 from layers.GNeuralFlow.experiments.latent_ode.lib.encoder_decoder import *
 from layers.GNeuralFlow.experiments.latent_ode.lib.latent_ode import LatentODE
-from layers.GNeuralFlow.models import CouplingFlow_latent, ResNetFlow, GRUFlow
+from layers.GNeuralFlow.models import (
+    CouplingFlow_latent,
+    GRUFlow,
+    ResNetFlow,
+)
+from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

@@ -5,14 +5,22 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
-from layers.PrimeNet.models import TimeBERTForClassification, TimeBERTForRegression, TimeBERTForInterpolation, TimeBERTConfig, TimeBERTForPretrainingV2, TimeBERTForPretraining
-from loss_fns.MSE import Loss as MSE
+from layers.PrimeNet.models import (
+    TimeBERTConfig,
+    TimeBERTForClassification,
+    TimeBERTForInterpolation,
+    TimeBERTForPretraining,
+    TimeBERTForPretrainingV2,
+    TimeBERTForRegression,
+)
 from loss_fns.CrossEntropyLoss import Loss as CrossEntropyLoss
+from loss_fns.MSE import Loss as MSE
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

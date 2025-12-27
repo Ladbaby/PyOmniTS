@@ -1,6 +1,7 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 from torch.optim.lr_scheduler import _LRScheduler
 
+
 class ManualMilestonesLR(_LRScheduler):
     '''
     Custom lr scheduler class.

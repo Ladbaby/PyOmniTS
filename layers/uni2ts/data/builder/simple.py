@@ -17,16 +17,29 @@ import argparse
 from dataclasses import dataclass
 from itertools import product
 from pathlib import Path
-from typing import Any, Callable, Generator, Optional
+from typing import (
+    Any,
+    Callable,
+    Generator,
+    Optional,
+)
 
 import datasets
 import pandas as pd
-from datasets import Features, Sequence, Value
+from datasets import (
+    Features,
+    Sequence,
+    Value,
+)
 from torch.utils.data import Dataset
 
 from layers.uni2ts.common.env import env
 from layers.uni2ts.common.typing import GenFunc
-from layers.uni2ts.data.dataset import EvalDataset, SampleTimeSeriesType, TimeSeriesDataset
+from layers.uni2ts.data.dataset import (
+    EvalDataset,
+    SampleTimeSeriesType,
+    TimeSeriesDataset,
+)
 from layers.uni2ts.data.indexer import HuggingFaceDatasetIndexer
 from layers.uni2ts.transform import Transformation
 

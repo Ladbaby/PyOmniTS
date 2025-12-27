@@ -1,8 +1,25 @@
-from typing import Dict, List, Literal, Optional, Tuple, Type, Union
+from typing import (
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 from numpy import ndarray
-from pandas import DataFrame, DatetimeIndex, PeriodIndex, TimedeltaIndex
-from scipy.sparse import coo_matrix, csc_matrix, csr_matrix
+from pandas import (
+    DataFrame,
+    DatetimeIndex,
+    PeriodIndex,
+    TimedeltaIndex,
+)
+from scipy.sparse import (
+    coo_matrix,
+    csc_matrix,
+    csr_matrix,
+)
 from torch import Tensor
 from torch_sparse import SparseTensor
 

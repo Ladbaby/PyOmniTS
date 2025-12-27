@@ -8,15 +8,24 @@ __all__ = [
     "TaskDataset",
 ]
 
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, NamedTuple
 
 import numpy as np
-import torch
-from pandas import DataFrame, Index, MultiIndex
 import pandas as pd
+import torch
+from pandas import (
+    DataFrame,
+    Index,
+    MultiIndex,
+)
 from sklearn.model_selection import train_test_split
 from torch import Tensor
 from torch import nan as NAN

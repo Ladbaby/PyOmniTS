@@ -7,22 +7,48 @@
     by Francesco Landolfi (https://github.com/flandolfi)
 """
 
-from typing import Callable, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch_geometric.nn.dense import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor, Tensor
-from torch_geometric.utils import scatter
-from torch_geometric.utils import to_undirected, add_remaining_self_loops
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairTensor,
+    Tensor,
+)
+from torch_geometric.utils import (
+    add_remaining_self_loops,
+    scatter,
+    to_undirected,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_sparse import SparseTensor
 
-from .aggr_pool import (AggrReduce, AggrLift, AggrConnect,
-                        ReductionType, ConnectionType)
-from .base import Select, Pooling, PoolingOutput, SelectOutput
-from .utils import (connectivity_to_row_col,
-                    connectivity_to_edge_index,
-                    connectivity_to_adj_t, broadcast_shape)
+from .aggr_pool import (
+    AggrConnect,
+    AggrLift,
+    AggrReduce,
+    ConnectionType,
+    ReductionType,
+)
+from .base import (
+    Pooling,
+    PoolingOutput,
+    Select,
+    SelectOutput,
+)
+from .utils import (
+    broadcast_shape,
+    connectivity_to_adj_t,
+    connectivity_to_edge_index,
+    connectivity_to_row_col,
+)
 
 Scorer = Callable[[Tensor, Adj, OptTensor, OptTensor], Tensor]
 

@@ -1,15 +1,16 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
-import numpy as np
+from einops import *
 from scipy import signal
 from scipy import special as ss
-from einops import *
+from torch import Tensor
 
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     """

@@ -1,6 +1,7 @@
 import torch.nn as nn
 from torch.nn.modules.linear import Linear
 
+
 class ConvLayer(nn.Module):
     def __init__(self, c_in, window_size):
         super(ConvLayer, self).__init__()

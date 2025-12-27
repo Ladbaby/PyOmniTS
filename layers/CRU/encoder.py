@@ -23,6 +23,7 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 
+
 # taken from https://github.com/ALRhub/rkn_share/ and not modified
 def elup1(x: torch.Tensor) -> torch.Tensor:
     return torch.exp(x).where(x < 0.0, x + 1.0)

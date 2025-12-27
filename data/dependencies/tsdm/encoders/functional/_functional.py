@@ -23,7 +23,11 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from pandas import CategoricalDtype, DataFrame, Series
+from pandas import (
+    CategoricalDtype,
+    DataFrame,
+    Series,
+)
 from pandas.api.extensions import ExtensionDtype
 
 

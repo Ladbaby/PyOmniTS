@@ -21,7 +21,11 @@ __all__ = [
 
 from datetime import datetime as py_dt
 from datetime import timedelta as py_td
-from typing import TypeAlias, TypeVar, Union
+from typing import (
+    TypeAlias,
+    TypeVar,
+    Union,
+)
 
 from numpy import datetime64 as np_dt
 from numpy import floating as np_float

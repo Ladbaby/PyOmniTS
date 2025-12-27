@@ -4,11 +4,12 @@ import math
 import numpy as np
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

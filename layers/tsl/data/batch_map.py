@@ -1,8 +1,19 @@
-from typing import Iterator, List, Mapping, Optional, Tuple, Union
+from typing import (
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from layers.tsl.utils.python_utils import ensure_list
 
-from .synch_mode import STATIC, WINDOW, SynchMode
+from .synch_mode import (
+    STATIC,
+    WINDOW,
+    SynchMode,
+)
 
 
 class BatchMapItem:

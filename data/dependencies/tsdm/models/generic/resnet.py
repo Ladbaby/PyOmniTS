@@ -4,9 +4,17 @@ r"""#TODO add module summary line.
 """
 
 from collections import OrderedDict
-from typing import Any, Final, TypeVar
+from typing import (
+    Any,
+    Final,
+    TypeVar,
+)
 
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 
 from data.dependencies.tsdm.models.generic.dense import ReverseDense
 from data.dependencies.tsdm.utils import deep_dict_update, initialize_from_config

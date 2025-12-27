@@ -11,10 +11,18 @@ __all__ = [
 
 from collections import OrderedDict
 from math import ceil, log2
-from typing import Any, Final, Optional
+from typing import (
+    Any,
+    Final,
+    Optional,
+)
 
 import torch
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 from torch._jit_internal import _copy_to_script_wrapper
 
 from data.dependencies.tsdm.models.generic.dense import ReverseDense

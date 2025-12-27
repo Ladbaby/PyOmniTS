@@ -72,7 +72,14 @@ from typing import Final, TypeAlias
 
 from torch import nn
 
-from data.dependencies.tsdm.metrics._modular import ND, NRMSE, RMSE, WRMSE, Q_Quantile, Q_Quantile_Loss
+from data.dependencies.tsdm.metrics._modular import (
+    ND,
+    NRMSE,
+    RMSE,
+    WRMSE,
+    Q_Quantile,
+    Q_Quantile_Loss,
+)
 from data.dependencies.tsdm.metrics.functional import (
     FUNCTIONAL_LOSSES,
     FunctionalLoss,

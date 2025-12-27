@@ -1,8 +1,17 @@
-from typing import Callable, Mapping, Optional, Type, Union, List, Tuple
+from typing import (
+    Callable,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import torch
 from torch_geometric.data.storage import recursive_apply
 from torchmetrics import Metric
+
 from layers.tsl.engines import Predictor
 
 

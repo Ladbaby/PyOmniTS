@@ -33,7 +33,11 @@ __all__ = [
 ]
 
 from collections.abc import Callable
-from typing import Any, Final, TypeAlias
+from typing import (
+    Any,
+    Final,
+    TypeAlias,
+)
 
 from sklearn.preprocessing import (
     binarize,

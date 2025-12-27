@@ -16,4 +16,6 @@ __all__ = [
 from data.dependencies.tsdm.models.generic.deepset import DeepSet, DeepSetReZero
 from data.dependencies.tsdm.models.generic.mlp import MLP
 from data.dependencies.tsdm.models.generic.rezero import ReZero, ReZeroMLP
-from data.dependencies.tsdm.models.generic.scaled_dot_product_attention import ScaledDotProductAttention
+from data.dependencies.tsdm.models.generic.scaled_dot_product_attention import (
+    ScaledDotProductAttention,
+)

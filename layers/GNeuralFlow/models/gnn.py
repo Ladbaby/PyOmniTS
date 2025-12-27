@@ -1,7 +1,6 @@
 """GNN taken from GANF https://github.com/EnyanDai/GANF"""
-import torch.nn as nn
 import torch
-
+import torch.nn as nn
 
 
 class GNN(nn.Module):

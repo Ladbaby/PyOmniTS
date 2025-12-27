@@ -1,4 +1,10 @@
-from typing import List, Mapping, Optional, Sequence, Union
+from typing import (
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Union,
+)
 
 import numpy as np
 import torch

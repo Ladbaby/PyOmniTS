@@ -1,6 +1,6 @@
 import torch
 import torch_sparse
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torch_sparse import SparseTensor
 
 

@@ -8,13 +8,14 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import *
+from torch import Tensor
 from torch.autograd import Variable
 from torch.nn.parameter import Parameter
-from torch import Tensor
-from einops import *
 
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     """

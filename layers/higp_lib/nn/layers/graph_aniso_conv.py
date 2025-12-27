@@ -1,8 +1,9 @@
 from typing import Optional
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torch_geometric.nn import MessagePassing
+
 from layers.tsl.nn.layers import Dense
 from layers.tsl.nn.layers.ops import Activation
 

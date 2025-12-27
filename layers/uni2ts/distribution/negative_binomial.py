@@ -17,8 +17,16 @@ from typing import Callable, Optional
 
 import torch
 from jaxtyping import Float
-from torch.distributions import Distribution, Gamma, constraints
-from torch.distributions.utils import broadcast_all, lazy_property, logits_to_probs
+from torch.distributions import (
+    Distribution,
+    Gamma,
+    constraints,
+)
+from torch.distributions.utils import (
+    broadcast_all,
+    lazy_property,
+    logits_to_probs,
+)
 from torch.nn import functional as F
 
 from ._base import DistributionOutput

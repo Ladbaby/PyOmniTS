@@ -8,7 +8,12 @@ __all__ = [
     "DatasetCollection",
 ]
 
-from collections.abc import Iterable, Iterator, Mapping, Sequence
+from collections.abc import (
+    Iterable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from typing import Any, Optional
 
 from pandas import DataFrame, MultiIndex

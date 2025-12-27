@@ -1,7 +1,8 @@
 from typing import List
 
-import layers.stribor.stribor as st
 import torch.nn as nn
+
+import layers.stribor.stribor as st
 
 
 class ResNetBlock(nn.Module):

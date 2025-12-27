@@ -1,8 +1,14 @@
 import math
-from typing import List, Optional, Union, Literal
+from typing import (
+    List,
+    Literal,
+    Optional,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
+
 from layers.tsl.data import Splitter
 from layers.tsl.data.datamodule.splitters import indices_between
 from layers.tsl.datasets.prototypes import DatetimeDataset

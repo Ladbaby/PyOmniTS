@@ -6,8 +6,9 @@ from torch import nn
 from torch.nn import functional as F
 
 import layers.tsl as tsl
-from layers.higp_lib.nn.hierarchical.ops import src_reduce, src_connect
+from layers.higp_lib.nn.hierarchical.ops import src_connect, src_reduce
 from layers.tsl.nn.layers.base import NodeEmbedding
+
 
 def _rank3_trace(x):
     return torch.einsum('...jj->...', x)

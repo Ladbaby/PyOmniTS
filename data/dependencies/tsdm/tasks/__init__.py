@@ -56,8 +56,8 @@ from data.dependencies.tsdm.tasks.kiwi_final_product import KIWI_FINAL_PRODUCT
 from data.dependencies.tsdm.tasks.kiwi_runs_task import KIWI_RUNS_TASK
 from data.dependencies.tsdm.tasks.mimic_iii_debrouwer2019 import MIMIC_III_DeBrouwer2019
 from data.dependencies.tsdm.tasks.mimic_iv_bilos2021 import MIMIC_IV_Bilos2021
-from data.dependencies.tsdm.tasks.ushcn_debrouwer2019 import USHCN_DeBrouwer2019
 from data.dependencies.tsdm.tasks.P12 import Physionet2012
+from data.dependencies.tsdm.tasks.ushcn_debrouwer2019 import USHCN_DeBrouwer2019
 
 Task: TypeAlias = BaseTask
 r"""Type hint for tasks."""

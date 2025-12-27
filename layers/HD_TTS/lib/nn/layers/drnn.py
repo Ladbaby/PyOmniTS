@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 from einops import rearrange
 from torch import Tensor, nn
+
 from layers.tsl.nn import maybe_cat_exog
 
 

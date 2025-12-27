@@ -11,7 +11,12 @@ from collections.abc import Mapping, Sequence
 from typing import Optional, TypeAlias
 
 import numpy as np
-from pandas import DataFrame, Index, MultiIndex, Series
+from pandas import (
+    DataFrame,
+    Index,
+    MultiIndex,
+    Series,
+)
 
 FOLDS: TypeAlias = Sequence[Mapping[str, Series]]
 r"""Type Hint for Folds. the series must be boolean."""

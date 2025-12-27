@@ -19,11 +19,19 @@ from typing import Optional
 
 import torch
 import torch.nn.functional as F
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch import nn
 
 from .attention import GroupedQueryAttention
-from .ffn import FeedForward, GatedLinearUnitFeedForward, MoEFeedForward
+from .ffn import (
+    FeedForward,
+    GatedLinearUnitFeedForward,
+    MoEFeedForward,
+)
 from .position import AttentionBias, QueryKeyProjection
 
 

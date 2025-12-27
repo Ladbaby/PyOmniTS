@@ -1,5 +1,10 @@
 from types import ModuleType
-from typing import List, Optional, Tuple, Union
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
@@ -13,8 +18,14 @@ from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import add_remaining_self_loops, subgraph
 from torch_sparse import SparseTensor, fill_diag
 
-from layers.tsl.typing import (DataArray, OptTensArray, ScipySparseMatrix,
-                        SparseTensArray, TensArray, TorchConnectivity)
+from layers.tsl.typing import (
+    DataArray,
+    OptTensArray,
+    ScipySparseMatrix,
+    SparseTensArray,
+    TensArray,
+    TorchConnectivity,
+)
 from layers.tsl.utils import casting
 
 
@@ -334,8 +345,10 @@ def power_series(edge_index: TensArray, edge_weights: OptTensArray = None,
     """
     N = maybe_num_nodes(edge_index, num_nodes)
     if isinstance(edge_index, Tensor):
-        from torch_geometric.utils import (from_scipy_sparse_matrix,
-                                           to_scipy_sparse_matrix)
+        from torch_geometric.utils import (
+            from_scipy_sparse_matrix,
+            to_scipy_sparse_matrix,
+        )
         coo = to_scipy_sparse_matrix(edge_index, edge_weights, N)
         coo = coo**k
         return from_scipy_sparse_matrix(coo)

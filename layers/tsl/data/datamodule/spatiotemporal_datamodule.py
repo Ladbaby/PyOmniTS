@@ -1,7 +1,15 @@
-from typing import Literal, Mapping, Optional
+from typing import (
+    Literal,
+    Mapping,
+    Optional,
+)
 
 from pytorch_lightning import LightningDataModule
-from torch.utils.data import DataLoader, Dataset, Subset
+from torch.utils.data import (
+    DataLoader,
+    Dataset,
+    Subset,
+)
 
 import layers.tsl as tsl
 

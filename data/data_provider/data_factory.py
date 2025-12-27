@@ -1,9 +1,11 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import importlib
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
+
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 def data_provider(configs: ExpConfigs, flag: str, shuffle_flag: bool = None, drop_last: bool = None) -> tuple[Dataset, DataLoader]:
     '''

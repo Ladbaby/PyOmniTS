@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class RevIN(nn.Module):
     def __init__(self, num_features: int, eps=1e-5, affine=True, subtract_last=False):
         """

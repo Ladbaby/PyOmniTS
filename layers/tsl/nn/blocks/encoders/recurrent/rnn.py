@@ -1,10 +1,18 @@
-from typing import List, Optional, Tuple
+from typing import (
+    List,
+    Optional,
+    Tuple,
+)
 
 import torch
 from einops import rearrange
 from torch import Tensor, nn
 
-from layers.tsl.nn.layers.recurrent import GRUCell, LSTMCell, StateType
+from layers.tsl.nn.layers.recurrent import (
+    GRUCell,
+    LSTMCell,
+    StateType,
+)
 from layers.tsl.nn.utils import maybe_cat_exog
 
 from .base import RNNIBase

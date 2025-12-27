@@ -18,8 +18,13 @@ from functools import partial
 import torch
 import torch.nn.functional as F
 from huggingface_hub import PyTorchModelHubMixin
+
 # from hydra.utils import instantiate
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch import nn
 from torch.distributions import Distribution
 from torch.utils._pytree import tree_map

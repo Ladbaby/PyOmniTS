@@ -3,12 +3,21 @@ from math import ceil
 
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import rearrange, repeat
+from torch import Tensor
 
-from layers.Crossformer.Crossformer_EncDec import scale_block, Encoder, Decoder, DecoderLayer
+from layers.Crossformer.Crossformer_EncDec import (
+    Decoder,
+    DecoderLayer,
+    Encoder,
+    scale_block,
+)
 from layers.Formers.Embed import PatchEmbedding
-from layers.Formers.SelfAttention_Family import AttentionLayer, FullAttention, TwoStageAttentionLayer
+from layers.Formers.SelfAttention_Family import (
+    AttentionLayer,
+    FullAttention,
+    TwoStageAttentionLayer,
+)
 from models.PatchTST import FlattenHead
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger

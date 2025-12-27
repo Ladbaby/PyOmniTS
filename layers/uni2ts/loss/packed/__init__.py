@@ -13,7 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from ._base import PackedDistributionLoss, PackedLoss, PackedPointLoss
+from ._base import (
+    PackedDistributionLoss,
+    PackedLoss,
+    PackedPointLoss,
+)
 from .distribution import PackedNLLLoss
 from .normalized import (
     PackedNMAELoss,
@@ -24,7 +28,11 @@ from .normalized import (
     PointNormType,
 )
 from .percentage_error import PackedMAPELoss, PackedSMAPELoss
-from .point import PackedMAELoss, PackedMSELoss, PackedRMSELoss
+from .point import (
+    PackedMAELoss,
+    PackedMSELoss,
+    PackedRMSELoss,
+)
 
 __all__ = [
     "PackedDistributionLoss",

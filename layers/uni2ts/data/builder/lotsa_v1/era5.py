@@ -23,7 +23,11 @@ from typing import Any, Generator
 import datasets
 import numpy as np
 import pandas as pd
-from datasets import Features, Sequence, Value
+from datasets import (
+    Features,
+    Sequence,
+    Value,
+)
 
 from layers.uni2ts.common.env import env
 from layers.uni2ts.data.dataset import TimeSeriesDataset

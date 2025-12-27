@@ -74,7 +74,12 @@ __all__ = [
 import zipfile
 from pathlib import Path
 
-from pandas import DataFrame, Timestamp, concat, read_csv
+from pandas import (
+    DataFrame,
+    Timestamp,
+    concat,
+    read_csv,
+)
 
 from data.dependencies.tsdm.datasets.base import SingleFrameDataset
 

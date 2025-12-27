@@ -7,7 +7,13 @@ __all__ = [
 ]
 
 from abc import ABCMeta
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    TypeVar,
+    cast,
+)
 
 T = TypeVar("T")
 R = TypeVar("R")

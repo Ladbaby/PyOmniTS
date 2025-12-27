@@ -2,9 +2,9 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+import sklearn as sk
 import torch
 import torch.nn as nn
-import sklearn as sk
 from tqdm import tqdm
 
 from layers.GNeuralFlow.train_utils import delta_time

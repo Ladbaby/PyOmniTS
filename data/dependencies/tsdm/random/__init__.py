@@ -12,4 +12,8 @@ __all__ = [
 ]
 
 from data.dependencies.tsdm.random import samplers, stats
-from data.dependencies.tsdm.random._random import random_data, sample_timedeltas, sample_timestamps
+from data.dependencies.tsdm.random._random import (
+    random_data,
+    sample_timedeltas,
+    sample_timestamps,
+)

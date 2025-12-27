@@ -9,11 +9,22 @@ import logging
 from collections.abc import Callable
 from functools import cached_property
 from itertools import product
-from typing import Any, Literal, NamedTuple, Optional
+from typing import (
+    Any,
+    Literal,
+    NamedTuple,
+    Optional,
+)
 
 import pandas as pd
 import torch
-from pandas import DataFrame, MultiIndex, Series, Timedelta, Timestamp
+from pandas import (
+    DataFrame,
+    MultiIndex,
+    Series,
+    Timedelta,
+    Timestamp,
+)
 from pandas._libs.missing import NAType
 from sklearn.model_selection import ShuffleSplit
 from torch import Tensor, jit

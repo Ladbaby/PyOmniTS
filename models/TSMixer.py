@@ -6,6 +6,7 @@ from torch import Tensor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
+
 class Model(nn.Module):
     '''
     - paper: "TSMixer: An All-MLP Architecture for Time Series Forecasting" (TMLR)

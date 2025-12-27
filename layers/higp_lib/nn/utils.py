@@ -1,6 +1,8 @@
 from typing import Optional
+
 import torch
 from torch import Tensor
+
 
 def maybe_cat_emb(x: Tensor, emb: Optional[Tensor]):
     if emb is None:

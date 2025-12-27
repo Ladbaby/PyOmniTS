@@ -17,21 +17,46 @@ import os
 import subprocess
 import warnings
 import webbrowser
-from abc import ABC, ABCMeta, abstractmethod
-from collections.abc import Hashable, Iterator, Mapping, MutableMapping, Sequence
+from abc import (
+    ABC,
+    ABCMeta,
+    abstractmethod,
+)
+from collections.abc import (
+    Hashable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    Sequence,
+)
 from functools import cached_property, partial
 from hashlib import sha256
 from pathlib import Path
-from typing import Any, ClassVar, Generic, Optional, TypeAlias, overload
+from typing import (
+    Any,
+    ClassVar,
+    Generic,
+    Optional,
+    TypeAlias,
+    overload,
+)
 from urllib.parse import urlparse
 
 import pandas
 from pandas import DataFrame, Series
 
 from data.dependencies.tsdm.config import DATASETDIR, RAWDATADIR
-from data.dependencies.tsdm.utils import flatten_nested, paths_exists, prepend_path
+from data.dependencies.tsdm.utils import (
+    flatten_nested,
+    paths_exists,
+    prepend_path,
+)
 from data.dependencies.tsdm.utils.remote import download
-from data.dependencies.tsdm.utils.types import KeyVar, Nested, PathType
+from data.dependencies.tsdm.utils.types import (
+    KeyVar,
+    Nested,
+    PathType,
+)
 
 DATASET_OBJECT: TypeAlias = Series | DataFrame
 r"""Type hint for pandas objects."""

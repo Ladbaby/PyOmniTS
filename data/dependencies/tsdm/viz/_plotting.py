@@ -12,7 +12,12 @@ __all__ = [
 import logging
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Literal, Optional, TypeAlias
+from typing import (
+    Any,
+    Literal,
+    Optional,
+    TypeAlias,
+)
 
 import numpy as np
 import torch

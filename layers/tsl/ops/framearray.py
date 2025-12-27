@@ -1,11 +1,21 @@
-from typing import Any, Callable, Optional, Union
+from typing import (
+    Any,
+    Callable,
+    Optional,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
 import torch
 
 import layers.tsl as tsl
-from layers.tsl.typing import FillOptions, FrameArray, Index, Scalar
+from layers.tsl.typing import (
+    FillOptions,
+    FrameArray,
+    Index,
+    Scalar,
+)
 
 
 def framearray_to_numpy(x: FrameArray) -> np.ndarray:

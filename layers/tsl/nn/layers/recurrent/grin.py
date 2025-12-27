@@ -1,17 +1,28 @@
-from typing import List, Optional, Union
+from typing import (
+    List,
+    Optional,
+    Union,
+)
 
 import torch
 import torch.nn as nn
 from torch import LongTensor, Tensor
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import (from_scipy_sparse_matrix, remove_self_loops,
-                                   to_scipy_sparse_matrix)
+from torch_geometric.utils import (
+    from_scipy_sparse_matrix,
+    remove_self_loops,
+    to_scipy_sparse_matrix,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from layers.tsl.nn.layers.base import NodeEmbedding
 from layers.tsl.nn.layers.graph_convs import DiffConv
 from layers.tsl.nn.layers.norm import LayerNorm
-from layers.tsl.ops.connectivity import asymmetric_norm, power_series, transpose
+from layers.tsl.ops.connectivity import (
+    asymmetric_norm,
+    power_series,
+    transpose,
+)
 
 from .dcrnn import DCRNNCell
 

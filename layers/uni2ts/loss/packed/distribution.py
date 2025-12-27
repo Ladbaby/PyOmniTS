@@ -14,7 +14,11 @@
 #  limitations under the License.
 
 import torch
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch.distributions import Distribution
 
 from ._base import PackedDistributionLoss

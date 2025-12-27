@@ -17,13 +17,21 @@ from collections import defaultdict
 from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Generator, Optional
+from typing import (
+    Any,
+    Generator,
+    Optional,
+)
 from zipfile import ZipFile
 
 import datasets
 import gluonts
 import numpy as np
-from datasets import Features, Sequence, Value
+from datasets import (
+    Features,
+    Sequence,
+    Value,
+)
 from gluonts.dataset import DatasetWriter
 from gluonts.dataset.common import MetaData, TrainDatasets
 from gluonts.dataset.field_names import FieldName

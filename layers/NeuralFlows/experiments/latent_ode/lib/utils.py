@@ -1,9 +1,9 @@
 from pathlib import Path
 
 import numpy as np
+import sklearn as sk
 import torch
 import torch.nn as nn
-import sklearn as sk
 
 
 def split_last_dim(data):

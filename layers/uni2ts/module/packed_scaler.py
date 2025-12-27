@@ -17,7 +17,11 @@ from typing import Optional
 
 import torch
 from einops import reduce
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch import nn
 
 from layers.uni2ts.common.torch_util import safe_div

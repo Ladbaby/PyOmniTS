@@ -23,10 +23,11 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
+import logging
+import os
+
 import torch
 from torch import nn
-import logging
-import os 
 
 
 # taken from https://github.com/ALRhub/rkn_share/ and not modified

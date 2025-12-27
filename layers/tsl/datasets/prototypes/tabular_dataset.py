@@ -1,6 +1,13 @@
 from contextlib import contextmanager
 from copy import deepcopy
-from typing import Dict, List, Mapping, Optional, Tuple, Union
+from typing import (
+    Dict,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
@@ -8,9 +15,19 @@ from numpy import ndarray
 from pandas import Index
 
 from layers.tsl import logger
-from layers.tsl.ops.framearray import aggregate, fill_nan, framearray_to_numpy, reduce
-from layers.tsl.typing import (FillOptions, FrameArray, OptFrameArray, Scalar,
-                        TemporalIndex)
+from layers.tsl.ops.framearray import (
+    aggregate,
+    fill_nan,
+    framearray_to_numpy,
+    reduce,
+)
+from layers.tsl.typing import (
+    FillOptions,
+    FrameArray,
+    OptFrameArray,
+    Scalar,
+    TemporalIndex,
+)
 from layers.tsl.utils.python_utils import ensure_list
 
 from ...ops.pattern import broadcast, outer_pattern

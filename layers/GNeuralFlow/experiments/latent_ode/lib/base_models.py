@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
-from torch.distributions.normal import Normal
 from torch.distributions import kl_divergence
+from torch.distributions.normal import Normal
 
 import layers.GNeuralFlow.experiments.latent_ode.lib.utils as utils
 from layers.GNeuralFlow.experiments.latent_ode.lib.encoder_decoder import *
 from layers.GNeuralFlow.experiments.latent_ode.lib.likelihood_eval import *
+
 
 def create_classifier(z0_dim, n_labels):
     return nn.Sequential(

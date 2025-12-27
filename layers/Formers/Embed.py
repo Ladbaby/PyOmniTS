@@ -1,10 +1,12 @@
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils import weight_norm
-import math
 
 from utils.globals import logger
+
 
 class PatchEmbedding(nn.Module):
     def __init__(self, d_model, patch_len, stride, padding, dropout):

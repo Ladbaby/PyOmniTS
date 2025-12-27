@@ -15,7 +15,11 @@
 
 import itertools
 from collections import defaultdict, deque
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import (
+    Callable,
+    Iterator,
+    Sequence,
+)
 from dataclasses import dataclass, field
 from typing import NamedTuple, Optional
 
@@ -23,7 +27,12 @@ import numpy as np
 import torch
 from jaxtyping import Bool, Int
 from torch.utils.data import DataLoader as TorchDataLoader
-from torch.utils.data import Dataset, Sampler, default_collate, default_convert
+from torch.utils.data import (
+    Dataset,
+    Sampler,
+    default_collate,
+    default_convert,
+)
 
 from layers.uni2ts.common.typing import BatchedSample, Sample
 

@@ -10,7 +10,11 @@ __all__ = [
 from typing import Final
 
 import torch
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 
 from data.dependencies.tsdm.utils.decorators import autojit
 

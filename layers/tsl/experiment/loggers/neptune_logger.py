@@ -1,5 +1,10 @@
 import os
-from typing import List, Mapping, Optional, Union
+from typing import (
+    List,
+    Mapping,
+    Optional,
+    Union,
+)
 
 import numpy as np
 import pandas as pd

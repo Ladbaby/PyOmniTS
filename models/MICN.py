@@ -2,13 +2,14 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import repeat
+from torch import Tensor
 
-from layers.Formers.Embed import DataEmbedding
 from layers.Formers.Autoformer_EncDec import series_decomp, series_decomp_multi
+from layers.Formers.Embed import DataEmbedding
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     """

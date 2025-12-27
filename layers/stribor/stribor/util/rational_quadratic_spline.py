@@ -1,7 +1,8 @@
-import layers.stribor.stribor as st
+import numpy as np
 import torch
 from torch.nn import functional as F
-import numpy as np
+
+import layers.stribor.stribor as st
 
 
 def quadratic_spline_latent_dim(dim, n_bins):

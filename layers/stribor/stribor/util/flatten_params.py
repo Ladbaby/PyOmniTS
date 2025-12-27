@@ -1,5 +1,7 @@
 from itertools import chain
+
 import torch
+
 __all__ = ['flatten_params']
 
 

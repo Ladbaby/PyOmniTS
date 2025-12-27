@@ -1,5 +1,8 @@
-from layers.higp_lib.nn.hierarchical.models.hierarchical_time_than_space import HierarchicalTimeThanSpaceModel
+from layers.higp_lib.nn.hierarchical.models.hierarchical_time_than_space import (
+    HierarchicalTimeThanSpaceModel,
+)
 from layers.higp_lib.nn.hierarchical.pyramidal_gnn import PyramidalGNN
+
 
 class HiGPTTSModel(HierarchicalTimeThanSpaceModel):
     r""""""

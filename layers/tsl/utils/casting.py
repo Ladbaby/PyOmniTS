@@ -1,4 +1,8 @@
-from typing import Any, Literal, Union
+from typing import (
+    Any,
+    Literal,
+    Union,
+)
 
 import torch
 from einops import rearrange

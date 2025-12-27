@@ -2,11 +2,17 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
+from layers.ETSformer.ETSformer_EncDec import (
+    Decoder,
+    DecoderLayer,
+    Encoder,
+    EncoderLayer,
+    Transform,
+)
 from layers.Formers.Embed import DataEmbedding
-from layers.ETSformer.ETSformer_EncDec import EncoderLayer, Encoder, DecoderLayer, Decoder, Transform
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 

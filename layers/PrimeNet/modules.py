@@ -1,8 +1,8 @@
+import math
+
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch
-
-import math
 
 MAX_VAL = 1e4
 MIN_VAL = 1e-12

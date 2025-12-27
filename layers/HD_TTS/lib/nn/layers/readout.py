@@ -1,7 +1,8 @@
 from typing import Optional
 
 from einops.layers.torch import Rearrange
-from torch import nn, Tensor
+from torch import Tensor, nn
+
 from layers.tsl.nn.layers import Dense, MultiLinear
 
 

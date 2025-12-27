@@ -13,7 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .normalized import PackedNMAELoss, PackedNMSELoss, PackedNRMSELoss, PointNormType
+from .normalized import (
+    PackedNMAELoss,
+    PackedNMSELoss,
+    PackedNRMSELoss,
+    PointNormType,
+)
 
 
 class PackedMAELoss(PackedNMAELoss):

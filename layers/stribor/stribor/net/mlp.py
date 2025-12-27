@@ -1,4 +1,8 @@
-from typing import Union, Callable, List
+from typing import (
+    Callable,
+    List,
+    Union,
+)
 
 import torch.nn as nn
 

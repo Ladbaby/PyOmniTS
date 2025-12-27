@@ -5,11 +5,12 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

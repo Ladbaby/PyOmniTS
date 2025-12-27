@@ -1,6 +1,7 @@
 from typing import Optional
 
 from torch import Tensor, nn
+
 from layers.tsl.nn import get_functional_activation
 from layers.tsl.nn.layers import NodeEmbedding
 

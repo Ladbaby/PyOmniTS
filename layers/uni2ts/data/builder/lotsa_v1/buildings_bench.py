@@ -22,7 +22,11 @@ from typing import Any, Generator
 
 import datasets
 import pyarrow.parquet as pq
-from datasets import Features, Sequence, Value
+from datasets import (
+    Features,
+    Sequence,
+    Value,
+)
 
 try:
     from buildings_bench.data import load_pandas_dataset

@@ -29,13 +29,26 @@ __all__ = [
 ]
 
 import os
-from collections.abc import Collection, Hashable, Mapping
+from collections.abc import (
+    Collection,
+    Hashable,
+    Mapping,
+)
 from pathlib import Path
 from types import GenericAlias, ModuleType
-from typing import Any, ParamSpec, TypeAlias, TypeVar
+from typing import (
+    Any,
+    ParamSpec,
+    TypeAlias,
+    TypeVar,
+)
 
 from numpy import ndarray
-from pandas import DataFrame, Index, Series
+from pandas import (
+    DataFrame,
+    Index,
+    Series,
+)
 from torch import Tensor, nn
 
 Parameters = ParamSpec("Parameters")

@@ -12,11 +12,23 @@ __all__ = [
     "TimeDeltaEncoder",
 ]
 
-from typing import Any, Hashable, Literal, Optional, cast
+from typing import (
+    Any,
+    Hashable,
+    Literal,
+    Optional,
+    cast,
+)
 
 import numpy as np
 import pandas as pd
-from pandas import DataFrame, DatetimeIndex, Series, Timedelta, Timestamp
+from pandas import (
+    DataFrame,
+    DatetimeIndex,
+    Series,
+    Timedelta,
+    Timestamp,
+)
 
 from data.dependencies.tsdm.encoders._modular import FrameEncoder
 from data.dependencies.tsdm.encoders.base import BaseEncoder

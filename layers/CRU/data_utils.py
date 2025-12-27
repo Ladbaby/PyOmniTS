@@ -13,12 +13,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import torch
-from torch.utils.data import Dataset, DataLoader
-from torch.nn.utils.rnn import pad_sequence
+import os
+
 import numpy as np
 import pandas as pd
-import os
+import torch
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
+
 
 # new code component 
 class Pendulum_interpolation(Dataset):

@@ -2,18 +2,22 @@
 import math
 
 import torch
+from sklearn import model_selection
 from torch import Tensor
 from torch.utils.data import Dataset
-from sklearn import model_selection
 
-from utils.globals import logger
+from data.dependencies.HumanActivity.HumanActivity import (
+    Activity_time_chunk,
+    HumanActivity,
+)
+from data.dependencies.tsdm.PyOmniTS.tsdmDataset import (  # collate_fns must be imported here for PyOmniTS's --collate_fn argument to work
+    collate_fn,
+    collate_fn_patch,
+    collate_fn_tpatch,
+)
 from utils.ExpConfigs import ExpConfigs
-from data.dependencies.HumanActivity.HumanActivity import HumanActivity, Activity_time_chunk
-from data.dependencies.tsdm.PyOmniTS.tsdmDataset import (
-    collate_fn, 
-    collate_fn_patch, 
-    collate_fn_tpatch 
-) # collate_fns must be imported here for PyOmniTS's --collate_fn argument to work
+from utils.globals import logger
+
 
 class Data(Dataset):
     '''

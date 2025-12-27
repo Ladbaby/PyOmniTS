@@ -1,6 +1,11 @@
 import os.path
 from copy import deepcopy
-from typing import List, Optional, Tuple, Union
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch
@@ -11,7 +16,11 @@ from torch.nn import Module
 from torch_geometric.data.storage import recursive_apply
 
 import layers.tsl as tsl
-from layers.tsl.ops.pattern import check_pattern, outer_pattern, take
+from layers.tsl.ops.pattern import (
+    check_pattern,
+    outer_pattern,
+    take,
+)
 from layers.tsl.typing import TensArray
 
 __all__ = [

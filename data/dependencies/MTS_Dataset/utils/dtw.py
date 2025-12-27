@@ -1,8 +1,9 @@
 __author__ = 'Brian Iwana'
 
-import numpy as np
 import math
 import sys
+
+import numpy as np
 
 RETURN_VALUE = 0
 RETURN_PATH = 1

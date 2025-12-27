@@ -17,7 +17,11 @@ from typing import Optional
 
 import numpy as np
 import torch
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 
 numpy_to_torch_dtype_dict = {
     bool: torch.bool,

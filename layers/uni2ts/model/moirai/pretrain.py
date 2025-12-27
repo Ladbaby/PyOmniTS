@@ -20,7 +20,11 @@ from typing import Any, Optional
 import lightning as L
 import numpy as np
 import torch
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch import nn
 from torch.distributions import Distribution
 

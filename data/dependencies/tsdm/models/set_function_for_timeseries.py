@@ -12,7 +12,11 @@ __all__ = [
 from typing import Optional
 
 import torch
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 
 from data.dependencies.tsdm.encoders.torch import PositionalEncoder, Time2Vec
 from data.dependencies.tsdm.models.generic import (

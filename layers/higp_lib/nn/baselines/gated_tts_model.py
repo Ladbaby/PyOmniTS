@@ -1,8 +1,8 @@
 from torch import nn
 
+from layers.higp_lib.nn.base.time_then_space_model import TimeThenSpaceModel
 from layers.higp_lib.nn.layers import GraphAnisoConv
 
-from layers.higp_lib.nn.base.time_then_space_model import TimeThenSpaceModel
 
 class GatedTTSModel(TimeThenSpaceModel):
     r""""""

@@ -1,9 +1,9 @@
 import torch
 
 import layers.GNeuralFlow.experiments.latent_ode.lib.utils as utils
+from layers.GNeuralFlow.experiments.latent_ode.lib.base_models import VAE_Baseline
 from layers.GNeuralFlow.experiments.latent_ode.lib.encoder_decoder import *
 from layers.GNeuralFlow.experiments.latent_ode.lib.likelihood_eval import *
-from layers.GNeuralFlow.experiments.latent_ode.lib.base_models import VAE_Baseline
 from layers.GNeuralFlow.models.gnn import GNN
 from layers.GNeuralFlow.models.mlp import MLP
 

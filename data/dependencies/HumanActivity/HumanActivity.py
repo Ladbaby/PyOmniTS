@@ -3,10 +3,10 @@
 # Authors: Yulia Rubanova and Ricky Chen
 ###########################
 
-import os
 import hashlib
-import requests
+import os
 
+import requests
 import torch
 
 # Adapted from: https://github.com/rtqichen/time-series-datasets

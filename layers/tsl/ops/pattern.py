@@ -1,7 +1,12 @@
 import re
 from collections import Counter
 from types import ModuleType
-from typing import Iterable, List, Optional, Union
+from typing import (
+    Iterable,
+    List,
+    Optional,
+    Union,
+)
 
 import numpy as np
 import torch

@@ -17,7 +17,11 @@ from functools import reduce
 from typing import Callable, Optional
 
 import torch
-from torch.distributions import Categorical, Distribution, constraints
+from torch.distributions import (
+    Categorical,
+    Distribution,
+    constraints,
+)
 
 from layers.uni2ts.common.torch_util import unsqueeze_trailing_dims
 

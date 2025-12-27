@@ -128,8 +128,10 @@ class PvUS(DatetimeDataset):
 
     def compute_similarity(self, method: str, theta: float = 150, **kwargs):
         if method == "distance":
-            from layers.tsl.ops.similarities import (gaussian_kernel,
-                                              geographical_distance)
+            from layers.tsl.ops.similarities import (
+                gaussian_kernel,
+                geographical_distance,
+            )
 
             # compute distances from latitude and longitude degrees
             loc_coord = self.metadata.loc[:, ['lat', 'lon']].values

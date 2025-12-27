@@ -14,7 +14,12 @@
 import logging
 from collections import ChainMap
 from dataclasses import dataclass
-from typing import Iterable, List, Optional, Union
+from typing import (
+    Iterable,
+    List,
+    Optional,
+    Union,
+)
 
 import numpy as np
 import pandas as pd

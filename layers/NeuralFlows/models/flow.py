@@ -1,9 +1,10 @@
 from typing import List, Optional
 
 import torch.nn as nn
-import layers.stribor.stribor as st
 from torch import Tensor
 from torch.nn import Module
+
+import layers.stribor.stribor as st
 
 
 class CouplingFlow(Module):

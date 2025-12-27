@@ -1,8 +1,9 @@
+from abc import ABCMeta, abstractmethod
 from typing import List, Union
 
-from abc import ABCMeta, abstractmethod
 import torch
 import torch.nn as nn
+
 import layers.stribor.stribor as st
 
 

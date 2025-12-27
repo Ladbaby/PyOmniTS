@@ -8,7 +8,12 @@ __all__ = [
 from collections.abc import Callable
 from functools import cached_property
 from itertools import product
-from typing import Any, Literal, NamedTuple, Optional
+from typing import (
+    Any,
+    Literal,
+    NamedTuple,
+    Optional,
+)
 
 import torch
 from pandas import DataFrame, Series

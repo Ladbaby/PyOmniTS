@@ -4,22 +4,22 @@
 ###########################
 
 import gc
+
 import numpy as np
 import sklearn as sk
-import numpy as np
+
 #import gc
 import torch
 import torch.nn as nn
+from torch.distributions import Independent, kl_divergence
+from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.normal import Normal
 from torch.nn.functional import relu
 
 import layers.Latent_ODE.utils as utils
-from layers.Latent_ODE.utils import get_device
 from layers.Latent_ODE.encoder_decoder import *
 from layers.Latent_ODE.likelihood_eval import *
-
-from torch.distributions.multivariate_normal import MultivariateNormal
-from torch.distributions.normal import Normal
-from torch.distributions import kl_divergence, Independent
+from layers.Latent_ODE.utils import get_device
 
 
 def gaussian_log_likelihood(mu_2d, data_2d, obsrv_std, indices = None):

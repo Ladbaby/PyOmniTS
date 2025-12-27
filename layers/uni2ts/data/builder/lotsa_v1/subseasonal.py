@@ -19,7 +19,11 @@ from typing import Any, Generator
 
 import datasets
 import numpy as np
-from datasets import Features, Sequence, Value
+from datasets import (
+    Features,
+    Sequence,
+    Value,
+)
 
 try:
     from subseasonal_data import data_loaders

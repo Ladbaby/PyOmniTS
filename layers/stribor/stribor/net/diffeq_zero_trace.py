@@ -1,7 +1,13 @@
-from typing import Union, List, Optional, Tuple
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 import torch.nn as nn
+
 import layers.stribor.stribor as st
 from layers.stribor.stribor.net import DiffeqNet
 

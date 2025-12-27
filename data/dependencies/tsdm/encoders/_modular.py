@@ -18,14 +18,34 @@ __all__ = [
 
 import warnings
 from collections import defaultdict, namedtuple
-from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
-from typing import Any, Final, Generic, Optional, TypeVar, cast, overload
+from collections.abc import (
+    Callable,
+    Hashable,
+    Iterable,
+    Mapping,
+    Sequence,
+)
+from typing import (
+    Any,
+    Final,
+    Generic,
+    Optional,
+    TypeVar,
+    cast,
+    overload,
+)
 
 import numpy as np
 import pandas as pd
 import torch
 from numpy.typing import NDArray
-from pandas import NA, DataFrame, Index, MultiIndex, Series
+from pandas import (
+    NA,
+    DataFrame,
+    Index,
+    MultiIndex,
+    Series,
+)
 from pandas.core.indexes.frozen import FrozenList
 from torch import Tensor
 
@@ -33,7 +53,11 @@ from data.dependencies.tsdm.encoders.base import BaseEncoder
 from data.dependencies.tsdm.utils import pairwise_disjoint
 from data.dependencies.tsdm.utils.data import TimeTensor
 from data.dependencies.tsdm.utils.strings import repr_mapping
-from data.dependencies.tsdm.utils.types import PandasObject, PathType, TensorVar
+from data.dependencies.tsdm.utils.types import (
+    PandasObject,
+    PathType,
+    TensorVar,
+)
 from data.dependencies.tsdm.utils.types.protocols import NTuple
 
 

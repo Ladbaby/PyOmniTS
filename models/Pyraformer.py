@@ -1,8 +1,8 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from layers.Pyraformer.Pyraformer_EncDec import Encoder
 from utils.ExpConfigs import ExpConfigs

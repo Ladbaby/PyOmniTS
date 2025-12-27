@@ -16,12 +16,20 @@
 import math
 from contextlib import contextmanager
 from copy import deepcopy
-from typing import Any, Generator, Optional
+from typing import (
+    Any,
+    Generator,
+    Optional,
+)
 
 import lightning as L
 import numpy as np
 import torch
-from einops import rearrange, reduce, repeat
+from einops import (
+    rearrange,
+    reduce,
+    repeat,
+)
 from gluonts.model import Input, InputSpec
 from gluonts.torch import PyTorchPredictor
 from gluonts.transform import (
@@ -33,7 +41,11 @@ from gluonts.transform import (
     Transformation,
 )
 from gluonts.transform.split import TFTInstanceSplitter
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch.distributions import Distribution
 
 from layers.uni2ts.common.torch_util import safe_div

@@ -1,28 +1,37 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-from pathlib import Path
 import datetime
-import warnings
-import json
-from collections import OrderedDict
-from typing import Generator
 import importlib
+import json
+import warnings
+from collections import OrderedDict
+from pathlib import Path
+from typing import Generator
 
 import numpy as np
-from tqdm import tqdm
 import torch
-from torch import optim, Tensor
-from torch.nn import Module
-from torch.utils.data import Dataset, DataLoader
-from torch.nn.utils import clip_grad_norm_
-from torch.optim.lr_scheduler import LambdaLR, CosineAnnealingLR, LRScheduler
 from accelerate import load_checkpoint_in_model
+from torch import Tensor, optim
+from torch.nn import Module
+from torch.nn.utils import clip_grad_norm_
+from torch.optim.lr_scheduler import (
+    CosineAnnealingLR,
+    LambdaLR,
+    LRScheduler,
+)
+from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
 
 from data.data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from utils.tools import EarlyStopping, test_params_flop, test_train_time, test_gpu_memory
-from utils.metrics import metric
-from utils.globals import logger, accelerator
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import accelerator, logger
+from utils.metrics import metric
+from utils.tools import (
+    EarlyStopping,
+    test_gpu_memory,
+    test_params_flop,
+    test_train_time,
+)
 
 warnings.filterwarnings('ignore')
 
@@ -58,6 +67,7 @@ class Exp_Main(Exp_Basic):
             Originally named as 'type2'
             '''
             from lr_schedulers.ManualMilestonesLR import ManualMilestonesLR
+
             # Convert 1-based epochs to 0-based
             user_milestones = {2:5e-5, 4:1e-5, 6:5e-6, 8:1e-6, 10:5e-7, 15:1e-7, 20:5e-8}
             milestones = {k-1: v for k, v in user_milestones.items()}

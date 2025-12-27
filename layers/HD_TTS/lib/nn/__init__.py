@@ -1,2 +1,6 @@
-from . import models, layers, predictors
+from . import (
+    layers,
+    models,
+    predictors,
+)
 from .predictors import MultiScalePredictor

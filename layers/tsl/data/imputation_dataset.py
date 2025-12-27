@@ -1,8 +1,18 @@
-from typing import Callable, Mapping, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 
-from layers.tsl.typing import DataArray, SparseTensArray, TemporalIndex
+from layers.tsl.typing import (
+    DataArray,
+    SparseTensArray,
+    TemporalIndex,
+)
 
 from .batch_map import BatchMap, BatchMapItem
 from .preprocessing import Scaler

@@ -5,11 +5,12 @@
 import torch
 
 import layers.Latent_ODE.utils as utils
-from layers.Latent_ODE.utils import get_device
-from layers.Latent_ODE.encoder_decoder import *
-from layers.Latent_ODE.likelihood_eval import *
 from layers.Latent_ODE.base_models import VAE_Baseline
 from layers.Latent_ODE.diffeq_solver import DiffeqSolver
+from layers.Latent_ODE.encoder_decoder import *
+from layers.Latent_ODE.likelihood_eval import *
+from layers.Latent_ODE.utils import get_device
+
 
 class LatentODE(VAE_Baseline):
     def __init__(self, input_dim, latent_dim, encoder_z0, decoder, diffeq_solver, 

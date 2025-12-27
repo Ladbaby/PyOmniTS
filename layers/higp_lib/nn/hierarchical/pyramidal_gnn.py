@@ -1,12 +1,12 @@
 from functools import partial
 
-from torch import nn
 import torch
+from torch import nn
 
-from layers.higp_lib.nn.hierarchical.ops import src_reduce, src_lift
+from layers.higp_lib.nn.hierarchical.ops import src_lift, src_reduce
 from layers.higp_lib.nn.layers import GraphAnisoConv
 from layers.tsl.nn.blocks import ResidualMLP
-from layers.tsl.nn.layers import GraphConv, DiffConv
+from layers.tsl.nn.layers import DiffConv, GraphConv
 
 
 class PyramidalGNN(nn.Module):

@@ -14,7 +14,11 @@ __all__ = [
     "GENERATORS",
 ]
 
-from typing import Any, Final, TypeAlias
+from typing import (
+    Any,
+    Final,
+    TypeAlias,
+)
 
 Generator: TypeAlias = Any
 r"""Type hint for generators."""

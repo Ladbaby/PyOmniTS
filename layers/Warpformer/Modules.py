@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
 
+
 class ScaledDotProductAttention(nn.Module):
     """ Scaled Dot-Product Attention """
 

@@ -1,19 +1,28 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-from typing import Sequence, Dict, List, Tuple
 from collections.abc import Sequence as SequenceType
+from typing import (
+    Dict,
+    List,
+    Sequence,
+    Tuple,
+)
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
-from torch.nn import Parameter
-from torch.nn.init import xavier_uniform_
-from torch.nn import TransformerEncoder, TransformerEncoderLayer
-import numpy as np
 from einops import *
+from torch import Tensor
+from torch.nn import (
+    Parameter,
+    TransformerEncoder,
+    TransformerEncoderLayer,
+)
+from torch.nn.init import xavier_uniform_
 
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     """

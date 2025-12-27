@@ -18,24 +18,53 @@ __all__ = [
 
 import logging
 import math
-from abc import ABC, ABCMeta, abstractmethod
-from collections.abc import Callable, Iterator, Mapping, Sequence, Sized
+from abc import (
+    ABC,
+    ABCMeta,
+    abstractmethod,
+)
+from collections.abc import (
+    Callable,
+    Iterator,
+    Mapping,
+    Sequence,
+    Sized,
+)
 from datetime import timedelta as py_td
 from itertools import chain, count
-from typing import Any, Generic, Literal, Optional, TypeAlias, Union, cast
+from typing import (
+    Any,
+    Generic,
+    Literal,
+    Optional,
+    TypeAlias,
+    Union,
+    cast,
+)
 
 import numpy as np
 import pandas as pd
 from numpy.lib.stride_tricks import sliding_window_view
 from numpy.typing import NDArray
-from pandas import DataFrame, Index, Series, Timedelta, Timestamp
+from pandas import (
+    DataFrame,
+    Index,
+    Series,
+    Timedelta,
+    Timestamp,
+)
 from torch.utils.data import Sampler
 
 from data.dependencies.tsdm.utils.data.datasets import DatasetCollection
 from data.dependencies.tsdm.utils.strings import repr_mapping
 from data.dependencies.tsdm.utils.types import ObjectVar, ValueVar
 from data.dependencies.tsdm.utils.types.protocols import Array
-from data.dependencies.tsdm.utils.types.time import DTVar, NumpyDTVar, NumpyTDVar, TDVar
+from data.dependencies.tsdm.utils.types.time import (
+    DTVar,
+    NumpyDTVar,
+    NumpyTDVar,
+    TDVar,
+)
 
 Boxed: TypeAlias = Union[
     Sequence[ValueVar],

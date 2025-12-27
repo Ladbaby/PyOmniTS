@@ -1,8 +1,17 @@
 import inspect
 import os
 from argparse import ArgumentParser
-from typing import (Any, Callable, List, Mapping, Optional, Sequence, Set,
-                    Type, Union)
+from typing import (
+    Any,
+    Callable,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Set,
+    Type,
+    Union,
+)
 
 
 def ensure_list(value: Any) -> List:

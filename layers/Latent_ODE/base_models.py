@@ -5,12 +5,12 @@
 
 import torch
 import torch.nn as nn
+from torch.distributions.normal import Normal
 
 import layers.Latent_ODE.utils as utils
 from layers.Latent_ODE.encoder_decoder import *
 from layers.Latent_ODE.likelihood_eval import *
 
-from torch.distributions.normal import Normal
 
 def create_classifier(z0_dim, n_labels):
     return nn.Sequential(

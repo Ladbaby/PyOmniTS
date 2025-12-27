@@ -90,7 +90,13 @@ from typing import Final, TypeAlias
 from sklearn import preprocessing as sk_preprocessing
 from sklearn.base import BaseEstimator
 
-from data.dependencies.tsdm.encoders import base, functional, numerical, time, torch
+from data.dependencies.tsdm.encoders import (
+    base,
+    functional,
+    numerical,
+    time,
+    torch,
+)
 from data.dependencies.tsdm.encoders._modular import (
     DataFrameEncoder,
     FrameEncoder,

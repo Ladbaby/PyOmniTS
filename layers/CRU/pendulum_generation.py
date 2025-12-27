@@ -18,10 +18,10 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
-import numpy as np
-from PIL import Image
-from PIL import ImageDraw
 import os
+
+import numpy as np
+from PIL import Image, ImageDraw
 
 
 # taken from https://github.com/ALRhub/rkn_share/ and not modified

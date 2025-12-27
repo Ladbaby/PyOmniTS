@@ -5,10 +5,10 @@
 
 import torch
 import torch.nn as nn
+from torch.nn.modules.rnn import GRU
 from tqdm import tqdm
 
 import layers.Latent_ODE.utils as utils
-from torch.nn.modules.rnn import GRU
 from layers.Latent_ODE.utils import get_device
 
 

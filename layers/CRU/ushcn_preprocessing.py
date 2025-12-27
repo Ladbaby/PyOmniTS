@@ -18,13 +18,15 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
-from concurrent.futures import process
-import pandas as pd
-from itertools import chain
-import numpy as np
-import os
 import gzip
+import os
+from concurrent.futures import process
+from itertools import chain
+
+import numpy as np
+import pandas as pd
 from torchvision.datasets.utils import download_url
+
 
 # new code component
 def download_ushcn(data_path):

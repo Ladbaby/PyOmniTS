@@ -1,10 +1,16 @@
-from typing import List, Optional, Tuple, Union
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
-import layers.stribor.stribor as st
 from torch import Tensor
 from torch.nn import Module
 from torchdiffeq import odeint_adjoint as odeint
+
+import layers.stribor.stribor as st
 
 
 class DiffeqConcat(Module):

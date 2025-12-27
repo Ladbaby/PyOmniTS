@@ -3,13 +3,13 @@ from typing import Tuple, Union
 import torch
 from torch import Tensor
 from torch_geometric.typing import Adj
+
+from layers.HD_TTS.lib.pooling import connectivity_to_adj_t
 from layers.tsl.datasets import TabularDataset
 from layers.tsl.ops.connectivity import parse_connectivity
 from layers.tsl.ops.imputation import to_missing_values_dataset
-from layers.tsl.typing import SparseTensArray, DataArray
+from layers.tsl.typing import DataArray, SparseTensArray
 from layers.tsl.utils import ensure_list
-
-from layers.HD_TTS.lib.pooling import connectivity_to_adj_t
 
 
 def sample_mask(shape,

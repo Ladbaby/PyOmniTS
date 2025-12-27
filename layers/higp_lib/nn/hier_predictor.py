@@ -1,4 +1,9 @@
-from typing import Optional, Callable, Mapping, Type
+from typing import (
+    Callable,
+    Mapping,
+    Optional,
+    Type,
+)
 
 import torch
 from torch import nn

@@ -1,9 +1,11 @@
+import math
+from typing import Optional
+
 import torch
 import torch.nn as nn
-import math
-from torch import Tensor
 import torch.nn.functional as F
-from typing import  Optional
+from torch import Tensor
+
 
 class Leddam(nn.Module):
     def __init__(self,

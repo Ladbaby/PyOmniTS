@@ -6,9 +6,18 @@ __all__ = [
 ]
 
 
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Mapping,
+    Sequence,
+)
 from functools import cached_property
-from typing import Any, Literal, NamedTuple, Optional
+from typing import (
+    Any,
+    Literal,
+    NamedTuple,
+    Optional,
+)
 
 import numpy as np
 import pandas as pd

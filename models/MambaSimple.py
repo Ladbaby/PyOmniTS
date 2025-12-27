@@ -4,12 +4,16 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import (
+    einsum,
+    rearrange,
+    repeat,
+)
 from torch import Tensor
-from einops import rearrange, repeat, einsum
 
 from layers.Formers.Embed import DataEmbedding
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
 
 
 class Model(nn.Module):

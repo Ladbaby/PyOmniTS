@@ -18,8 +18,8 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
-import torch
 import numpy as np
+import torch
 
 
 # taken from https://github.com/ALRhub/rkn_share/ and modified

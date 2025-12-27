@@ -1,8 +1,9 @@
 import math
-from typing import Optional, List
+from typing import List, Optional
 
 import torch
 from torch import Tensor, nn
+
 from layers.tsl.nn.blocks.encoders import RNNBase
 from layers.tsl.nn.layers.recurrent import RNNCellBase, StateType
 

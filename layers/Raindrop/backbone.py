@@ -11,8 +11,8 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import TransformerEncoderLayer, TransformerEncoder
 from einops import *
+from torch.nn import TransformerEncoder, TransformerEncoderLayer
 
 
 class BackboneRaindrop(nn.Module):
@@ -34,7 +34,7 @@ class BackboneRaindrop(nn.Module):
     ):
 
         try:
-            from .layers import PositionalEncoding, ObservationPropagation
+            from .layers import ObservationPropagation, PositionalEncoding
         except (ImportError, NameError) as e:
             raise ImportError(
                 f"❌ {e}. Note that torch_geometric is missing, please install it with "

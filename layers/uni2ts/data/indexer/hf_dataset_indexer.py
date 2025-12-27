@@ -22,7 +22,12 @@ from datasets import Dataset
 from datasets.features import Sequence
 from datasets.formatting import query_table
 
-from layers.uni2ts.common.typing import BatchedData, Data, MultivarTimeSeries, UnivarTimeSeries
+from layers.uni2ts.common.typing import (
+    BatchedData,
+    Data,
+    MultivarTimeSeries,
+    UnivarTimeSeries,
+)
 
 from ._base import Indexer
 

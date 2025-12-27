@@ -4,7 +4,7 @@ from .cnf import *
 from .coupling import *
 from .cumsum import *
 from .identity import *
-from .permute import *
 from .iresnet import *
+from .permute import *
 from .sigmoid import *
 from .spline import *

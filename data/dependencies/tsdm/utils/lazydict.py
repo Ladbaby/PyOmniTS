@@ -12,8 +12,20 @@ __all__ = [
 ]
 
 import logging
-from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping
-from typing import Any, Generic, NamedTuple, Union, overload
+from collections.abc import (
+    Callable,
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+)
+from typing import (
+    Any,
+    Generic,
+    NamedTuple,
+    Union,
+    overload,
+)
 
 from data.dependencies.tsdm.utils.types import KeyVar, ObjectVar
 

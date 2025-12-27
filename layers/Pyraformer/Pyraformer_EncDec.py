@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules.linear import Linear
 
-from layers.Formers.SelfAttention_Family import AttentionLayer, FullAttention
 from layers.Formers.Embed import DataEmbedding
+from layers.Formers.SelfAttention_Family import AttentionLayer, FullAttention
 from utils.ExpConfigs import ExpConfigs
 
 

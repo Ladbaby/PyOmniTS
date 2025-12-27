@@ -1,13 +1,27 @@
 import copy
-from typing import (Any, Callable, Dict, Iterable, Iterator, List, Mapping,
-                    Optional, Tuple, Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 from einops import rearrange
 from torch import Tensor
 from torch_geometric.data.data import Data as PyGData
 from torch_geometric.data.storage import BaseStorage
-from torch_geometric.data.view import ItemsView, KeysView, ValuesView
+from torch_geometric.data.view import (
+    ItemsView,
+    KeysView,
+    ValuesView,
+)
 from torch_geometric.typing import Adj
 from torch_sparse import SparseTensor
 

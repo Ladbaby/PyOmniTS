@@ -1,10 +1,15 @@
 from typing import Optional
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torch_geometric.nn import MessagePassing
+
 from layers.tsl.nn.blocks import RNNBase
-from layers.tsl.nn.layers import Dense, GraphGRUCellBase, Activation
+from layers.tsl.nn.layers import (
+    Activation,
+    Dense,
+    GraphGRUCellBase,
+)
 
 
 class GraphAnisoConv(MessagePassing):

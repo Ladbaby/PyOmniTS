@@ -15,9 +15,18 @@ __all__ = [
 
 
 import logging
-from abc import ABC, ABCMeta, abstractmethod
+from abc import (
+    ABC,
+    ABCMeta,
+    abstractmethod,
+)
 from copy import deepcopy
-from typing import Any, ClassVar, Sequence, overload
+from typing import (
+    Any,
+    ClassVar,
+    Sequence,
+    overload,
+)
 
 from data.dependencies.tsdm.utils.decorators import wrap_func
 from data.dependencies.tsdm.utils.strings import repr_sequence

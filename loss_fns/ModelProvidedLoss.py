@@ -2,8 +2,9 @@
 import torch.nn as nn
 from torch import Tensor
 
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Loss(nn.Module):
     '''

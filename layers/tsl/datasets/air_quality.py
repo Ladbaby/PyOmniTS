@@ -1,5 +1,9 @@
 import os
-from typing import List, Optional, Sequence
+from typing import (
+    List,
+    Optional,
+    Sequence,
+)
 
 import numpy as np
 import pandas as pd

@@ -7,6 +7,7 @@ from torch import Tensor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
+
 class Model(nn.Module):
     """
     - paper: "Frequency-domain MLPs are More Effective Learners in Time Series Forecasting" (NeurIPS 2023)

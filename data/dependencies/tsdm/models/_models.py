@@ -8,7 +8,11 @@ __all__ = [
 import logging
 import os
 import subprocess
-from abc import ABC, ABCMeta, abstractmethod
+from abc import (
+    ABC,
+    ABCMeta,
+    abstractmethod,
+)
 from functools import cached_property
 from pathlib import Path
 from typing import Optional, Protocol

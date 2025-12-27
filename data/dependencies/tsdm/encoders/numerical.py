@@ -12,12 +12,24 @@ __all__ = [
 ]
 
 from functools import singledispatchmethod
-from typing import Any, Generic, NamedTuple, Optional, TypeAlias, TypeVar, overload
+from typing import (
+    Any,
+    Generic,
+    NamedTuple,
+    Optional,
+    TypeAlias,
+    TypeVar,
+    overload,
+)
 
 import numpy as np
 import torch
 from numpy.typing import NDArray
-from pandas import DataFrame, Index, Series
+from pandas import (
+    DataFrame,
+    Index,
+    Series,
+)
 from torch import Tensor
 
 from data.dependencies.tsdm.encoders.base import BaseEncoder

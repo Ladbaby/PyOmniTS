@@ -1,7 +1,13 @@
 import functools
 from copy import deepcopy
 from datetime import datetime
-from typing import Callable, Mapping, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 

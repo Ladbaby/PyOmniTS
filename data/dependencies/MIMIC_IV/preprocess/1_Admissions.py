@@ -1,9 +1,9 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-import sys
 import os
+import sys
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 file_path = sys.argv[1]
 fn = 'core/admissions.csv.gz'

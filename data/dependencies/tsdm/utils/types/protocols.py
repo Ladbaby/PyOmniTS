@@ -16,7 +16,14 @@ __all__ = [
 ]
 
 from collections.abc import Iterable, Sequence
-from typing import Protocol, TypeAlias, TypeVar, Union, overload, runtime_checkable
+from typing import (
+    Protocol,
+    TypeAlias,
+    TypeVar,
+    Union,
+    overload,
+    runtime_checkable,
+)
 
 ScalarType = TypeVar("ScalarType")
 T = TypeVar("T")

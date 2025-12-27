@@ -1,11 +1,16 @@
-from typing import Union, Optional, Tuple
-
-from numbers import Number
 import math
+from numbers import Number
+from typing import (
+    Optional,
+    Tuple,
+    Union,
+)
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from layers.stribor.stribor import Transform, ElementwiseTransform
+
+from layers.stribor.stribor import ElementwiseTransform, Transform
 
 
 class Affine(ElementwiseTransform):

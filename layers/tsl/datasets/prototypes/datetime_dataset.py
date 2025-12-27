@@ -1,5 +1,11 @@
 from copy import deepcopy
-from typing import Literal, Mapping, Optional, Tuple, Union
+from typing import (
+    Literal,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from layers.tsl.typing import FrameArray, OptFrameArray
 

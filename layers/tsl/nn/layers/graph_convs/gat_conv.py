@@ -1,4 +1,8 @@
-from typing import Optional, Tuple, Union
+from typing import (
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 import torch.nn.functional as F
@@ -7,7 +11,11 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+)
 from torch_geometric.utils import add_self_loops, remove_self_loops
 from torch_sparse import SparseTensor, set_diag
 

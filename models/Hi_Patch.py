@@ -1,17 +1,18 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import math
 
-from einops import *
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import *
 from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
-from torch_scatter import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_scatter import scatter
 
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 # Custom softmax function for handling node-wise softmax over a graph structure
 def softmax(src: Tensor, index, shape):

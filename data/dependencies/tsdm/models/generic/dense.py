@@ -3,9 +3,17 @@ r"""#TODO add module summary line.
 #TODO add module description.
 """
 
-from typing import Any, Final, Optional
+from typing import (
+    Any,
+    Final,
+    Optional,
+)
 
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 
 from data.dependencies.tsdm.utils import deep_dict_update, initialize_from_config
 from data.dependencies.tsdm.utils.decorators import autojit

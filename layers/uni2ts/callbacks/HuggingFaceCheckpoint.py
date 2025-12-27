@@ -22,7 +22,14 @@ import warnings
 from copy import deepcopy
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Set, Union
+from typing import (
+    Any,
+    Dict,
+    Literal,
+    Optional,
+    Set,
+    Union,
+)
 from weakref import proxy
 
 import lightning.pytorch as pl

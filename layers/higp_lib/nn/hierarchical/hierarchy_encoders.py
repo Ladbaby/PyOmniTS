@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from layers.higp_lib.nn.hierarchical.ops import src_reduce, compute_aggregation_matrix
+from layers.higp_lib.nn.hierarchical.ops import compute_aggregation_matrix, src_reduce
 from layers.higp_lib.nn.utils import maybe_cat_emb
 from layers.tsl.nn import maybe_cat_exog
 

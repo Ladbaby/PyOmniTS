@@ -1,15 +1,16 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch
+import torch.fft
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.fft
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from layers.Formers.Embed import DataEmbedding
 from layers.TimesNet.Conv_Blocks import Inception_Block_V1
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     """

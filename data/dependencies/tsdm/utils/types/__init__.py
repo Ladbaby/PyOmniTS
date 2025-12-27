@@ -31,7 +31,11 @@ __all__ = [
 ]
 
 
-from data.dependencies.tsdm.utils.types import abc, protocols, time
+from data.dependencies.tsdm.utils.types import (
+    abc,
+    protocols,
+    time,
+)
 from data.dependencies.tsdm.utils.types._types import (
     AliasVar,
     AnyTypeVar,

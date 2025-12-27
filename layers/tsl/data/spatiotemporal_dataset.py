@@ -1,7 +1,15 @@
 from contextlib import contextmanager
 from copy import deepcopy
-from typing import (Callable, Iterable, List, Literal, Mapping, Optional,
-                    Tuple, Union)
+from typing import (
+    Callable,
+    Iterable,
+    List,
+    Literal,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
@@ -12,18 +20,33 @@ from torch.utils.data import Dataset
 from torch_geometric.typing import Adj
 from torch_sparse import SparseTensor
 
-from layers.tsl.typing import (DataArray, IndexSlice, SparseTensArray, TemporalIndex,
-                        TensArray)
+from layers.tsl.typing import (
+    DataArray,
+    IndexSlice,
+    SparseTensArray,
+    TemporalIndex,
+    TensArray,
+)
 
 from ..ops.connectivity import reduce_graph
-from ..ops.pattern import broadcast, check_pattern, outer_pattern, take
+from ..ops.pattern import (
+    broadcast,
+    check_pattern,
+    outer_pattern,
+    take,
+)
 from ..utils.casting import parse_index
 from . import StaticBatch
 from .batch_map import BatchMap, BatchMapItem
 from .data import Data
 from .mixin import DataParsingMixin
 from .preprocessing.scalers import Scaler, ScalerModule
-from .synch_mode import HORIZON, STATIC, WINDOW, SynchMode
+from .synch_mode import (
+    HORIZON,
+    STATIC,
+    WINDOW,
+    SynchMode,
+)
 
 _WINDOWING_ = {
     'window': ['window', 'window_lag'],

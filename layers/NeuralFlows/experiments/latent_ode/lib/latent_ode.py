@@ -1,9 +1,9 @@
 import torch
 
 import layers.NeuralFlows.experiments.latent_ode.lib.utils as utils
+from layers.NeuralFlows.experiments.latent_ode.lib.base_models import VAE_Baseline
 from layers.NeuralFlows.experiments.latent_ode.lib.encoder_decoder import *
 from layers.NeuralFlows.experiments.latent_ode.lib.likelihood_eval import *
-from layers.NeuralFlows.experiments.latent_ode.lib.base_models import VAE_Baseline
 
 
 class LatentODE(VAE_Baseline):

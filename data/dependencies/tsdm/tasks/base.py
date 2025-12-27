@@ -87,10 +87,23 @@ __all__ = [
 ]
 
 import logging
-from abc import ABC, ABCMeta, abstractmethod
-from collections.abc import Callable, Mapping, Sequence
+from abc import (
+    ABC,
+    ABCMeta,
+    abstractmethod,
+)
+from collections.abc import (
+    Callable,
+    Mapping,
+    Sequence,
+)
 from functools import cached_property
-from typing import Any, ClassVar, Generic, Optional
+from typing import (
+    Any,
+    ClassVar,
+    Generic,
+    Optional,
+)
 
 from pandas import DataFrame
 from torch import Tensor

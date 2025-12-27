@@ -5,6 +5,7 @@ from torch import Tensor
 
 from utils.ExpConfigs import ExpConfigs
 
+
 class Loss(nn.Module):
     def __init__(self, configs:ExpConfigs):
         '''

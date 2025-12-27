@@ -1,4 +1,12 @@
-from typing import Callable, List, Mapping, Optional, Tuple, Type, Union
+from typing import (
+    Callable,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import torch
 from torch import Tensor

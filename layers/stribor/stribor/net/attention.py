@@ -1,8 +1,9 @@
-import layers.stribor.stribor as st
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+import layers.stribor.stribor as st
 
 
 def attention(query, key, value, n_heads=1, mask_diagonal=False, mask=None):

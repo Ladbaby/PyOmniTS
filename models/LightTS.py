@@ -7,6 +7,7 @@ from torch import Tensor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
+
 class Model(nn.Module):
     """
     - paper: "Less Is More: Fast Multivariate Time Series Forecasting with Light Sampling-oriented MLP Structures"

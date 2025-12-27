@@ -1,10 +1,10 @@
 import torch
 from einops import rearrange
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn.pool import TopKPooling
 from torch_geometric.typing import PairTensor
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.utils import add_self_loops, remove_self_loops
 from torch_sparse import SparseTensor
 
 from layers.tsl.nn.layers.graph_convs import GraphConv

@@ -12,7 +12,12 @@ import logging
 import pickle
 from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Final, Literal, Optional
+from typing import (
+    Any,
+    Final,
+    Literal,
+    Optional,
+)
 
 import numpy as np
 import pandas as pd

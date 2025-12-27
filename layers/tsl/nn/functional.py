@@ -1,11 +1,20 @@
 import math
-from typing import List, Optional, Tuple, Union
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_scatter import gather_csr, scatter, segment_csr
+from torch_scatter import (
+    gather_csr,
+    scatter,
+    segment_csr,
+)
 from torch_scatter.utils import broadcast
 
 import layers.tsl as tsl

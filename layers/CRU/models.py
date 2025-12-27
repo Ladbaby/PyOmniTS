@@ -18,9 +18,10 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
+import torch
 from lib.CRU import CRU
 from lib.utils import MyLayerNorm2d
-import torch
+
 nn = torch.nn
 
 

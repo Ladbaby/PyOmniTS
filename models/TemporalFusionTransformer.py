@@ -1,12 +1,12 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-from typing import Optional
 from collections import namedtuple
+from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from layers.Formers.Embed import DataEmbedding, TemporalEmbedding
 from utils.ExpConfigs import ExpConfigs

@@ -1,9 +1,10 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import os
+
 import torch
 
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
 
 
 class Exp_Basic(object):

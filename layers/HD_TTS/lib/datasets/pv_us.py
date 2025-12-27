@@ -1,6 +1,7 @@
-from typing import Union, List
+from typing import List, Union
 
 import pandas as pd
+
 from layers.tsl.datasets import PvUS as _PvUS
 
 

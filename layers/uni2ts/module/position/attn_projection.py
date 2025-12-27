@@ -19,7 +19,11 @@ from functools import cached_property
 from typing import Any, Optional
 
 import torch
-from einops import einsum, rearrange, repeat
+from einops import (
+    einsum,
+    rearrange,
+    repeat,
+)
 from jaxtyping import Float, Int
 from torch import nn
 

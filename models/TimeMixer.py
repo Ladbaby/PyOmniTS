@@ -2,14 +2,15 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from layers.Formers.Autoformer_EncDec import series_decomp
 from layers.Formers.Embed import DataEmbedding_wo_pos
 from layers.TimeMixer.StandardNorm import Normalize
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

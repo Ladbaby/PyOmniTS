@@ -7,6 +7,7 @@ from torch import Tensor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
+
 class Model(nn.Module):
     '''
     - paper: "FourierGNN: Rethinking Multivariate Time Series Forecasting from a Pure Graph Perspective" (NeurIPS 2023)

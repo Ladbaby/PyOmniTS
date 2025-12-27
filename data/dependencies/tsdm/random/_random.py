@@ -13,9 +13,18 @@ from typing import Optional
 
 import numpy as np
 from numpy.typing import DTypeLike, NDArray
-from pandas import Timedelta, Timestamp, date_range, timedelta_range
+from pandas import (
+    Timedelta,
+    Timestamp,
+    date_range,
+    timedelta_range,
+)
 
-from data.dependencies.tsdm.utils.types.dtypes import BOOLS, EMOJIS, STRINGS
+from data.dependencies.tsdm.utils.types.dtypes import (
+    BOOLS,
+    EMOJIS,
+    STRINGS,
+)
 from data.dependencies.tsdm.utils.types.time import DTVar, TDVar
 
 __logger__ = logging.getLogger(__name__)

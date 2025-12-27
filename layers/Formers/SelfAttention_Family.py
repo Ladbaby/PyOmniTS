@@ -1,14 +1,16 @@
+import math
+import os
+from math import sqrt
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from reformer_pytorch import LSHSelfAttention
 from einops import rearrange, repeat
+from reformer_pytorch import LSHSelfAttention
 
-import numpy as np
-import math
-from math import sqrt
-from layers.Formers.masking import TriangularCausalMask, ProbMask
-import os
+from layers.Formers.masking import ProbMask, TriangularCausalMask
+
 
 class TwoStageAttentionLayer(nn.Module):
     '''

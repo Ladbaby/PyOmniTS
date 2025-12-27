@@ -23,7 +23,11 @@ from layers.uni2ts.common.sampler import Sampler, get_sampler
 from layers.uni2ts.common.typing import UnivarTimeSeries
 
 from ._base import Transformation
-from ._mixin import CheckArrNDimMixin, CollectFuncMixin, MapFuncMixin
+from ._mixin import (
+    CheckArrNDimMixin,
+    CollectFuncMixin,
+    MapFuncMixin,
+)
 
 
 @dataclass

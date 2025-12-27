@@ -1,11 +1,11 @@
 """various utils"""
 import os
-
-import torch
-import torch.multiprocessing as mp
-import torch.distributed as dist
 import random
+
 import numpy as np
+import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
 
 
 def delta_time(start, end, rank=None):

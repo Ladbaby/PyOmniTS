@@ -1,5 +1,6 @@
 from torch import Tensor
 from torch_geometric.typing import Adj, OptTensor
+
 from layers.tsl.nn.layers import DiffConv as DiffConv_
 
 

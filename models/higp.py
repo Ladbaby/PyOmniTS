@@ -2,18 +2,19 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
 from einops import repeat
+from torch import Tensor
 
-from layers.higp_lib.nn.hierarchical.pyramidal_gnn import PyramidalGNN
 from layers.higp_lib.nn.hierarchical.hierarchy_builders import MinCutHierarchyBuilder
 from layers.higp_lib.nn.hierarchical.hierarchy_encoders import HierarchyEncoder
 from layers.higp_lib.nn.hierarchical.ops import compute_aggregation_matrix
+from layers.higp_lib.nn.hierarchical.pyramidal_gnn import PyramidalGNN
 from layers.higp_lib.nn.utils import maybe_cat_emb
 from layers.tsl.nn.blocks import RNN, MLPDecoder
 from layers.tsl.nn.layers.base import NodeEmbedding
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
+
 
 class GraphLearner(nn.Module):
     def __init__(self, n_variables):

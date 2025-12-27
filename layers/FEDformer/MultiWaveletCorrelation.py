@@ -1,16 +1,26 @@
-import torch
+import math
+import pdb
+from functools import partial
+from math import ceil, log2
+from typing import List, Tuple
+
 import numpy as np
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
-from typing import List, Tuple
-import math
-from functools import partial
-from torch import nn, einsum, diagonal
-from math import log2, ceil
-import pdb
-from sympy import Poly, legendre, Symbol, chebyshevt
 from scipy.special import eval_legendre
+from sympy import (
+    Poly,
+    Symbol,
+    chebyshevt,
+    legendre,
+)
+from torch import (
+    Tensor,
+    diagonal,
+    einsum,
+    nn,
+)
 
 
 def legendreDer(k, x):

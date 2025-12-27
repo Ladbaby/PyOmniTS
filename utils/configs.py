@@ -1,8 +1,9 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import argparse
-import yaml
-from pathlib import Path
 from dataclasses import asdict
+from pathlib import Path
+
+import yaml
 
 from utils.ExpConfigs import ExpConfigs
 

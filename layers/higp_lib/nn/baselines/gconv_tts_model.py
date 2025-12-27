@@ -1,7 +1,8 @@
 from torch import nn
-from layers.tsl.nn.layers import GraphConv
 
 from layers.higp_lib.nn.base.time_then_space_model import TimeThenSpaceModel
+from layers.tsl.nn.layers import GraphConv
+
 
 class GraphConvTTSModel(TimeThenSpaceModel):
     r""""""

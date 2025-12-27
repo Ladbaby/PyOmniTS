@@ -25,14 +25,20 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from layers.CRU.utils import TimeDistributed
-from layers.CRU.encoder import Encoder
-from layers.CRU.decoder import SplitDiagGaussianDecoder, BernoulliDecoder
-from layers.CRU.CRULayer import CRULayer
 from layers.CRU.CRUCell import var_activation, var_activation_inverse
-from layers.CRU.losses import rmse, mse, GaussianNegLogLik, bernoulli_nll
-from layers.CRU.data_utils import  align_output_and_target, adjust_obs_for_extrapolation
+from layers.CRU.CRULayer import CRULayer
+from layers.CRU.data_utils import adjust_obs_for_extrapolation, align_output_and_target
+from layers.CRU.decoder import BernoulliDecoder, SplitDiagGaussianDecoder
+from layers.CRU.encoder import Encoder
+from layers.CRU.losses import (
+    GaussianNegLogLik,
+    bernoulli_nll,
+    mse,
+    rmse,
+)
+from layers.CRU.utils import TimeDistributed
 from utils.ExpConfigs import ExpConfigs
+
 
 # taken from https://github.com/ALRhub/rkn_share/ and modified
 class CRU(nn.Module):

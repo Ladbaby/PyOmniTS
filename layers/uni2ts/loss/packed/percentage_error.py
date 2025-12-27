@@ -14,7 +14,11 @@
 #  limitations under the License.
 
 import torch
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch.nn import functional as F
 
 from layers.uni2ts.common.torch_util import safe_div

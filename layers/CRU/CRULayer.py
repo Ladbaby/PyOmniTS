@@ -21,7 +21,7 @@
 import torch
 import torch.nn as nn
 
-from layers.CRU.CRUCell import RKNCell, CRUCell
+from layers.CRU.CRUCell import CRUCell, RKNCell
 
 
 # taken from https://github.com/ALRhub/rkn_share/ and modified

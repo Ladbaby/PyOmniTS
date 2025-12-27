@@ -21,8 +21,16 @@ import torch
 from einops import rearrange
 from jaxtyping import Float
 from torch import nn
-from torch.distributions import AffineTransform, Distribution, TransformedDistribution
-from torch.utils._pytree import tree_flatten, tree_map, tree_unflatten
+from torch.distributions import (
+    AffineTransform,
+    Distribution,
+    TransformedDistribution,
+)
+from torch.utils._pytree import (
+    tree_flatten,
+    tree_map,
+    tree_unflatten,
+)
 
 from layers.uni2ts.common.core import abstract_class_property
 from layers.uni2ts.module.ts_embed import MultiOutSizeLinear

@@ -11,8 +11,18 @@ __all__ = [
 ]
 
 from abc import ABCMeta
-from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
-from dataclasses import KW_ONLY, dataclass, field
+from collections.abc import (
+    Callable,
+    Iterable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+    field,
+)
 from typing import Any
 
 

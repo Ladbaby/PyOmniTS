@@ -32,9 +32,16 @@ from torch import nn
 
 from data.dependencies.tsdm.models import activations, generic
 from data.dependencies.tsdm.models._models import BaseModel
-from data.dependencies.tsdm.models.generic import MLP, DeepSet, ScaledDotProductAttention
+from data.dependencies.tsdm.models.generic import (
+    MLP,
+    DeepSet,
+    ScaledDotProductAttention,
+)
 from data.dependencies.tsdm.models.ode_rnn import ODE_RNN
-from data.dependencies.tsdm.models.set_function_for_timeseries import GroupedSetFuncTS, SetFuncTS
+from data.dependencies.tsdm.models.set_function_for_timeseries import (
+    GroupedSetFuncTS,
+    SetFuncTS,
+)
 
 Model: TypeAlias = nn.Module
 r"""Type hint for models."""

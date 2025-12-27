@@ -2,9 +2,9 @@
 import torch
 import torch.nn as nn
 
+import layers.GNeuralFlow.models as mods
 from layers.GNeuralFlow.models.gnn import GNN
 from layers.GNeuralFlow.models.mlp import MLP
-import layers.GNeuralFlow.models as mods
 
 
 class ResNetFlowBlock(nn.Module):

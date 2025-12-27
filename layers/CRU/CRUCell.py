@@ -18,11 +18,16 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
-from typing import Iterable, Tuple, List, Union
+from typing import (
+    Iterable,
+    List,
+    Tuple,
+    Union,
+)
 
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
 from utils.ExpConfigs import ExpConfigs
 

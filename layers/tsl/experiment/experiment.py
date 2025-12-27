@@ -5,7 +5,12 @@ import random
 import sys
 from contextlib import contextmanager
 from functools import wraps
-from typing import Callable, List, Optional, Union
+from typing import (
+    Callable,
+    List,
+    Optional,
+    Union,
+)
 
 import torch
 from pytorch_lightning import seed_everything
@@ -17,7 +22,11 @@ from layers.tsl.utils.python_utils import ensure_list
 if _HYDRA_AVAILABLE:
     import hydra
     from hydra.core.hydra_config import HydraConfig
-    from omegaconf import DictConfig, OmegaConf, flag_override
+    from omegaconf import (
+        DictConfig,
+        OmegaConf,
+        flag_override,
+    )
     from omegaconf.errors import ConfigAttributeError
 
     from .resolvers import register_resolvers

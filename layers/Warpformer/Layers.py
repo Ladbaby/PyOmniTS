@@ -1,7 +1,12 @@
-import torch.nn as nn
 import torch
-from .SubLayers import  PositionwiseFeedForward, MultiHeadAttention_tem_bias, MultiHeadAttention_type_bias
+import torch.nn as nn
 from einops import rearrange, repeat
+
+from .SubLayers import (
+    MultiHeadAttention_tem_bias,
+    MultiHeadAttention_type_bias,
+    PositionwiseFeedForward,
+)
 
 PAD = 0
 

@@ -5,11 +5,15 @@ from typing import Optional
 
 import numpy as np
 import scipy.sparse as sp
+
 from layers.tsl import logger
 from layers.tsl.datasets import TabularDataset
 from layers.tsl.datasets.prototypes.mixin import MissingValuesMixin
-from layers.tsl.ops.graph_generators import build_circle_graph, build_knn_graph, \
-    build_line_graph
+from layers.tsl.ops.graph_generators import (
+    build_circle_graph,
+    build_knn_graph,
+    build_line_graph,
+)
 from layers.tsl.ops.imputation import sample_mask
 from layers.tsl.utils import files_exist
 

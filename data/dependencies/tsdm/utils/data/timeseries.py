@@ -15,10 +15,21 @@ __all__ = [
 
 from collections import namedtuple
 from collections.abc import Mapping, Sized
-from typing import Any, NamedTuple, Optional, TypeAlias, Union
+from typing import (
+    Any,
+    NamedTuple,
+    Optional,
+    TypeAlias,
+    Union,
+)
 
 import numpy as np
-from pandas import DataFrame, Index, Series, Timedelta
+from pandas import (
+    DataFrame,
+    Index,
+    Series,
+    Timedelta,
+)
 from torch import Tensor
 from torch.utils.data import Dataset as TorchDataset
 

@@ -18,11 +18,12 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
+import os
+import tarfile
+
+import numpy as np
 import torch
 from sklearn.model_selection import train_test_split
-import os
-import numpy as np
-import tarfile
 from torchvision.datasets.utils import download_url
 
 

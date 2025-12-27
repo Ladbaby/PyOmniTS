@@ -1,16 +1,29 @@
-from typing import Literal, Optional, Tuple
+from typing import (
+    Literal,
+    Optional,
+    Tuple,
+)
 
 import torch_sparse
 from torch import Tensor
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import scatter, coalesce, remove_self_loops as rsl
+from torch_geometric.utils import coalesce
+from torch_geometric.utils import remove_self_loops as rsl
+from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_sparse import SparseTensor
 
-from .base import Lift, Reduce, Connect, SelectOutput
-from .utils import (pseudo_inverse,
-                    connectivity_to_edge_index,
-                    connectivity_to_adj_t)
+from .base import (
+    Connect,
+    Lift,
+    Reduce,
+    SelectOutput,
+)
+from .utils import (
+    connectivity_to_adj_t,
+    connectivity_to_edge_index,
+    pseudo_inverse,
+)
 
 LiftMatrixType = Literal["precomputed", "transpose", "inverse"]
 ReductionType = Literal["sum", "mean", "min", "max"]

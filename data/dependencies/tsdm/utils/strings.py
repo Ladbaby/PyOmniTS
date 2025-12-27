@@ -19,8 +19,20 @@ __ALL__ = dir() + __all__
 
 
 import builtins
-from collections.abc import Callable, Iterable, Mapping, Sequence, Sized
-from typing import Any, NamedTuple, Optional, cast, overload
+from collections.abc import (
+    Callable,
+    Iterable,
+    Mapping,
+    Sequence,
+    Sized,
+)
+from typing import (
+    Any,
+    NamedTuple,
+    Optional,
+    cast,
+    overload,
+)
 
 from pandas import DataFrame
 from torch import Tensor

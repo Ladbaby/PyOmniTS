@@ -1,5 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Optional, Tuple, Union
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch.nn as nn
 from torch.distributions import Distribution

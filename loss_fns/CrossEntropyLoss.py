@@ -6,6 +6,7 @@ from torch import Tensor
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
+
 class Loss(nn.Module):
     def __init__(self, configs:ExpConfigs):
         super(Loss, self).__init__()

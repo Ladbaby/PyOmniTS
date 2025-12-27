@@ -21,7 +21,11 @@ import numpy as np
 from jaxtyping import Bool, Float
 
 from ._base import Transformation
-from ._mixin import CheckArrNDimMixin, CollectFuncMixin, MapFuncMixin
+from ._mixin import (
+    CheckArrNDimMixin,
+    CollectFuncMixin,
+    MapFuncMixin,
+)
 
 
 @dataclass

@@ -5,7 +5,11 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 from gluonts.dataset import DatasetWriter
-from gluonts.dataset.common import CategoricalFeatureInfo, MetaData, TrainDatasets
+from gluonts.dataset.common import (
+    CategoricalFeatureInfo,
+    MetaData,
+    TrainDatasets,
+)
 
 from layers.uni2ts.common.env import env
 

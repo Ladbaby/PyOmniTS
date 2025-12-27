@@ -18,7 +18,7 @@
 # licensed under MIT License
 # cf. 3rd-party-licenses.txt file in the root directory of this source tree.
 
-from typing import Tuple, Iterable
+from typing import Iterable, Tuple
 
 import torch
 import torch.nn as nn

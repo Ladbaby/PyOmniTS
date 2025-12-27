@@ -26,14 +26,28 @@ from collections.abc import Callable
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import wraps
-from inspect import Parameter, Signature, signature
+from inspect import (
+    Parameter,
+    Signature,
+    signature,
+)
 from time import perf_counter_ns
-from typing import Any, Optional, overload
+from typing import (
+    Any,
+    Optional,
+    overload,
+)
 
 from torch import jit, nn
 
 from data.dependencies.tsdm.config import conf
-from data.dependencies.tsdm.utils.types import AnyTypeVar, ClassVar, ObjectVar, ReturnVar, TorchModuleVar
+from data.dependencies.tsdm.utils.types import (
+    AnyTypeVar,
+    ClassVar,
+    ObjectVar,
+    ReturnVar,
+    TorchModuleVar,
+)
 from data.dependencies.tsdm.utils.types.abc import CollectionType
 
 __logger__ = logging.getLogger(__name__)

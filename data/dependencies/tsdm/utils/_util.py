@@ -27,19 +27,39 @@ __all__ = [
 ]
 
 import os
-from collections.abc import Callable, Collection, Hashable, Iterable, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Collection,
+    Hashable,
+    Iterable,
+    Mapping,
+    Sequence,
+)
 from datetime import datetime
 from functools import partial
 from importlib import import_module
 from logging import getLogger
 from pathlib import Path
-from typing import Any, Literal, NamedTuple, Optional, Union, overload
+from typing import (
+    Any,
+    Literal,
+    NamedTuple,
+    Optional,
+    Union,
+    overload,
+)
 
 import numpy as np
 from numpy.typing import NDArray
 from torch import nn
 
-from data.dependencies.tsdm.utils.types import AnyTypeVar, Nested, ObjectVar, PathType, ReturnVar
+from data.dependencies.tsdm.utils.types import (
+    AnyTypeVar,
+    Nested,
+    ObjectVar,
+    PathType,
+    ReturnVar,
+)
 from data.dependencies.tsdm.utils.types.abc import HashableType
 
 __logger__ = getLogger(__name__)

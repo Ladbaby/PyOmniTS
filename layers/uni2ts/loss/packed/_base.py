@@ -18,7 +18,11 @@ from typing import Any, Optional
 
 import torch
 from einops import rearrange, reduce
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch.distributions import Distribution
 
 from layers.uni2ts.common.torch_util import safe_div

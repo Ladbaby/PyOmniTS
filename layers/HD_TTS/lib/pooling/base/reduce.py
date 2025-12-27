@@ -1,5 +1,4 @@
-from typing import Literal
-from typing import Optional
+from typing import Literal, Optional
 
 from torch import Tensor, nn
 

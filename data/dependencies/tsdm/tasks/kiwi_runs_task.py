@@ -11,10 +11,19 @@ __all__ = [
 from collections.abc import Callable
 from functools import cached_property
 from itertools import product
-from typing import Any, Literal, NamedTuple, Optional
+from typing import (
+    Any,
+    Literal,
+    NamedTuple,
+    Optional,
+)
 
 import torch
-from pandas import DataFrame, MultiIndex, Series
+from pandas import (
+    DataFrame,
+    MultiIndex,
+    Series,
+)
 from sklearn.model_selection import ShuffleSplit
 from torch import Tensor, jit
 from torch.utils.data import DataLoader

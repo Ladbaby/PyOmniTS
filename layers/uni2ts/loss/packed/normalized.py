@@ -19,7 +19,11 @@ from typing import Callable, Optional
 
 import torch
 from einops import reduce
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 
 from layers.uni2ts.common.core import abstract_class_property
 from layers.uni2ts.common.torch_util import safe_div

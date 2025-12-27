@@ -3,7 +3,13 @@ from collections import namedtuple
 import numpy as np
 import scipy.stats
 
-from layers.tsl.typing import Optional, OptTensArray, TensArray, Tuple, Union
+from layers.tsl.typing import (
+    Optional,
+    OptTensArray,
+    TensArray,
+    Tuple,
+    Union,
+)
 
 
 def _twosided_std_gaussian_pval(stat: float):

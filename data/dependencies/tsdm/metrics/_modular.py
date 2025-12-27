@@ -21,9 +21,18 @@ from typing import Final
 
 import numpy as np
 import torch
-from torch import Tensor, jit, nn
+from torch import (
+    Tensor,
+    jit,
+    nn,
+)
 
-from data.dependencies.tsdm.metrics.functional import nd, nrmse, q_quantile, q_quantile_loss
+from data.dependencies.tsdm.metrics.functional import (
+    nd,
+    nrmse,
+    q_quantile,
+    q_quantile_loss,
+)
 from data.dependencies.tsdm.utils.decorators import autojit
 
 

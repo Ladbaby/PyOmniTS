@@ -1,7 +1,8 @@
 from typing import List
 
-from torch.nn.utils import spectral_norm
 import torch
+from torch.nn.utils import spectral_norm
+
 import layers.stribor.stribor as st
 from layers.stribor.stribor import Transform
 

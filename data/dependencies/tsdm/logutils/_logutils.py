@@ -15,17 +15,31 @@ __all__ = [
 
 import shutil
 import warnings
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Mapping,
+    Sequence,
+)
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, NamedTuple, Optional, TypedDict, Union
+from typing import (
+    Any,
+    NamedTuple,
+    Optional,
+    TypedDict,
+    Union,
+)
 
 import pandas as pd
 import torch
 import yaml
 from matplotlib.pyplot import Figure
 from matplotlib.pyplot import close as close_figure
-from pandas import DataFrame, Index, MultiIndex
+from pandas import (
+    DataFrame,
+    Index,
+    MultiIndex,
+)
 from torch import Tensor, nn
 from torch.linalg import cond, slogdet
 from torch.utils.data import DataLoader
@@ -48,7 +62,12 @@ from data.dependencies.tsdm.linalg import (
 from data.dependencies.tsdm.metrics import Loss
 from data.dependencies.tsdm.models import Model
 from data.dependencies.tsdm.optimizers import Optimizer
-from data.dependencies.tsdm.viz import center_axes, kernel_heatmap, plot_spectrum, rasterize
+from data.dependencies.tsdm.viz import (
+    center_axes,
+    kernel_heatmap,
+    plot_spectrum,
+    rasterize,
+)
 
 
 @torch.no_grad()

@@ -2,8 +2,7 @@
 # distributed training
 
 from accelerate import Accelerator
-from accelerate.utils import DistributedDataParallelKwargs
-from accelerate.utils import ProjectConfiguration
+from accelerate.utils import DistributedDataParallelKwargs, ProjectConfiguration
 
 kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
 projectConfiguration = ProjectConfiguration(
@@ -16,8 +15,10 @@ accelerator = Accelerator(kwargs_handlers=[kwargs], log_with="wandb", project_co
 
 import logging
 import logging.handlers as handlers
-import coloredlogs
 import os
+
+import coloredlogs
+
 
 class MainProcessLogger(logging.Logger):
     def __init__(self, name, level=logging.NOTSET):

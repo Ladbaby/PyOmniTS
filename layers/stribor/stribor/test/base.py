@@ -1,7 +1,8 @@
 from typing import Union
 
 import torch
-from layers.stribor.stribor import Transform, ElementwiseTransform
+
+from layers.stribor.stribor import ElementwiseTransform, Transform
 
 
 def check_inverse_transform(f, x, **kwargs):

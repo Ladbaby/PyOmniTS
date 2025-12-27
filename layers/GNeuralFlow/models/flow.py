@@ -5,12 +5,13 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn import Module
 
+import layers.GNeuralFlow.models as mods
 from layers.GNeuralFlow.models.gnn import GNN
 from layers.GNeuralFlow.models.h_coupling_flow import ContinuousAffineCoupling
 from layers.GNeuralFlow.models.mlp import MLP, MlpLN
 from layers.GNeuralFlow.models.resnet_flow import ResNetFlowNF
 from layers.GNeuralFlow.train_utils import set_seed
-import layers.GNeuralFlow.models as mods
+
 
 class Flow(nn.Module):
     """

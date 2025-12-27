@@ -1,10 +1,9 @@
-from torch import nn
 import torch
+from torch import nn
 
 from layers.higp_lib.nn.utils import maybe_cat_emb
 from layers.tsl.nn.blocks import RNN, MLPDecoder
 from layers.tsl.nn.layers import DiffConv
-
 from layers.tsl.nn.layers.base import NodeEmbedding
 from layers.tsl.nn.models import BaseModel
 from layers.tsl.nn.utils import maybe_cat_exog

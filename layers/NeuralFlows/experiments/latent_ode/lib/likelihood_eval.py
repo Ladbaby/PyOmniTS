@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from torch.distributions.normal import Normal
 from torch.distributions import Independent
+from torch.distributions.normal import Normal
 
 from layers.NeuralFlows.experiments.latent_ode.lib.encoder_decoder import *
 from layers.NeuralFlows.experiments.latent_ode.lib.likelihood_eval import *

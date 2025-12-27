@@ -1,7 +1,8 @@
 from torch import nn
-from layers.tsl.nn.layers import DiffConv
 
 from layers.higp_lib.nn.base.time_then_space_model import TimeThenSpaceModel
+from layers.tsl.nn.layers import DiffConv
+
 
 class DiffConvTTSModel(TimeThenSpaceModel):
     r""""""

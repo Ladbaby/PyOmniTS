@@ -3,10 +3,10 @@ from torch import nn
 from torch_geometric.utils import to_dense_adj
 from torch_sparse import SparseTensor
 
-from layers.higp_lib.nn.hierarchical.pooling.mincut_pool import MinCutPool
 import layers.tsl as tsl
-
+from layers.higp_lib.nn.hierarchical.pooling.mincut_pool import MinCutPool
 from layers.tsl.utils import ensure_list
+
 
 class MinCutHierarchyBuilder(nn.Module):
     r"""Hierarchy encoder"""

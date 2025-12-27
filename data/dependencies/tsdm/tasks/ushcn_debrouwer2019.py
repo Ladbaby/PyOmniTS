@@ -8,15 +8,24 @@ __all__ = [
     "TaskDataset",
 ]
 
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, NamedTuple
 from math import floor
+from typing import Any, NamedTuple
 
 import numpy as np
 import torch
-from pandas import DataFrame, Index, MultiIndex
+from pandas import (
+    DataFrame,
+    Index,
+    MultiIndex,
+)
 from sklearn.model_selection import train_test_split
 from torch import Tensor
 from torch import nan as NAN
@@ -24,7 +33,9 @@ from torch import nn
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
 
-from data.dependencies.tsdm.datasets import USHCN_DeBrouwer2019 as USHCN_DeBrouwer2019_Dataset
+from data.dependencies.tsdm.datasets import (
+    USHCN_DeBrouwer2019 as USHCN_DeBrouwer2019_Dataset,
+)
 from data.dependencies.tsdm.tasks.base import BaseTask
 from data.dependencies.tsdm.utils import is_partition
 from data.dependencies.tsdm.utils.strings import repr_namedtuple

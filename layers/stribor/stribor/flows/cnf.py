@@ -1,10 +1,17 @@
-from typing import Dict, Optional, Tuple, Union
+from typing import (
+    Dict,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 import torch.nn as nn
-from torchdiffeq import odeint_adjoint, odeint
+from torchdiffeq import odeint, odeint_adjoint
+
 import layers.stribor.stribor as st
 from layers.stribor.stribor import Transform
+
 __all__ = ['ContinuousTransform']
 
 

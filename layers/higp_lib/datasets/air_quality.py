@@ -1,10 +1,14 @@
 import os
-from typing import Optional, Sequence, List
+from typing import (
+    List,
+    Optional,
+    Sequence,
+)
 
 import numpy as np
 import pandas as pd
 
-from layers.tsl.data.datamodule.splitters import disjoint_months, Splitter
+from layers.tsl.data.datamodule.splitters import Splitter, disjoint_months
 from layers.tsl.data.synch_mode import HORIZON
 from layers.tsl.datasets.prototypes import DatetimeDataset
 from layers.tsl.datasets.prototypes.mixin import MissingValuesMixin
@@ -198,6 +202,7 @@ class AirQuality(DatetimeDataset, MissingValuesMixin):
     def compute_similarity(self, method: str, **kwargs):
         if method == "distance":
             from layers.tsl.ops.similarities import gaussian_kernel
+
             # use same theta for both air and air36
             theta = np.std(self.dist[:36, :36])
             return gaussian_kernel(self.dist, theta=theta)

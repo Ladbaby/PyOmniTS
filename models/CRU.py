@@ -21,13 +21,14 @@
 
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
 from layers.CRU.CRU import CRU
 from layers.CRU.CRUCell import var_activation
-from utils.globals import logger
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Model(CRU):
     '''

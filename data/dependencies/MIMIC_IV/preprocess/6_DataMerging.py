@@ -1,6 +1,6 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-from datetime import timedelta
 import sys
+from datetime import timedelta
 
 import pandas as pd
 

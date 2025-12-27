@@ -1,11 +1,11 @@
 import math
 import string
 from typing import List
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
-
 
 
 class TimeBERT(nn.Module):

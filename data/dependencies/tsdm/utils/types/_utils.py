@@ -34,7 +34,11 @@ __all__ = [
     "float_is_int",
 ]
 
-from typing import Final, Optional, cast
+from typing import (
+    Final,
+    Optional,
+    cast,
+)
 
 import numpy as np
 import pandas

@@ -16,7 +16,12 @@ __all__ = [
 
 from collections.abc import Iterable, Sequence
 from functools import singledispatch
-from typing import Optional, TypeAlias, cast, overload
+from typing import (
+    Optional,
+    TypeAlias,
+    cast,
+    overload,
+)
 
 import numpy as np
 import torch

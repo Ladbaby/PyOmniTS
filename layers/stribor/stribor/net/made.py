@@ -1,9 +1,10 @@
-from typing import Union, List
+from typing import List, Union
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 __all__ = ['MADE']
 
 

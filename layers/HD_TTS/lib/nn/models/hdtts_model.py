@@ -2,13 +2,15 @@ from typing import Optional
 
 from einops import rearrange
 from torch import Tensor
-from layers.tsl.nn.models import BaseModel
 
-from layers.HD_TTS.lib.nn.layers import (DRNN,
-                           HierPoolFactory,
-                           MessagePassingMethods,
-                           AttentionReadout,
-                           Encoder)
+from layers.HD_TTS.lib.nn.layers import (
+    DRNN,
+    AttentionReadout,
+    Encoder,
+    HierPoolFactory,
+    MessagePassingMethods,
+)
+from layers.tsl.nn.models import BaseModel
 
 
 class HDTTSModel(BaseModel):

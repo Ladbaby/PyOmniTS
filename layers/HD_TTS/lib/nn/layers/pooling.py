@@ -1,12 +1,27 @@
-from typing import Optional, Literal, List, Union, Tuple
+from typing import (
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
+
+from layers.HD_TTS.lib.pooling import (
+    KMISPooling,
+    Pooling,
+    SelectOutput,
+    connectivity_to_adj_t,
+)
+from layers.HD_TTS.lib.pooling.aggr_pool import (
+    ConnectionType,
+    LiftMatrixType,
+    ReductionType,
+)
 from layers.tsl.utils import ensure_list
 
-from layers.HD_TTS.lib.pooling import KMISPooling
-from layers.HD_TTS.lib.pooling import connectivity_to_adj_t, Pooling, SelectOutput
-from layers.HD_TTS.lib.pooling.aggr_pool import ReductionType, ConnectionType, LiftMatrixType
 from .anisotropic import GraphAnisoConv
 from .diff_conv import DiffConv
 from .prop_conv import PropConv

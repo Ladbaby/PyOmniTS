@@ -21,7 +21,11 @@ from typing import Optional
 import torch
 import torch.nn.functional as F
 from einops import rearrange, repeat
-from jaxtyping import Bool, Float, Int
+from jaxtyping import (
+    Bool,
+    Float,
+    Int,
+)
 from torch import nn
 
 from .position import AttentionBias, QueryKeyProjection

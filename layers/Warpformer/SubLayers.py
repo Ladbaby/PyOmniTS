@@ -3,6 +3,7 @@ import torch.nn.functional as F
 
 from .Modules import ScaledDotProductAttention_bias
 
+
 class MultiHeadAttention_tem_bias(nn.Module):
     """ Multi-Head Attention module """
 

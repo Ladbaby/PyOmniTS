@@ -3,21 +3,22 @@
 # Author: Yulia Rubanova
 ###########################
 
-import os
+import datetime
+import glob
 import logging
+import math
+import os
 import pickle
+import re
+import subprocess
+from shutil import copyfile
 
-import torch
-import torch.nn as nn
 import numpy as np
 import pandas as pd
-import math 
-import glob
-import re
-from shutil import copyfile
 import sklearn as sk
-import subprocess
-import datetime
+import torch
+import torch.nn as nn
+
 
 def makedirs(dirname):
 	if not os.path.exists(dirname):

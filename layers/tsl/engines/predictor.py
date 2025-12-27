@@ -1,5 +1,10 @@
 import inspect
-from typing import Callable, Mapping, Optional, Type
+from typing import (
+    Callable,
+    Mapping,
+    Optional,
+    Type,
+)
 
 import pytorch_lightning as pl
 import torch

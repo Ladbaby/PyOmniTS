@@ -1,22 +1,23 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-import time
-import json
-import socket
-from pathlib import Path
-import os
-from typing import Optional, Literal
 import hashlib
+import json
+import os
 import signal
+import socket
+import time
+from pathlib import Path
+from typing import Literal, Optional
 
 import numpy as np
+import requests
 import torch
+from requests.adapters import HTTPAdapter
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from urllib3.util.retry import Retry
 
-from utils.globals import logger, accelerator
+from utils.globals import accelerator, logger
+
 
 class EarlyStopping:
     def __init__(self, patience=7, verbose=False, delta=0):

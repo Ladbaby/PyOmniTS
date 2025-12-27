@@ -1,13 +1,18 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
+import numpy as np
 import torch
 import torch.nn as nn
-from torch import Tensor
-import numpy as np
 from einops import repeat
+from torch import Tensor
 
-from utils.globals import logger
+from layers.mTAN.models import (
+    create_classifier,
+    dec_mtan_rnn,
+    enc_mtan_rnn,
+)
 from utils.ExpConfigs import ExpConfigs
-from layers.mTAN.models import create_classifier, enc_mtan_rnn, dec_mtan_rnn
+from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

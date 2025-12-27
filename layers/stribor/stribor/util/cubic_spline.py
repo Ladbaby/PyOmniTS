@@ -1,7 +1,10 @@
-import layers.stribor.stribor as st
 import math
+
 import torch
 from torch.nn import functional as F
+
+import layers.stribor.stribor as st
+
 __all__ = ['cubic_spline_latent_dim', 'cubic_spline',
     'unconstrained_cubic_spline']
 

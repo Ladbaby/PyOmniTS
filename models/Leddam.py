@@ -1,13 +1,14 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch
 import torch.nn as nn
-from torch import Tensor
 from einops import *
+from torch import Tensor
 
-from layers.RevIN.RevIN import RevIN
 from layers.Leddam.Leddam import Leddam
-from utils.globals import logger
+from layers.RevIN.RevIN import RevIN
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Model(nn.Module):
     '''

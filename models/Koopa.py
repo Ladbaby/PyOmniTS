@@ -6,8 +6,9 @@ import torch.nn as nn
 from torch import Tensor
 
 from data.data_provider.data_factory import data_provider
-from utils.globals import logger 
 from utils.ExpConfigs import ExpConfigs
+from utils.globals import logger
+
 
 class Model(nn.Module):
     '''
