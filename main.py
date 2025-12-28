@@ -15,10 +15,11 @@ from utils.configs import get_configs
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import accelerator, logger
 
-hyperparameters_sweep: dict[str, dict[str, list]] = {}
-configs: ExpConfigs = get_configs() # wandb.agent only accepts a zero-arg function, so we have to parse args here.
 
-def main():
+def main(
+    configs: ExpConfigs,
+    hyperparameters_sweep: dict[str, dict[str, list]] = None
+):
     # random seed
     fix_seed_list = range(2024, 2024 + configs.itr)
 
@@ -35,6 +36,7 @@ def main():
             yaml.dump(asdict(configs), f, default_flow_style=False)
         # init exp tracker
         if (configs.wandb and accelerator.is_main_process) or configs.sweep:
+            assert hyperparameters_sweep is not None, f"Please provide 'hyperparameters_sweep' to main() when --sweep 1."
             import wandb
             run = wandb.init(
                 # Set the project where this run will be logged
@@ -132,10 +134,12 @@ def main():
 
 if __name__ == "__main__":
     # warp the codes, such that errors will only be outputted from the main process
+    configs: ExpConfigs = get_configs() # parse args here
     try:
         if not configs.sweep:
-            main()
+            main(configs=configs)
         else:
+            hyperparameters_sweep: dict[str, dict[str, list]] = {}
             # first determine the hyperparameters actually accessed by model
             from utils.ExpConfigs import ExpConfigsTracker
             configs_tracker = ExpConfigsTracker(configs)
@@ -183,9 +187,17 @@ if __name__ == "__main__":
             sweep_id = None
             with open(temp_file_path, mode='r', encoding="utf-8") as f:
                 sweep_id = f.readline()
+
+            def sweep_main():
+                # wandb.agent only accepts a zero-arg function, so we have to pass configs here.
+                main(
+                    configs=configs,
+                    hyperparameters_sweep=hyperparameters_sweep
+                )
+
             wandb.agent(
                 sweep_id, 
-                function=main, 
+                function=sweep_main, 
                 project="YOUR_PROJECT_NAME",
                 count=max_count
             )
