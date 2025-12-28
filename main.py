@@ -16,8 +16,9 @@ from utils.ExpConfigs import ExpConfigs
 from utils.globals import accelerator, logger
 
 hyperparameters_sweep: dict[str, dict[str, list]] = {}
+configs: ExpConfigs = get_configs() # wandb.agent only accepts a zero-arg function, so we have to parse args here.
 
-def main(configs: ExpConfigs):
+def main():
     # random seed
     fix_seed_list = range(2024, 2024 + configs.itr)
 
@@ -131,10 +132,9 @@ def main(configs: ExpConfigs):
 
 if __name__ == "__main__":
     # warp the codes, such that errors will only be outputted from the main process
-    configs: ExpConfigs = get_configs() # parse command line args
     try:
         if not configs.sweep:
-            main(configs)
+            main()
         else:
             # first determine the hyperparameters actually accessed by model
             from utils.ExpConfigs import ExpConfigsTracker
