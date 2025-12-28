@@ -38,12 +38,16 @@ warnings.filterwarnings('ignore')
 
 class Exp_Main(Exp_Basic):
     def __init__(self, configs: ExpConfigs):
+        '''
+        Available variables:
+        - self.configs
+        - self.device
+        '''
         super(Exp_Main, self).__init__(configs)
 
     def _build_model(self) -> Module:
         # dynamically import the desired model class
         model_module = importlib.import_module("models." + self.configs.model_name)
-        # model = model_module.Model(self.configs).to(torch.bfloat16)
         model = model_module.Model(self.configs)
         return model
 
@@ -106,7 +110,7 @@ class Exp_Main(Exp_Basic):
         Fix model state dict errors
         '''
         logger.info(f"Loading model checkpoint from {path}")
-        state_dict = torch.load(path, map_location=f"cuda:{self.configs.gpu_id}" if self.configs.use_gpu else "cpu")
+        state_dict = torch.load(path, map_location=self.device)
         new_state_dict = OrderedDict()
         if_fixed = False
         for key, value in state_dict.items():
@@ -178,7 +182,7 @@ class Exp_Main(Exp_Basic):
                                 logger.warning(f"Exp_Main.vali(): Batch No.{i} out of [0~{len(vali_loader) - 1}] has no evaluation point (inferred from y_mask), thus skipping")
                             continue
                     if not self.configs.use_multi_gpu:
-                        batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
+                        batch = {k: v.to(self.device) for k, v in batch.items()}
 
                     # some model's forward function return different values in "train", "val", "test", they can use `exp_stage` as argument to distinguish
                     outputs: dict[str, Tensor] = model_train(
@@ -233,7 +237,7 @@ class Exp_Main(Exp_Basic):
         initial_scheduler_state = lr_scheduler.state_dict()
 
         if not self.configs.use_multi_gpu:
-            model_train = model_train.to(f"cuda:{self.configs.gpu_id}")
+            model_train = model_train.to(self.device)
 
         if_nan_loss = False # break nested loop without using for...else...
         for train_stage in range(1, self.configs.n_train_stages + 1):
@@ -255,7 +259,7 @@ class Exp_Main(Exp_Basic):
                                 continue
                         model_optim.zero_grad()
                         if not self.configs.use_multi_gpu:
-                            batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
+                            batch = {k: v.to(self.device) for k, v in batch.items()}
 
                         outputs: dict[str, Tensor] = model_train(
                             exp_stage="train",
@@ -386,7 +390,7 @@ class Exp_Main(Exp_Basic):
             logger.debug("batch_size automatically overwritten to 32.")
             train_data, train_loader = self._get_data(flag='train')
             batch = next(iter(train_loader))
-            batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
+            batch = {k: v.to(self.device) for k, v in batch.items()}
             model = self._build_model().to(self.device).train()
             test_gpu_memory(
                 model=model,
@@ -494,7 +498,7 @@ class Exp_Main(Exp_Basic):
 
             model_test, test_loader = accelerator.prepare(model_test, test_loader)
             if not self.configs.use_multi_gpu:
-                model_test = model_test.to(f"cuda:{self.configs.gpu_id}")
+                model_test = model_test.to(self.device)
 
             # create folder for test results
             subfolder_eval = f'eval_{datetime.datetime.now().strftime("%Y_%m%d_%H%M")}'
@@ -547,7 +551,7 @@ class Exp_Main(Exp_Basic):
                         logger.warning(f"Exp_Main.test(): Batch No.{i} out of [0~{len(test_loader) - 1}] has an actual batch_size={batch[next(iter(batch))].shape[0]}, which is not the same as --batch_size {self.configs.batch_size}")
                         # continue
                     if not self.configs.use_multi_gpu:
-                        batch = {k: v.to(f"cuda:{self.configs.gpu_id}") for k, v in batch.items()}
+                        batch = {k: v.to(self.device) for k, v in batch.items()}
 
                     outputs: dict[str, Tensor] = model_test(
                         exp_stage="test",
