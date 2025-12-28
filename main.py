@@ -135,6 +135,16 @@ def main(
 if __name__ == "__main__":
     # warp the codes, such that errors will only be outputted from the main process
     configs: ExpConfigs = get_configs() # parse args here
+    if configs.allow_tf32:
+        try: # new api
+            torch.backends.fp32_precision = "tf32"
+            torch.backends.cuda.matmul.fp32_precision = "tf32"
+            torch.backends.cudnn.fp32_precision = "tf32"
+            torch.backends.cudnn.conv.fp32_precision = "tf32"
+            torch.backends.cudnn.rnn.fp32_precision = "tf32"
+        except: # old api
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
     try:
         if not configs.sweep:
             main(configs=configs)
