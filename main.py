@@ -125,7 +125,7 @@ class ExperimentRunner:
         """
         Train the model with automatic batch size reduction.
         Major logics:
-        1. Invoke Exp_Main.train() and Exp_Main.vali() once.
+        1. Invoke Exp_Main.train() once, which also calls Exp_Main.vali()
         """
         path = self._create_output_path()
         logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
