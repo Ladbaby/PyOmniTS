@@ -16,204 +16,294 @@ from utils.ExpConfigs import ExpConfigs
 from utils.globals import accelerator, logger
 
 
-def main(
-    configs: ExpConfigs,
-    hyperparameters_sweep: dict[str, dict[str, list]] = None
-):
-    # random seed
-    fix_seed_list = range(2024, 2024 + configs.itr)
-
-    configs.use_gpu = True if torch.cuda.is_available() and configs.use_gpu else False
-
-    Exp = Exp_Main
-
-    def start_exp_train() -> Exp_Main:
-        # save training config file for reference
-        path = Path(configs.checkpoints) / configs.dataset_name / configs.dataset_id / configs.model_name / configs.model_id / f"{configs.seq_len}_{configs.pred_len}" / configs.subfolder_train / f"iter{configs.itr_i}" # same as the one in Exp_Main.train()
+class ExperimentRunner:
+    """
+    Invoke Exp_Main with automatic batch size reduction.
+    Core functions:
+    1. run_training(): train + val + test (when --is_training 1)
+    2. run_test_only(): test (when --is_training 0)
+    3. run_sweep(): To be invoked by SweepManager.run_sweep() (when --sweep 1)
+    """
+    
+    def __init__(self, configs: ExpConfigs, hyperparameters_sweep: dict = None):
+        self.configs = configs
+        self.hyperparameters_sweep = hyperparameters_sweep
+        self.exp = None
+    
+    def _setup_random_seeds(self, iteration: int):
+        """Set random seeds for reproducibility."""
+        seed = 2024 + iteration
+        random.seed(seed)
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+    
+    def _create_output_path(self) -> Path:
+        """Create and return the output path for checkpoints."""
+        path = (Path(self.configs.checkpoints) / 
+                self.configs.dataset_name / 
+                self.configs.dataset_id / 
+                self.configs.model_name / 
+                self.configs.model_id / 
+                f"{self.configs.seq_len}_{self.configs.pred_len}" / 
+                self.configs.subfolder_train / 
+                f"iter{self.configs.itr_i}")
         path.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Training iter{configs.itr_i} save to: {path}")
+        return path
+    
+    def _save_configs(self, path: Path):
+        """
+        Save training configuration to YAML file under the training directory.
+        Note: YAML will also be updated under 'configs/' folder, which is done by get_configs() in utils/configs.py
+        """
         with open(path / "configs.yaml", 'w', encoding='utf-8') as f:
-            yaml.dump(asdict(configs), f, default_flow_style=False)
-        # init exp tracker
-        if (configs.wandb and accelerator.is_main_process) or configs.sweep:
-            assert hyperparameters_sweep is not None, f"Please provide 'hyperparameters_sweep' to main() when --sweep 1."
+            yaml.dump(asdict(self.configs), f, default_flow_style=False)
+    
+    def _init_wandb(self, path: Path):
+        """
+        Initialize Weights & Biases tracking if enabled.
+        Also, overwrite hyperparameter settings when --sweep 1.
+        """
+        if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
+            assert self.hyperparameters_sweep is not None, \
+                "Please provide 'hyperparameters_sweep' when using --sweep 1."
+            
             import wandb
-            run = wandb.init(
-                # Set the project where this run will be logged
+            wandb.init(
                 project="YOUR_PROJECT_NAME",
-                # Track hyperparameters and run metadata
                 config={
-                    "model_name": configs.model_name,
-                    "model_id": configs.model_id,
-                    "dataset_name": configs.dataset_name,
-                    "seq_len": configs.seq_len,
-                    "pred_len": configs.pred_len,
-                    "learning_rate": configs.learning_rate,
-                    "batch_size": configs.batch_size
+                    "model_name": self.configs.model_name,
+                    "model_id": self.configs.model_id,
+                    "dataset_name": self.configs.dataset_name,
+                    "seq_len": self.configs.seq_len,
+                    "pred_len": self.configs.pred_len,
+                    "learning_rate": self.configs.learning_rate,
+                    "batch_size": self.configs.batch_size
                 },
                 dir=path
             )
-            # overwrite model hyperparameters when sweeping
-            for attribute_name in hyperparameters_sweep.keys():
-                setattr(configs, attribute_name, getattr(wandb.config, attribute_name))
-
-        accelerator.project_configuration.set_directories(project_dir=path)
-
-        exp = Exp(configs)
-        exp.train()
-        return exp
-
-    def train_with_auto_batch_reduction():
+            
+            # Overwrite hyperparameters when sweeping
+            if self.configs.sweep:
+                for attr_name in self.hyperparameters_sweep.keys():
+                    setattr(self.configs, attr_name, getattr(wandb.config, attr_name))
+    
+    def _run_with_batch_reduction(self, func, operation_name: str):
         """
-        invoke start_exp_train(), and automatically reduce batch size on CUDA OOM errors.
+        Execute a function with automatic batch size reduction on CUDA OOM.
+        
+        Args:
+            func: Function to execute (should be train or test method)
+            operation_name: Name of the operation (for logging)
         """
-        while configs.batch_size >= 1:
+        original_batch_size = self.configs.batch_size
+        
+        while self.configs.batch_size >= 1:
             try:
-                return start_exp_train()
-            except torch.cuda.OutOfMemoryError as e:
+                return func()
+            except torch.cuda.OutOfMemoryError:
                 torch.cuda.empty_cache()
-                if configs.batch_size == 1:
-                    logger.exception("CUDA OOM error even with batch_size=1. Training aborted.")
+                
+                if self.configs.batch_size == 1:
+                    logger.exception(
+                        f"CUDA OOM error during {operation_name} even with batch_size=1. "
+                        f"Operation aborted."
+                    )
                     exit(1)
-                # Reduce batch size by half
-                new_batch_size = max(1, configs.batch_size // 2)
-                logger.error(f"CUDA OOM error! Reducing batch_size from {configs.batch_size} to {new_batch_size} and try again...")
-                configs.batch_size = new_batch_size
-
-    if configs.sweep:
-        '''
-        Currently, wandb sweep with huggingface accelerate multi GPU is tricky, use at your own risk.
-        It is running N cases of hyperparameter settings at the same time, each case in a GPU. It's NOT running 1 case using all GPUs.
-        - `wandb.sweep` is only created in the main process
-        - `wandb.agent` is created in every process, where the sweep_id is obtained via tmp file on disk
-        - `accelerate.backward` and `accelerate.log` are not used
-        '''
-        # hyperparameter search using wandb sweep
-        logger.info('>>>>>>> sweeping start <<<<<<<')
-
-        subfolder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
-        configs.subfolder_train = subfolder
-        # Automatically enable wandb logging when sweeping
-        configs.wandb = 1
-        logger.debug('wandb=1: Weight & Bias logging is automatically enabled')
-
-        # ignore itr, only train once for each combination
-        configs.itr = 1
-        configs.itr_i = 0
-        logger.debug('itr=1: training iteration is automatically overwritten to 1')
-
-        random.seed(fix_seed_list[configs.itr_i])
-        torch.manual_seed(fix_seed_list[configs.itr_i])
-        np.random.seed(fix_seed_list[configs.itr_i])
-
-        exp = train_with_auto_batch_reduction()
-        exp.test()
-    elif configs.is_training:
-        '''
-        Normal train&test
-        '''
-        subfolder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
-        configs.subfolder_train = subfolder
-        for i in range(configs.itr):
-            configs.itr_i = i
-
-            random.seed(fix_seed_list[i])
-            torch.manual_seed(fix_seed_list[i])
-            np.random.seed(fix_seed_list[i])
-
-            exp = train_with_auto_batch_reduction()
-            torch.cuda.empty_cache()
-        exp.test()
-    else:
-        '''
-        test only
-        '''
-        exp = Exp(configs)
-        exp.test()
+                
+                new_batch_size = max(1, self.configs.batch_size // 2)
+                logger.error(
+                    f"CUDA OOM error during {operation_name}! "
+                    f"Reducing batch_size from {self.configs.batch_size} to {new_batch_size}"
+                )
+                self.configs.batch_size = new_batch_size
+        
+        # Restore original batch size for subsequent operations
+        self.configs.batch_size = original_batch_size
+    
+    def train(self) -> Exp_Main:
+        """Train the model with automatic batch size reduction."""
+        path = self._create_output_path()
+        logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
+        
+        self._save_configs(path)
+        self._init_wandb(path)
+        accelerator.project_configuration.set_directories(project_dir=path)
+        
+        self.exp = Exp_Main(self.configs)
+        self._run_with_batch_reduction(self.exp.train, "training")
+        return self.exp
+    
+    def test(self):
+        """Test the model with automatic batch size reduction."""
+        if self.exp is None:
+            self.exp = Exp_Main(self.configs)
+        
+        self._run_with_batch_reduction(self.exp.test, "testing")
         torch.cuda.empty_cache()
+    
+    def run_sweep(self):
+        """Run hyperparameter sweep."""
+        logger.info('>>>>>>> sweeping start <<<<<<<')
+        
+        self.configs.subfolder_train = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
+        self.configs.wandb = 1
+        self.configs.itr = 1
+        self.configs.itr_i = 0
+        
+        logger.debug('wandb=1: Weight & Bias logging is automatically enabled')
+        logger.debug('itr=1: training iteration is automatically overwritten to 1')
+        
+        self._setup_random_seeds(0)
+        self.train()
+        self.test()
+    
+    def run_training(self):
+        """Run normal training and testing."""
+        self.configs.subfolder_train = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
+        
+        for i in range(self.configs.itr):
+            self.configs.itr_i = i
+            self._setup_random_seeds(i)
+            self.train()
+            torch.cuda.empty_cache()
+        
+        self.test()
+    
+    def run_test_only(self):
+        """Run testing only."""
+        self.test()
+
+
+class SweepManager:
+    """
+    Major logics:
+    1. Discover hyperparameters to be searched from utils/ExpConfigs.py
+    2. Invoke ExperimentRunner.run_sweep()
+    """
+    
+    def __init__(self, configs: ExpConfigs):
+        self.configs = configs
+        self.hyperparameters_sweep = {}
+    
+    def discover_hyperparameters(self) -> dict:
+        """Discover which hyperparameters the model accesses."""
+        from utils.ExpConfigs import ExpConfigsTracker
+        
+        configs_tracker = ExpConfigsTracker(self.configs)
+        model_module = importlib.import_module("models." + self.configs.model_name)
+        model = model_module.Model(configs_tracker)
+        del model
+        
+        accessed_configs = configs_tracker.get_accessed_attributes()
+        max_count = 1
+        
+        for accessed_config in accessed_configs:
+            try:
+                ref_values = self.configs.get_sweep_values(accessed_config)
+                if ref_values and isinstance(ref_values, list):
+                    self.hyperparameters_sweep[accessed_config] = {"values": ref_values}
+                    max_count *= len(ref_values)
+            except Exception:
+                continue
+        
+        if not self.hyperparameters_sweep:
+            logger.error("No hyperparameter to be searched, stopping now..")
+            logger.debug(f"{self.configs.model_name} access these attributes in ExpConfigs:")
+            configs_tracker.print_access_report()
+            logger.debug(
+                "Possible reasons: (1) The model does not access any hyperparameters; "
+                "(2) The accessed hyperparameters have not set their metadata properly. "
+                "Check the ExpConfigs class. Example: "
+                "d_model: int = field(metadata={'sweep': [32, 64, 128, 256]})"
+            )
+            exit(0)
+        
+        return self.hyperparameters_sweep, max_count
+    
+    def create_sweep(self) -> str:
+        """Create and return sweep ID."""
+        hyperparameters, max_count = self.discover_hyperparameters()
+        
+        sweep_method = "grid" if max_count <= 16 else "bayes"
+        max_count = min(max_count, 16)
+        
+        logger.info(
+            f"{len(hyperparameters)} hyperparameters and {max_count} runs "
+            f'using "{sweep_method}" as the sweep method:\n'
+            f"{pprint.pformat(hyperparameters)}"
+        )
+        
+        import wandb
+        sweep_configuration = {
+            "method": sweep_method,
+            "metric": {"goal": "minimize", "name": "loss_val_best"},
+            "parameters": hyperparameters
+        }
+        
+        temp_file_path = "storage/tmp.txt"
+        
+        if accelerator.is_main_process:
+            sweep_id = wandb.sweep(
+                sweep=sweep_configuration, 
+                project="YOUR_PROJECT_NAME"
+            )
+            with open(temp_file_path, mode='w', encoding="utf-8") as f:
+                f.write(sweep_id)
+        
+        accelerator.wait_for_everyone()
+        
+        with open(temp_file_path, mode='r', encoding="utf-8") as f:
+            sweep_id = f.readline()
+        
+        return sweep_id, max_count
+    
+    def run_sweep(self):
+        """Execute the hyperparameter sweep."""
+        sweep_id, max_count = self.create_sweep()
+        
+        def sweep_main():
+            runner = ExperimentRunner(self.configs, self.hyperparameters_sweep)
+            runner.run_sweep()
+        
+        import wandb
+        wandb.agent(
+            sweep_id,
+            function=sweep_main,
+            project="YOUR_PROJECT_NAME",
+            count=max_count
+        )
+
+
+def main(configs: ExpConfigs, hyperparameters_sweep: dict = None):
+    """
+    Main entry point for:
+    1. ExperimentRunner.run_training(): train + val + test
+    1. ExperimentRunner.run_test_only(): test
+    """
+    runner = ExperimentRunner(configs, hyperparameters_sweep)
+    
+    if configs.is_training:
+        runner.run_training()
+    else:
+        runner.run_test_only()
+
 
 if __name__ == "__main__":
-    # warp the codes, such that errors will only be outputted from the main process
-    configs: ExpConfigs = get_configs() # parse args here
-    if configs.allow_tf32:
-        try: # new api
-            torch.backends.fp32_precision = "tf32"
-            torch.backends.cuda.matmul.fp32_precision = "tf32"
-            torch.backends.cudnn.fp32_precision = "tf32"
-            torch.backends.cudnn.conv.fp32_precision = "tf32"
-            torch.backends.cudnn.rnn.fp32_precision = "tf32"
-        except: # old api
-            torch.backends.cuda.matmul.allow_tf32 = True
-            torch.backends.cudnn.allow_tf32 = True
+    configs: ExpConfigs = get_configs()
+    
     try:
         if not configs.sweep:
+            # train/val/test
             main(configs=configs)
         else:
-            hyperparameters_sweep: dict[str, dict[str, list]] = {}
-            # first determine the hyperparameters actually accessed by model
-            from utils.ExpConfigs import ExpConfigsTracker
-            configs_tracker = ExpConfigsTracker(configs)
-            model_module = importlib.import_module("models." + configs.model_name)
-            model = model_module.Model(configs_tracker)
-            del model
-            accessed_configs: set[str] = configs_tracker.get_accessed_attributes()
-            max_count = 1
-            for accessed_config in accessed_configs:
-                try:
-                    ref_values = configs.get_sweep_values(accessed_config)
-                    if ref_values and (type(ref_values) is list):
-                        hyperparameters_sweep[accessed_config] = {
-                            "values": ref_values
-                        }
-                        max_count *= len(ref_values)
-                except Exception as e:
-                    continue
-            # grid search if <=16, otherwise bayes
-            sweep_method = "grid" if max_count <= 16 else "bayes"
-            max_count = min(max_count, 16)
-
-            if hyperparameters_sweep == {}:
-                logger.error(f"No hyperparameter to be searched, stopping now..")
-                logger.debug(f"{configs.model_name} access these attributes in ExpConfigs:")
-                configs_tracker.print_access_report()
-                logger.debug("""Possible reasons: (1) The model does not access any hyperparameters in ExpConfigs; (2) The accessed hyperparameters have not set their metadata properly. Check the ExpConfigs class in utils/ExpConfigs.py. Example metadata setting:
-                d_model: int = field(metadata={"sweep": [32, 64, 128, 256]})""")
-                exit(0)
-            else:
-                logger.info(f"""{len(hyperparameters_sweep)} hyperparameters and {max_count} runs using "{sweep_method}" as the sweep method: \n{pprint.pformat(hyperparameters_sweep)}""")
-                
-            import wandb
-            sweep_configuration = {
-                "method": sweep_method,
-                "metric": {"goal": "minimize", "name": "loss_val_best"},
-                "parameters": hyperparameters_sweep
-            }
-            temp_file_path = "storage/tmp.txt"
-            if accelerator.is_main_process:
-                sweep_id = wandb.sweep(sweep=sweep_configuration, project="YOUR_PROJECT_NAME")
-                with open(temp_file_path, mode='w', encoding="utf-8") as f:
-                    f.write(sweep_id)
-            accelerator.wait_for_everyone()
-            sweep_id = None
-            with open(temp_file_path, mode='r', encoding="utf-8") as f:
-                sweep_id = f.readline()
-
-            def sweep_main():
-                # wandb.agent only accepts a zero-arg function, so we have to pass configs here.
-                main(
-                    configs=configs,
-                    hyperparameters_sweep=hyperparameters_sweep
-                )
-
-            wandb.agent(
-                sweep_id, 
-                function=sweep_main, 
-                project="YOUR_PROJECT_NAME",
-                count=max_count
-            )
+            # search hyperparameters
+            sweep_manager = SweepManager(configs)
+            sweep_manager.run_sweep()
+    
     except KeyboardInterrupt:
         if accelerator.is_main_process:
             print("\nProcess interrupted...")
+    
     except Exception as e:
         if accelerator.is_main_process:
             logger.exception(f"{e}", stack_info=True)
