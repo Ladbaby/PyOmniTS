@@ -50,6 +50,7 @@ class ExpConfigs:
     n_classes: int
 
     # GPU
+    allow_tf32: int
     gpu_id: int
     gpu_ids: str | None
     use_gpu: int
