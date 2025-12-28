@@ -60,8 +60,9 @@ class ExperimentRunner:
     
     def _init_wandb(self, path: Path):
         """
-        Initialize Weights & Biases tracking if enabled.
-        Also, overwrite hyperparameter settings when --sweep 1.
+        Major logics:
+        1. Initialize Weights & Biases tracking if enabled.
+        2. Overwrite self.configs with hyperparameter settings when --sweep 1.
         """
         if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
             assert self.hyperparameters_sweep is not None, \
@@ -121,7 +122,11 @@ class ExperimentRunner:
         self.configs.batch_size = original_batch_size
     
     def train(self) -> Exp_Main:
-        """Train the model with automatic batch size reduction."""
+        """
+        Train the model with automatic batch size reduction.
+        Major logics:
+        1. Invoke Exp_Main.train() and Exp_Main.vali() once.
+        """
         path = self._create_output_path()
         logger.info(f"Training iter{self.configs.itr_i} save to: {path}")
         
@@ -134,7 +139,11 @@ class ExperimentRunner:
         return self.exp
     
     def test(self):
-        """Test the model with automatic batch size reduction."""
+        """
+        Test the model with automatic batch size reduction.
+        Major logics:
+        1. Invoke Exp_Main.test() once.
+        """
         if self.exp is None:
             self.exp = Exp_Main(self.configs)
         
@@ -142,7 +151,11 @@ class ExperimentRunner:
         torch.cuda.empty_cache()
     
     def run_sweep(self):
-        """Run hyperparameter sweep."""
+        """
+        Run hyperparameter sweep.
+        1. Force overwrite some configs.
+        2. Invoke self.train() & self.test() once.
+        """
         logger.info('>>>>>>> sweeping start <<<<<<<')
         
         self.configs.subfolder_train = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
@@ -158,7 +171,11 @@ class ExperimentRunner:
         self.test()
     
     def run_training(self):
-        """Run normal training and testing."""
+        """
+        Major logics:
+        1. Run self.train() for 'configs.itr' times using different random seeds.
+        2. Invoke self.test() once.
+        """
         self.configs.subfolder_train = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
         
         for i in range(self.configs.itr):
@@ -177,8 +194,8 @@ class ExperimentRunner:
 class SweepManager:
     """
     Major logics:
-    1. Discover hyperparameters to be searched from utils/ExpConfigs.py
-    2. Invoke ExperimentRunner.run_sweep()
+    1. Discover hyperparameters to be searched.
+    2. SweepManager.run_sweep() -> ExperimentRunner.run_sweep()
     """
     
     def __init__(self, configs: ExpConfigs):
@@ -186,7 +203,9 @@ class SweepManager:
         self.hyperparameters_sweep = {}
     
     def discover_hyperparameters(self) -> dict:
-        """Discover which hyperparameters the model accesses."""
+        """
+        Discover which hyperparameters the model accesses, and get their search spaces from utils/ExpConfigs.py
+        """
         from utils.ExpConfigs import ExpConfigsTracker
         
         configs_tracker = ExpConfigsTracker(self.configs)
@@ -258,7 +277,12 @@ class SweepManager:
         return sweep_id, max_count
     
     def run_sweep(self):
-        """Execute the hyperparameter sweep."""
+        """
+        Execute the hyperparameter sweep.
+        Major logics:
+        1. self.create_sweep() -> self.discover_hyperparameters()
+        2. wandb.agent() -> ExperimentRunner.run_sweep()
+        """
         sweep_id, max_count = self.create_sweep()
         
         def sweep_main():
@@ -276,9 +300,9 @@ class SweepManager:
 
 def main(configs: ExpConfigs, hyperparameters_sweep: dict = None):
     """
-    Main entry point for:
-    1. ExperimentRunner.run_training(): train + val + test
-    1. ExperimentRunner.run_test_only(): test
+    Major logics:
+    ├── --is_training 1 -> ExperimentRunner.run_training(): train+val+test
+    └── otherwise -> ExperimentRunner.run_test_only(): test
     """
     runner = ExperimentRunner(configs, hyperparameters_sweep)
     
@@ -289,14 +313,17 @@ def main(configs: ExpConfigs, hyperparameters_sweep: dict = None):
 
 
 if __name__ == "__main__":
+    '''
+    Major logics:
+    ├── --sweep 1 -> SweepManager().run_sweep(): search hyperparameters
+    └── otherwise -> main(): train/val/test
+    '''
     configs: ExpConfigs = get_configs()
     
     try:
         if not configs.sweep:
-            # train/val/test
             main(configs=configs)
         else:
-            # search hyperparameters
             sweep_manager = SweepManager(configs)
             sweep_manager.run_sweep()
     
