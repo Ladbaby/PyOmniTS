@@ -101,7 +101,20 @@ class ExperimentRunner:
         while self.configs.batch_size >= 1:
             try:
                 return func()
-            except torch.cuda.OutOfMemoryError:
+            except (torch.cuda.OutOfMemoryError, RuntimeError) as e:
+                # Check if it's a CUDA OOM-related error
+                is_oom = isinstance(e, torch.cuda.OutOfMemoryError)
+                is_cublas_oom = isinstance(e, RuntimeError) and (
+                    "CUBLAS_STATUS_ALLOC_FAILED" in str(e) or
+                    "CUDA out of memory" in str(e)
+                )
+                
+                if not (is_oom or is_cublas_oom):
+                    # Not an OOM error, re-raise it
+                    raise
+                elif is_cublas_oom:
+                    logger.warning(f"PyOmniTS has regarded the following error as CUDA OOM error: {e}")
+                
                 torch.cuda.empty_cache()
                 
                 if self.configs.batch_size == 1:
