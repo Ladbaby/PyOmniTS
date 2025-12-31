@@ -49,7 +49,7 @@ class PyramidalGNN(nn.Module):
         elif mode == 'diff':
             mp_cls = partial(DiffConv, k=k)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         for i in range(layers):
             if i == 0:

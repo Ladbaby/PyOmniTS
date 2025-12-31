@@ -126,7 +126,7 @@ class Dataset(object):
         Returns:
             int: Temporal length of the dataset.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     def n_nodes(self) -> int:
@@ -137,7 +137,7 @@ class Dataset(object):
         Returns:
             int: Total number of nodes in the dataset.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     def n_channels(self) -> int:
@@ -147,7 +147,7 @@ class Dataset(object):
         Returns:
             int: Number of channels of the main signal.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     #
 
@@ -215,7 +215,7 @@ class Dataset(object):
 
     def download(self) -> None:
         """Downloads dataset's files to the :obj:`self.root_dir` folder."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def build(self) -> None:
         """Eventually build the dataset from raw data to :obj:`self.root_dir`
@@ -224,7 +224,7 @@ class Dataset(object):
 
     def load_raw(self, *args, **kwargs):
         """Loads raw dataset without any data preprocessing."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def load(self, *args, **kwargs):
         """Loads raw dataset and preprocess data. Default to :obj:`load_raw`."""
@@ -255,7 +255,7 @@ class Dataset(object):
         """Returns a pandas representation of the dataset in the form of a
         :class:`~pandas.DataFrame`. May be a list of DataFrames if the dataset
         has a dynamic structure."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def numpy(self, return_idx: bool = False) -> \
             Union[ndarray, List[ndarray],
@@ -265,7 +265,7 @@ class Dataset(object):
         returns also a :class:`~pandas.Series` that can be used as index. May
         be a list of ndarrays (and Series) if the dataset has a dynamic
         structure."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # IO
 
@@ -303,7 +303,7 @@ class Dataset(object):
         Returns:
             ndarray: The similarity dense matrix.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def get_similarity(self,
                        method: Optional[str] = None,
@@ -470,11 +470,11 @@ class Dataset(object):
         Args:
             node_index: Sequence of grouped node ids.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # Getters for SpatioTemporalDataset
 
     def get_config(self) -> dict:
         """Returns the keywords arguments (as dict) for instantiating a
          :class:`~tsl.data.SpatioTemporalDataset`."""
-        raise NotImplementedError
+        raise NotImplementedError()

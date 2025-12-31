@@ -31,7 +31,7 @@ class Model(nn.Module):
         elif configs.task_name == "classification":
             self.pred_len = self.seq_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         self.seg_len = configs.patch_len_max_irr or configs.patch_len
         self.seg_num_x = self.seq_len // self.seg_len
@@ -152,4 +152,4 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()

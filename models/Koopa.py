@@ -146,7 +146,7 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 class FourierFilter(nn.Module):
@@ -189,7 +189,7 @@ class MLP(nn.Module):
         elif activation == 'tanh':
             self.activation = nn.Tanh()
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         
         layers = [nn.Linear(self.f_in, self.hidden_dim), 
                   self.activation, nn.Dropout(self.dropout)]

@@ -84,7 +84,7 @@ class Model(nn.Module):
                 nn.Linear(d_final, n_classes),
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -169,7 +169,7 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def compute_lengths(self, timestamps: Tensor):
         '''

@@ -802,7 +802,7 @@ class TimeBERTForMultiTask(nn.Module):
 
         else:
 
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 class SwitchTimeBERTForMultiTask(nn.Module):
@@ -917,7 +917,7 @@ class SwitchTimeBERTForMultiTask(nn.Module):
 
         else:
 
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 

@@ -181,7 +181,7 @@ class Model(nn.Module):
                 "loss2": result_conloss
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 class HypergraphConv(MessagePassing):

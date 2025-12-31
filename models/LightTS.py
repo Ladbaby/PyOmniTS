@@ -28,7 +28,7 @@ class Model(nn.Module):
         elif self.task_name in ["short_term_forecast", "long_term_forecast"]:
             self.pred_len = configs.pred_len_max_irr or configs.pred_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         if self.task_name in ["short_term_forecast", "long_term_forecast"]:
             self.chunk_size = min(self.pred_len, self.seq_len, chunk_size)
@@ -160,7 +160,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class IEBlock(nn.Module):
     def __init__(self, input_dim, hid_dim, output_dim, num_node):

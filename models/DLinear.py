@@ -123,7 +123,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # elif self.task_name == 'imputation':
         #     dec_out = self.imputation(x)
         #     return dec_out  # [B, L, D]

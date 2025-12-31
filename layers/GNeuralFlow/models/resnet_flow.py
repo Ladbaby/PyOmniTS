@@ -33,7 +33,7 @@ class ResNetFlowBlock(nn.Module):
 
     def inverse(self, y, t, iterations=100):
         if not self.invertible:
-            raise NotImplementedError
+            raise NotImplementedError()
         # fixed-point iteration
         x = y
         for _ in range(iterations):

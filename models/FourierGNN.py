@@ -51,7 +51,7 @@ class Model(nn.Module):
                 nn.Linear(self.hidden_size, self.pred_len)
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def tokenEmb(self, x):
         x = x.unsqueeze(2)
@@ -181,5 +181,5 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 

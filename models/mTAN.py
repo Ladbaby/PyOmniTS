@@ -57,7 +57,7 @@ class Model(nn.Module):
             self.reconstruction_loss_fn = ReconstructionLoss()
             self.classification_loss_fn = nn.CrossEntropyLoss()
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self,
@@ -98,7 +98,7 @@ class Model(nn.Module):
         elif self.configs.task_name in ["classification", "imputation"]:
             observed_tp = x_mark[:, :, 0]
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # END adaptor
 
 
@@ -159,7 +159,7 @@ class Model(nn.Module):
                     "true": y_class
                 }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class ReconstructionLoss(nn.Module):
     '''

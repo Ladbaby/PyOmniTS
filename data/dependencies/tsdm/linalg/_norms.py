@@ -78,7 +78,7 @@ def _numpy_relative_error(xhat: np.ndarray, x_true: np.ndarray) -> np.ndarray:
     elif xhat.dtype in (np.float64, np.int64):
         eps = 2**-53
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     return np.abs(xhat - x_true) / (np.abs(x_true) + eps)
 
@@ -94,7 +94,7 @@ def _torch_relative_error(xhat: Tensor, x_true: Tensor) -> Tensor:
     elif xhat.dtype in (torch.float64, torch.int64):
         eps = 2**-53
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # eps = eps or _eps
     return torch.abs(xhat - x_true) / (torch.abs(x_true) + eps)

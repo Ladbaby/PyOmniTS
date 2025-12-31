@@ -83,7 +83,7 @@ class ODEModel(Module):
         elif isinstance(net, Module):
             self.net = net
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         self.solver = solver
 

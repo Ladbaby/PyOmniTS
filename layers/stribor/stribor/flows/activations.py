@@ -102,13 +102,13 @@ class ContinuousActivation(ElementwiseTransform):
         return x * (1 - w) + self.activation(x) * w
 
     def inverse(self, y, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def log_diag_jacobian(self, x, y, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def log_det_jacobian(self, x, y, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class ContinuousTanh(ElementwiseTransform):

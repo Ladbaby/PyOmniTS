@@ -25,7 +25,7 @@ class Normalize(nn.Module):
         elif mode == 'denorm':
             x = self._denormalize(x)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         return x
 
     def _init_params(self):

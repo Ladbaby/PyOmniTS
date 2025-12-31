@@ -37,7 +37,7 @@ class Model(nn.Module):
             output, target_U_, target_mask_ = self.enc(context_x, X, context_mask, target_y[:,:,:self.dim], target_y[:,:,self.dim:], exp_stage)
             return output, target_U_, target_mask_
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def convert_data(self,  x_time, x_vals, x_mask, y_time, y_vals, y_mask):
         return x_time, torch.cat([x_vals, x_mask],-1), y_time, torch.cat([y_vals, y_mask],-1)  
@@ -98,7 +98,7 @@ class Model(nn.Module):
 
             x_y_mask = x_mask + y_mask
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # END adaptor
 
 
@@ -133,7 +133,7 @@ class Model(nn.Module):
                     "mask": y_mask[:, :, f_dim:]
                 }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     # convert the output back to original shape, to align with api
     def unpad_and_reshape(self, target_U: Tensor, mask: Tensor, original_shape: Tensor):

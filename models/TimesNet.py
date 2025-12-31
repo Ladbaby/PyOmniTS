@@ -46,7 +46,7 @@ class Model(nn.Module):
             self.projection = nn.Linear(
                 configs.d_model * configs.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -91,7 +91,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forecast(self, x_enc, x_mark_enc):
         # Normalization from Non-stationary Transformer

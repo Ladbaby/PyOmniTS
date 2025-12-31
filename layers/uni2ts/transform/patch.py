@@ -102,7 +102,7 @@ class GetPatchSize(Transformation):
                 min(self.patch_sizes.stop, constraints.stop, patch_size_ceil),
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         if len(patch_size_candidates) <= 0:
             ts_shape = (len(target),) + target[0].shape

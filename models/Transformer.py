@@ -82,7 +82,7 @@ class Model(nn.Module):
             self.dropout = nn.Dropout(configs.dropout)
             self.projection = nn.Linear(configs.d_model * self.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         # Embedding
@@ -179,4 +179,4 @@ class Model(nn.Module):
         #     dec_out = self.anomaly_detection(x)
         #     return dec_out  # [B, L, D]
         else:
-            raise NotImplementedError
+            raise NotImplementedError()

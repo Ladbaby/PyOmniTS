@@ -82,4 +82,4 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()

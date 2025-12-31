@@ -25,7 +25,7 @@ class Transform(nn.Module, metaclass=ABCMeta):
         pass
 
     def jacobian(self, x, y, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def forward_and_log_det_jacobian(self, x, **kwargs):
         y = self.forward(x, **kwargs)

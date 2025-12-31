@@ -201,7 +201,7 @@ class Model(nn.Module):
                 "mask": y_mask
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # elif self.task_name == 'imputation':
         #     dec_out = self.imputation(
         #         x, x_mark, x_dec, x_mark_dec, y_mask)

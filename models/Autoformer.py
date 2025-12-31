@@ -129,7 +129,7 @@ class Model(nn.Module):
             self.projection = nn.Linear(
                 configs.d_model * self.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         # decomp init
@@ -251,7 +251,7 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:],
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # elif self.task_name == 'anomaly_detection':
         #     dec_out = self.anomaly_detection(x)
         #     return dec_out  # [B, L, D]

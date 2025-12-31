@@ -38,7 +38,7 @@ class EvolveGCN(nn.Module):
         elif variant == 'O':
             cell = EvolveGCNOCell
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         for i in range(self.n_layers):
             self.rnn_cells.append(

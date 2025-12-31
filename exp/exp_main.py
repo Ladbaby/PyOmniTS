@@ -512,7 +512,7 @@ class Exp_Main(Exp_Basic):
                 input_tensor_names = ["x", "y", "x_mask", "y_mask", "sample_ID"]
                 output_tensor_names = ["pred"]
             else:
-                raise NotImplementedError
+                raise NotImplementedError()
 
             for tensor_name in input_tensor_names + output_tensor_names:
                 array_dict[tensor_name] = []

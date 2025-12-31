@@ -41,7 +41,7 @@ class Model(nn.Module):
         elif configs.task_name in ["imputation", "classification"]:
             n_steps = configs.seq_len_max_irr or configs.seq_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         n_features = configs.enc_in
         rnn_hidden_size = configs.d_model # 100
         # END adaptor
@@ -196,7 +196,7 @@ class Model(nn.Module):
                 "true_class": y_class,
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def compute_lengths(self, timestamps: Tensor):
         '''

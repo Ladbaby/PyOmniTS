@@ -31,7 +31,7 @@ class Reduce(nn.Module):
         Returns:
             The pooled supernode features :math:`\mathbf{X}_{pool}`.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

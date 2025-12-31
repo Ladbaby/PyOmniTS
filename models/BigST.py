@@ -81,7 +81,7 @@ class Model(nn.Module):
             if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
                 self.regression_layer = nn.Conv2d(configs.d_model*4*2, self.pred_len, kernel_size=(1, 1), bias=True)
             else:
-                raise NotImplementedError
+                raise NotImplementedError()
 
     def forward(
         self, 
@@ -187,7 +187,7 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 def create_products_of_givens_rotations(dim, seed):
     nb_givens_rotations = dim * int(math.ceil(math.log(float(dim))))

@@ -98,7 +98,7 @@ class Pooling(torch.nn.Module):
             if self.cached:
                 self._s_cached = s
             return s
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def reduce(self,
                x: Tensor,
@@ -119,7 +119,7 @@ class Pooling(torch.nn.Module):
                                 batch=batch,
                                 num_nodes=num_nodes,
                                 **kwargs)
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def lift(self,
              x_pool: Tensor,
@@ -140,7 +140,7 @@ class Pooling(torch.nn.Module):
                                batch=batch,
                                num_nodes=num_nodes,
                                **kwargs)
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def connect(self,
                 edge_index: Adj,
@@ -162,7 +162,7 @@ class Pooling(torch.nn.Module):
                                   s=s,
                                   batch=batch,
                                   **kwargs)
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def clear_cache(self):
         self._s_cached = None

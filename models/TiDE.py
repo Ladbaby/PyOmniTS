@@ -60,7 +60,7 @@ class Model(nn.Module):
         elif self.task_name == "classification":
             self.decoder_classification = nn.Linear(self.hidden_dim * configs.enc_in, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         
     def forecast(self, x_enc, batch_y_mark):
         # Normalization
@@ -169,7 +169,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class LayerNorm(nn.Module):
     """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """

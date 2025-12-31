@@ -110,13 +110,13 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
                 activation=activation,
             ) for _ in range(self.levels)])
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         # Initialize graph learner
         self.graph_learner = GraphLearner(configs.enc_in)
 
     def hierarchical_message_passing(self, x, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def get_edge_index_and_weights(self, adj_matrix):
         n_variables = adj_matrix.size(0)
@@ -249,7 +249,7 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class Model(HierarchicalTimeThanSpaceModel):
     '''

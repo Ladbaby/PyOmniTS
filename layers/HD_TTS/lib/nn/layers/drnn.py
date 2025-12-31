@@ -95,7 +95,7 @@ class DRNN(nn.Module):
             if self.return_only_last_state:
                 out.append(x[-1])
             else:
-                raise NotImplementedError
+                raise NotImplementedError()
             # Downsample the input sequence
             num_steps = x.size(0)
             # Ensure last element is the last also in the downsampled sequence

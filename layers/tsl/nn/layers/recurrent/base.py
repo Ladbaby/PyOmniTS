@@ -10,7 +10,7 @@ class RNNCellBase(nn.Module):
     """Base class for implementing recurrent neural networks (RNN) cells."""
 
     def initialize_state(self, *args, **kwargs) -> StateType:
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class GRUCellBase(RNNCellBase):

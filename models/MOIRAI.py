@@ -132,7 +132,7 @@ class Model(nn.Module):
                     "loss": loss
                 }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward_one_variate(
         self,

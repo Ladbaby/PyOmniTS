@@ -125,5 +125,5 @@ class Elergone(DatetimeDataset):
             x = (x - x.mean()) / x.std()
             sim = sims.correntropy(x, period=period, mask=mask, gamma=gamma)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         return sim

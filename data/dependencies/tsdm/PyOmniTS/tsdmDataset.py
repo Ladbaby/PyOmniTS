@@ -68,7 +68,7 @@ class tsdmDataset(Dataset):
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             assert self.seq_len + self.pred_len <= self.L_TOTAL, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than {self.L_TOTAL}"
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def _preprocess_base(self, task):
         """
@@ -267,7 +267,7 @@ def collate_fn(
         y_marks = x_marks.clone()
         y_masks = x_masks.clone()
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     sample_IDs = torch.tensor(sample_IDs).float()
 
@@ -419,7 +419,7 @@ def collate_fn_patch(
         y_marks = x_marks.clone()
         y_masks = x_masks.clone()
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     sample_IDs = torch.tensor(sample_IDs).float()
 

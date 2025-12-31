@@ -45,7 +45,7 @@ class Model(nn.Module):
         elif configs.task_name == "classification":
             self.decoder_classification = nn.Linear(configs.d_model, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -104,7 +104,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 class ResidualBlock(nn.Module):

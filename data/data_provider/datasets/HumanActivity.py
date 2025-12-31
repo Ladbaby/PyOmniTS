@@ -87,13 +87,13 @@ class Data(Dataset):
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             assert self.seq_len + self.pred_len <= self.L_TOTAL, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than self.L_TOTAL"
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def _preprocess(self):
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             backbone_pred_len = self.pred_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         human_activity = HumanActivity(
             root=self.configs.dataset_root_path

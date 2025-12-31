@@ -161,7 +161,7 @@ def random_data(
     elif np.issubdtype(dtype, np.string_):
         result = rng.choice(STRINGS, size=size)
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     __logger__.warning("TODO: implement missing%s!", missing)
 

@@ -97,7 +97,7 @@ class Model(nn.Module):
             y_L = y
             y_mask_L = y_mask
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # END adaptor
 
         time_indices = torch.cumsum(torch.ones_like(x_L).to(torch.int64), dim=1) - 1  # (BATCH_SIZE, L, ENC_IN) init for time indices. 0, 1, 2...
@@ -213,7 +213,7 @@ class Model(nn.Module):
                     "pred_repr_obs": self.get_pred_repr_obs(observation_nodes, x_y_mask)
                 }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
     def unpad_and_reshape(

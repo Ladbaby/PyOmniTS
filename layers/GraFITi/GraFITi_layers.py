@@ -187,4 +187,4 @@ class Encoder(nn.Module):
             output = self.output(torch.cat([value_flattened, k_t, k_c], dim=-1))
             return output, target_value_flattened, target_mask_flattened
         else:
-            raise NotImplementedError
+            raise NotImplementedError()

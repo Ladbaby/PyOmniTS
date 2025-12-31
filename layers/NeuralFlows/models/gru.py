@@ -169,7 +169,7 @@ class ContinuousGRULayer(Module):
         elif model == 'flow' and flow_model == 'resnet':
             self.odeint = GRUFlow(hidden_dim, flow_layers, time_net, time_hidden_dim)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         self.gru = nn.GRU(dim, hidden_dim, 1, batch_first=True)
 

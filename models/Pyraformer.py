@@ -45,7 +45,7 @@ class Model(nn.Module):
             self.projection = nn.Linear(
                 (len(window_size)+1)*self.d_model * self.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def long_forecast(self, x_enc, x_mark_enc):
         enc_out = self.encoder(x_enc, x_mark_enc)[:, -1, :]
@@ -140,4 +140,4 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()

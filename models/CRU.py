@@ -118,7 +118,7 @@ class Model(CRU):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
     def _build_enc_hidden_layers(self):

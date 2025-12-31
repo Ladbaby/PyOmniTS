@@ -134,7 +134,7 @@ class Splitter:
         return copy
 
     def fit(self, dataset: SpatioTemporalDataset):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def split(self, dataset: SpatioTemporalDataset) -> dict:
         if self.fitted:

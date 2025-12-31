@@ -112,7 +112,7 @@ class Model(nn.Module):
             self.dropout = nn.Dropout(configs.dropout)
             self.projection = nn.Linear(configs.d_model * configs.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 

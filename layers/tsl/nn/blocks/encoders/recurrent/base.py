@@ -106,7 +106,7 @@ class RNNIBase(RNNBase):
         self.flip_time = flip_time
 
     def state_readout(self, h: List[StateType]):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def preprocess_input(self,
                          x: Tensor,

@@ -61,7 +61,7 @@ class PackedScaler(nn.Module):
         Float[torch.Tensor, "*batch seq_len #dim"],
         Float[torch.Tensor, "*batch seq_len #dim"],
     ]:
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class PackedNOPScaler(PackedScaler):

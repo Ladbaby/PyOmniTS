@@ -27,7 +27,7 @@ class Model(nn.Module):
         elif configs.task_name == "classification":
             self.projection = nn.Linear(self.seq_len * configs.enc_in, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forecast(self, x_enc):
         # x: [B, L, D]
@@ -84,7 +84,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class ResBlock(nn.Module):
     def __init__(self, configs: ExpConfigs):

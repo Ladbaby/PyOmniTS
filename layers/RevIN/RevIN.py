@@ -23,7 +23,7 @@ class RevIN(nn.Module):
             x = self._normalize(x)
         elif mode == 'denorm':
             x = self._denormalize(x)
-        else: raise NotImplementedError
+        else: raise NotImplementedError()
         return x
 
     def _init_params(self):

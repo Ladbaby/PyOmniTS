@@ -90,7 +90,7 @@ class HierarchicalTimeThanSpaceModel(BaseModel):
         ) for _ in range(self.levels)])
 
     def hierarchical_message_passing(self, x, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def forward(self, x, edge_index, edge_weight=None, u=None):
         """"""

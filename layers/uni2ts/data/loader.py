@@ -58,7 +58,7 @@ class Collate:
         return np.zeros
 
     def __call__(self, batch: list[Sample]) -> BatchedSample:
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class PadCollate(Collate):

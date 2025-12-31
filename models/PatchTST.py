@@ -59,7 +59,7 @@ class Model(nn.Module):
             self.projection = nn.Linear(
                 self.head_nf * configs.enc_in, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forecast(self, x_enc):
         # Normalization from Non-stationary Transformer
@@ -244,7 +244,7 @@ class Model(nn.Module):
         #     dec_out = self.anomaly_detection(x)
         #     return dec_out  # [B, L, D]
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 class Transpose(nn.Module):
     def __init__(self, *dims, contiguous=False): 

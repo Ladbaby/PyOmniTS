@@ -55,7 +55,7 @@ class TslExperiment:
 
     def make_run_dir(self):
         """Create directory to store run logs and artifacts."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def run(self):
         hparams = self.parser.parse_args()

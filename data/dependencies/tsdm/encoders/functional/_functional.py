@@ -56,7 +56,7 @@ def triplet2dense(
     -------
     DataFrame
     """
-    raise NotImplementedError
+    raise NotImplementedError()
 
 
 def make_dense_triplets(df: DataFrame) -> DataFrame:

@@ -98,7 +98,7 @@ class Model(nn.Module):
             self.projection = nn.Linear(
                 configs.d_model * configs.seq_len, configs.n_classes)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
     
     def forward(
         self, 
@@ -144,7 +144,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def out_projection(self, dec_out, i, out_res):
         dec_out = self.projection_layer(dec_out)

@@ -121,7 +121,7 @@ class CRU(nn.Module):
         Builds hidden layers for encoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and not modified
     def _build_dec_hidden_layers_mean(self) -> Tuple[nn.ModuleList, int]:
@@ -129,7 +129,7 @@ class CRU(nn.Module):
         Builds hidden layers for mean decoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and not modified
     def _build_dec_hidden_layers_var(self) -> Tuple[nn.ModuleList, int]:
@@ -137,7 +137,7 @@ class CRU(nn.Module):
         Builds hidden layers for variance decoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
     
     # taken from https://github.com/ALRhub/rkn_share/ and modified
     def forward(

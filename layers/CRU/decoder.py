@@ -71,7 +71,7 @@ class SplitDiagGaussianDecoder(nn.Module):
         Builds hidden layers for mean decoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and not modified
     def _build_hidden_layers_var(self) -> Tuple[nn.ModuleList, int]:
@@ -79,7 +79,7 @@ class SplitDiagGaussianDecoder(nn.Module):
         Builds hidden layers for variance decoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
     def forward(self, latent_mean: torch.Tensor, latent_cov: Iterable[torch.Tensor]) \
@@ -142,7 +142,7 @@ class BernoulliDecoder(nn.Module):
         Builds hidden layers for decoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
     def forward(self, latent_mean: torch.Tensor) \

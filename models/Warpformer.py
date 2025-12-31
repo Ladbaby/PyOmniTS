@@ -135,7 +135,7 @@ class Model(nn.Module):
                 configs.n_classes
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -264,7 +264,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def cal_tau(self, observed_tp, observed_mask):
         '''

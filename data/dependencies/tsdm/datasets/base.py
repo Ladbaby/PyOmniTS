@@ -363,7 +363,7 @@ class SingleFrameDataset(FrameDataset):
             # noinspection PyProtectedMember
             html_repr = self.dataset._repr_html_()  # pylint: disable=protected-access
             return header + html_repr
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @cached_property
     def dataset(self) -> DATASET_OBJECT:

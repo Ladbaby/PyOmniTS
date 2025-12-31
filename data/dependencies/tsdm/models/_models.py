@@ -112,7 +112,7 @@ class PreTrainedModel(ABC):
     @abstractmethod
     def from_hyperparameters(cls) -> None:
         r"""Create a model from hyperparameters."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def download(self) -> None:

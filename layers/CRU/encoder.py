@@ -66,7 +66,7 @@ class Encoder(nn.Module):
         Builds hidden layers for encoder
         :return: nn.ModuleList of hidden Layers, size of output of last layer
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
     def forward(self, obs: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:

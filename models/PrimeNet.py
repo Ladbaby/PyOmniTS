@@ -77,13 +77,13 @@ class Model(nn.Module):
                 nn.Linear(300, config.n_classes)
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             assert (self.seq_len + self.pred_len) % self.patch_len == 0, f"{self.seq_len+self.pred_len=} should be divisible by {self.patch_len=}"
             self.n_patch_all: int = math.ceil(configs.seq_len / configs.patch_len) + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -123,7 +123,7 @@ class Model(nn.Module):
             observed_mask = torch.cat([x_mask, torch.zeros_like(y_mask).to(y_mask.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
             interp_mask = torch.cat([torch.zeros_like(x_mask).to(x_mask.device), y_mask], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         # END adaptor
 
         out = self.model(

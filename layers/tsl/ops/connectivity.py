@@ -393,7 +393,7 @@ def get_dummy_edge_index(dummy: str,
     elif dummy == 'none':
         edge_index = None
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
     return edge_index
 
 

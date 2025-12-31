@@ -95,7 +95,7 @@ class Model(nn.Module):
                 nn.Linear(200, configs.n_classes)
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
             d_static = configs.d_static
             if d_static != 0:
                 self.emb = nn.Linear(d_static, configs.d_model)
@@ -179,7 +179,7 @@ class Model(nn.Module):
                 "true_class": y_class,
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def LearnableTE(self, tt):
         # learnable continuous time embeddings

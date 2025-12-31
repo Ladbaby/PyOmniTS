@@ -117,7 +117,7 @@ class HuggingFaceDatasetIndexer(Indexer):
             else:
                 array = [pa_array.flatten().to_numpy(False)]
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         return array
 

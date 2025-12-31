@@ -73,7 +73,7 @@ class BaseModel(nn.Module):
 
     def loss(self, target, *args, **kwargs):
         """Compute a custom loss w.r.t. :attr:`target`."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def predict(self, *args, **kwargs):
         """Forward function used only for inference."""

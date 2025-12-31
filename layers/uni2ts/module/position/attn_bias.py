@@ -61,7 +61,7 @@ class RelativeAttentionBias(AttentionBias):
         query_id: Int[torch.Tensor, "*batch 1 1 q_len"],
         kv_id: Int[torch.Tensor, "*batch 1 1 kv_len"],
     ) -> Float[torch.Tensor, "*batch #group #hpg q_len kv_len"]:
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class BinaryAttentionBias(AttentionBias):

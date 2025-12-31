@@ -99,7 +99,7 @@ class Model(nn.Module):
                 "loss": loss
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def create_LatentODE_model(
         self, 

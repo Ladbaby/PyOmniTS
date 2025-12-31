@@ -94,7 +94,7 @@ class MIMIC_III(MultiFrameDataset):
     index = list(dataset_files.keys())
 
     def _clean(self, key):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def _download(self, **_):
         cut_dirs = self.BASE_URL.count("/") - 3

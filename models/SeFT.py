@@ -102,7 +102,7 @@ class Model(nn.Module):
                 nn.Linear(d_inp * d_fi, configs.n_classes),
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         self.aggreg = aggreg
 
@@ -220,7 +220,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     # convert the output back to original shape, to align with api
     def unpad_and_reshape(

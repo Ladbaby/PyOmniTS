@@ -73,7 +73,7 @@ class TimeThenSpaceModel(BaseModel):
         )
 
     def message_passing(self, x, edge_index, edge_weight=None):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def forward(self, x, edge_index, edge_weight=None, u=None):
         """"""

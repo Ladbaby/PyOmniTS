@@ -118,7 +118,7 @@ class Model(nn.Module):
                 nn.Linear(self.hid_dim, 1)
             )
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
         
     def LearnableTE(self, tt):
         # tt: (ENC_IN*n_patch*BATCH_SIZE, L, 1)
@@ -273,7 +273,7 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:]
             }
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
 
 class nconv(nn.Module):

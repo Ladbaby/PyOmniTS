@@ -109,7 +109,7 @@ def sparse_softmax(src: Tensor,
         out_sum = scatter(out, expanded_index, dim, dim_size=N, reduce='sum')
         out_sum = out_sum.index_select(dim, index)
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     return out / (out_sum + tsl.epsilon)
 

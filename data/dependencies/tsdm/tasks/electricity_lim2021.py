@@ -153,7 +153,7 @@ class ElectricityLim2021(BaseTask):
     @cached_property
     def test_metric(self) -> Callable[..., Tensor]:
         r"""Test metric."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @cached_property
     def dataset(self) -> pd.DataFrame:

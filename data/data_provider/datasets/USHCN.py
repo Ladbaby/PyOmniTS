@@ -59,7 +59,7 @@ class Data(tsdmDataset):
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             backbone_pred_len = self.pred_len
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
         task = USHCN_DeBrouwer2019(
             seq_len=self.seq_len - 0.5,

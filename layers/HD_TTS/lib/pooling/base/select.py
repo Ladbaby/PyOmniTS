@@ -131,7 +131,7 @@ class Select(torch.nn.Module):
                 each node to a specific graph. (default: :obj:`None`)
             num_nodes (int, optional): The number of nodes.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
