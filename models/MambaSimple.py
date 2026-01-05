@@ -20,6 +20,8 @@ class Model(nn.Module):
     """
     Another implementation of Mamba
     
+    - paper: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces" (COLM 2024)
+    - paper link: https://openreview.net/forum?id=tEYskw1VY2
     - code adapted from: https://github.com/johnma2006/mamba-minimal/
     """
 
