@@ -16,7 +16,7 @@ from utils.globals import logger
 
 class Model(nn.Module):
     '''
-    - paper: "Latent ODEs for Irregularly-Sampled Time Series" (NeurIPS 2019)
+    - paper: "Latent Ordinary Differential Equations for Irregularly-Sampled Time Series" (NeurIPS 2019)
     - paper link: https://papers.nips.cc/paper_files/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html
     - Code adapted from: https://github.com/YuliaRubanova/latent_ode
     '''
