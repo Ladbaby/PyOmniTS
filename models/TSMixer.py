@@ -9,7 +9,7 @@ from utils.globals import logger
 
 class Model(nn.Module):
     '''
-    - paper: "TSMixer: An All-MLP Architecture for Time Series Forecasting" (TMLR)
+    - paper: "TSMixer: An All-MLP Architecture for Time Series Forecasting" (TMLR 2023)
     - paper link: https://openreview.net/forum?id=wbpxTuXgm0
     - code adapted from: https://github.com/thuml/Time-Series-Library
     '''
