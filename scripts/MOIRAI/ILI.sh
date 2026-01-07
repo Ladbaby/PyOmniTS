@@ -17,7 +17,7 @@ model_id=$model_name
 
 seq_len=36
 label_len=18
-for pred_len in 24 36 48; do
+for pred_len in 12 24 36 48; do
     $launch_command main.py \
     --is_training 1 \
     --patch_len 12 \
