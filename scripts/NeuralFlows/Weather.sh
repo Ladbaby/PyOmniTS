@@ -17,7 +17,7 @@ model_id=$model_name
 
 seq_len=96
 label_len=48
-for pred_len in 96; do
+for pred_len in 96 192 336 720; do
     $launch_command main.py \
     --is_training 1 \
     --loss "ModelProvidedLoss" \
