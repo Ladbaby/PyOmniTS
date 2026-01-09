@@ -19,6 +19,8 @@ class Model(nn.Module):
     - paper: "Latent Ordinary Differential Equations for Irregularly-Sampled Time Series" (NeurIPS 2019)
     - paper link: https://papers.nips.cc/paper_files/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html
     - Code adapted from: https://github.com/YuliaRubanova/latent_ode
+
+    Note: PyOmniTS has optimized its implementation for speed.
     '''
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()

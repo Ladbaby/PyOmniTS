@@ -21,6 +21,8 @@ class Model(nn.Module):
     - paper: "Neural Flows: Efficient Alternative to Neural ODEs" (NeurIPS 2021)
     - paper link: https://proceedings.neurips.cc/paper/2021/hash/b21f9f98829dea9a48fd8aaddc1f159d-Abstract.html
     - Code adapted from: https://github.com/mbilos/neural-flows-experiments
+
+    Note: PyOmniTS has optimized its implementation for speed.
     '''
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()

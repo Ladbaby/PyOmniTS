@@ -21,6 +21,8 @@ class Model(nn.Module):
     - paper: "Graph Neural Flows for Unveiling Systemic Interactions Among Irregularly Sampled Time Series" (NeurIPS 2024)
     - paper link: https://openreview.net/forum?id=tFB5SsabVb
     - Code adapted from: https://github.com/gmerca/GNeuralFlow
+
+    Note: PyOmniTS has optimized its implementation for speed.
     '''
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()
