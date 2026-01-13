@@ -186,15 +186,18 @@ class Exp_Main(Exp_Basic):
 
                     # some model's forward function return different values in "train", "val", "test", they can use `exp_stage` as argument to distinguish
                     outputs: dict[str, Tensor] = model_train(
+                        **batch,
                         exp_stage="val",
                         train_stage=train_stage,
-                        **batch
+                        current_epoch=current_epoch
                     )
 
                     loss: Tensor = criterion(
+                        **outputs,
                         exp_stage="val",
-                        model=model_train,
-                        **outputs
+                        train_stage=train_stage,
+                        current_epoch=current_epoch,
+                        model=model_train
                     )["loss"]
                     total_loss.append(loss.item())
 
@@ -262,10 +265,10 @@ class Exp_Main(Exp_Basic):
                             batch = {k: v.to(self.device) for k, v in batch.items()}
 
                         outputs: dict[str, Tensor] = model_train(
+                            **batch,
                             exp_stage="train",
                             train_stage=train_stage,
-                            current_epoch=epoch,
-                            **batch
+                            current_epoch=epoch
                         )
 
                         # check model's outputs only in the first iteration
@@ -273,9 +276,11 @@ class Exp_Main(Exp_Basic):
                             self._check_model_outputs(batch, outputs)
                         
                         loss: Tensor = criterion(
+                            **outputs,
                             exp_stage="train",
-                            model=model_train,
-                            **outputs
+                            train_stage=train_stage,
+                            current_epoch=epoch,
+                            model=model_train
                         )["loss"]
 
                         # check loss
@@ -554,8 +559,8 @@ class Exp_Main(Exp_Basic):
                         batch = {k: v.to(self.device) for k, v in batch.items()}
 
                     outputs: dict[str, Tensor] = model_test(
-                        exp_stage="test",
-                        **batch
+                        **batch,
+                        exp_stage="test"
                     )
 
                     # check model's outputs only in the first iteration
