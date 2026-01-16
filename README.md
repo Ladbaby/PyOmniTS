@@ -11,6 +11,15 @@ This is also the official repository for the following paper:
 
 - HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting (ICML 2025) [[poster]](https://icml.cc/virtual/2025/poster/43741) [[OpenReview]](https://openreview.net/forum?id=u8wRbX2r2V) [[arXiv]](https://arxiv.org/abs/2505.17431)
 
+    ```
+    @inproceedings{li_HyperIMTSHypergraphNeural_2025,
+        author = {Li, Boyuan and Luo, Yicheng and Liu, Zhen and Zheng, Junhao and Lv, Jianming and Ma, Qianli},
+        booktitle = {Forty-Second International Conference on Machine Learning},
+        title = {HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting},
+        year = {2025}
+    }
+    ```
+
 ## 1. ✨ Hightlighted Features
 
 ![](docs/images/overview.png)
