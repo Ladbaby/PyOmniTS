@@ -1,6 +1,6 @@
 # 🚀 Get Started
 
-This tutorial guides you running existing models, datasets, and loss functions.
+This tutorial guides you running experiments.
 
 ## 1. ⏬ Clone the Repository
 
@@ -61,18 +61,18 @@ You will get the following file structure under `storage/datasets`:
 
 ```
 .
-├── electricity
+├── electricity/
 │   └── electricity.csv
-├── ETT-small
+├── ETT-small/
 │   ├── ETTh1.csv
 │   ├── ETTh2.csv
 │   ├── ETTm1.csv
 │   └── ETTm2.csv
-├── illness
+├── illness/
 │   └── national_illness.csv
-├── traffic
+├── traffic/
 │   └── traffic.csv
-└── weather
+└── weather/
     └── weather.csv
 ```
 
@@ -86,10 +86,10 @@ Our code will automatically download then preprocess it if you want to train on 
 The following file structure will be found under `storage/datasets`, after the code finish preprocessing:
 ```
 .
-└── HumanActivity
-    ├── processed
+└── HumanActivity/
+    ├── processed/
     │   └── data.pt
-    └── raw
+    └── raw/
         └── ConfLongDemo_JSI.txt
 ```
 
@@ -117,12 +117,12 @@ Since MIMIC III requires credentialed access:
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing (Note: `.parquet` files will be generated automatically after training any model on this dataset):
 ```
 .
-├── datasets
-│   └── MIMIC_III_DeBrouwer2019
+├── datasets/
+│   └── MIMIC_III_DeBrouwer2019/
 │       ├── metadata.parquet
 │       └── timeseries.parquet
-└── rawdata
-    └── MIMIC_III_DeBrouwer2019
+└── rawdata/
+    └── MIMIC_III_DeBrouwer2019/
         └── complete_tensor.csv
 ```
 
@@ -151,11 +151,11 @@ Since MIMIC IV requires credentialed access:
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing (Note: `.parquet` files will be generated automatically after training any model on this dataset):
 ```
 .
-├── datasets
-│   └── MIMIC_IV_Bilos2021
+├── datasets/
+│   └── MIMIC_IV_Bilos2021/
 │       └── timeseries.parquet
-└── rawdata
-    └── MIMIC_IV_Bilos2021
+└── rawdata/
+    └── MIMIC_IV_Bilos2021/
         └── full_dataset.csv
 ```
 
@@ -168,13 +168,13 @@ Our code will automatically download then preprocess it if you want to train on 
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
 ```
 .
-├── datasets
-│   └── Physionet2012
+├── datasets/
+│   └── Physionet2012/
 │       ├── Physionet2012-set-A-sparse.tar
 │       ├── Physionet2012-set-B-sparse.tar
 │       └── Physionet2012-set-C-sparse.tar
-└── rawdata
-    └── Physionet2012
+└── rawdata/
+    └── Physionet2012/
         ├── set-a.tar.gz
         ├── set-b.tar.gz
         └── set-c.tar.gz
@@ -188,15 +188,65 @@ Our code will automatically download then preprocess it if you want to train on 
 The following file structure will be found under `~/.tsdm`, after the code finish preprocessing:
 ```
 .
-├── datasets
-│   └── USHCN_DeBrouwer2019
+├── datasets/
+│   └── USHCN_DeBrouwer2019/
 │       └── USHCN_DeBrouwer2019.parquet
-└── rawdata
-    └── USHCN_DeBrouwer2019
+└── rawdata/
+    └── USHCN_DeBrouwer2019/
         └── small_chunked_sporadic.csv
 ```
 
-## 4. 🔥 Training
+## 4. 📂 (Optional) Folder Structure
+
+You can optionally learn how PyOmniTS organize its folder structure:
+
+```
+.
+├── configs/ # (Auto-generated) YAML configs for experiments. Only saved as references, not input parameters.
+├── data/
+│   ├── data_provider/
+|   |   ├── datasets/ # Main classes of datasets. File names match the string provided in --dataset_name.
+|   |   └── data_factory.py # Provides an interface to get torch.utils.data.Dataset and torch.utils.data.DataLoader
+|   └── dependencies/ # Dependencies for dataset classes under data/data_provider/datasets/
+├── docs # Documentations
+├── exp/
+|   ├── exp_basic.py # Parent class for experiments.
+|   └── exp_main.py # Main class for experiments, inherit from the class in exp_basic.py
+├── layers/ # Dependencies for model classes under models/
+├── logs/ # (Auto-generated) Auto-rotated logs when running experiments.
+├── loss_fns/ # Main classes of loss functions. File names match the string provided in --loss.
+├── lr_schedulers/ # Main classes of some learning rate schedulers.
+├── models/ # Main classes of models. File names match the string provided in --model_name.
+├── scripts/ # Launch scripts for experiments.
+├── storage/ # (Auto-generated) General purpose storage folder, not recorded by git.
+|   ├── datasets/ # Time series data for some datasets.
+|   └── results/ # Experiment results.
+├── tests/ # Unit tests only used by PyOmniTS maintainers.
+├── utils/
+|   ├── configs.py # Command line arguments accepted by main.py
+|   ├── ExpConfigs.py # Dataclass that wraps utils/configs.py for typo check. Passed to models, datasets, loss_fns,... for their initializations.
+|   ├── globals.py # A few global variables (logger, accelerator,...).
+|   ├── metrics.py # Calculate metrics (e.g., MSE) during testing.
+|   └── tools.py # misc helper functions and classes.
+├── wandb/ # (Auto-generated) Weight & Bias logs when --wandb 1 or --sweep 1.
+├── .all-contributorsrc # Only used in README.md.
+├── .gitignore # Git ignore rules.
+├── .python-version # Recommended Python version, display only.
+├── LICENSE # MIT License.
+├── main.py # Main entrance for experiments.
+├── pyproject.toml # Standard configuration file for Python projects.
+├── README.md
+├── requirements.lock # Python package requirements (with versions).
+├── requirements.txt # Python package requirements (without versions).
+├── run_unittest.sh # Launch script for unit tests in tests/. Only used by PyOmniTS maintainers.
+└── run.sh # Launch script for scripts/. Useful when launching multiple experiments at once.
+```
+
+Core logic when running experiments:
+
+`scripts/` $\rightarrow$ `main.py` $\rightarrow$ `exp/exp_main.py`
+
+## 5. 🔥 Training
 
 Training scripts are located in `scripts` folder.
 For example, to train mTAN on dataset Human Activity:
@@ -205,11 +255,15 @@ For example, to train mTAN on dataset Human Activity:
 sh scripts/mTAN/HumanActivity.sh
 ```
 
-Training results will be organized in `storage/results/DATASET_NAME/MODEL_NAME/MODEL_ID_TIME`
+Training results will be organized in `storage/results/${DATASET_NAME}/${DATASET_ID}/${MODEL_NAME}/${MODEL_ID}/${SEQ_LEN}_${PRED_LEN}/%Y_%m%d_%H%M/iter0`
 
-## 5. ❄️ Testing
+## 6. ❄️ Testing
 
 Testing will be automatically conducted once the training finished. 
 If you wish to run test only, change command line argument `--is_training` in training script from `1` to `0` and run the script.
 
-Testing result `metric.json` will be saved in `storage/results/DATASET_NAME/MODEL_NAME/MODEL_ID_TIME/eval_TIME`
+Testing result `metric.json` will be saved in `storage/results/${DATASET_NAME}/${DATASET_ID}/${MODEL_NAME}/${MODEL_ID}/${SEQ_LEN}_${PRED_LEN}/%Y_%m%d_%H%M/iter0/eval_%Y_%m%d_%H%M`
+
+## Next Steps
+
+- Learn how to [change experiment settings](https://github.com/Ladbaby/PyOmniTS/blob/master/docs/tutorial/2_change_experiment_settings.md).
