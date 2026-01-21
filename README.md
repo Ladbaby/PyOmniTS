@@ -53,8 +53,8 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 
 |Model|Venue|Type|Forecasting|Classification|Imputation
 |---|---|---|---|---|---|
-|[APN](https://arxiv.org/abs/2505.11250)|AAAI 2026|IMTS|✅|-|-
 |[Ada-MSHyper](https://openreview.net/forum?id=RNbrIQ0se8)|NeurIPS 2024|MTS|✅|-|-
+|[APN](https://arxiv.org/abs/2505.11250)|AAAI 2026|IMTS|✅|-|-
 |[Autoformer](https://openreview.net/pdf?id=I55UqU-M11y)|NeurIPS 2021|MTS|✅|✅|✅
 |[BigST](https://dl.acm.org/doi/abs/10.14778/3641204.3641217)|VLDB 2024|MTS|✅|-|-
 |[Crossformer](https://openreview.net/pdf?id=vSVLM2j9eie)|ICLR 2023|MTS|✅|✅|✅
