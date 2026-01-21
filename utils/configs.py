@@ -116,6 +116,7 @@ def get_configs(args=None) -> ExpConfigs:
     parser.add_argument('--moving_avg', type=int, default=25, help='window size of moving average')
     parser.add_argument('--n_heads', type=int, default=8, help='num of heads (in attention)')
     parser.add_argument('--n_layers', type=int, default=1, help='num of layers')
+    parser.add_argument('--n_patches_list', type=int, nargs="+", default=[2], help='List of number of patches. --patch_len is more commonly used, and in most cases, you wont have to set both --n_patches_list and --patch_len.')
     parser.add_argument('--node_dim', type=int, default=10, help='hidden dimension of nodes used in a few GNNs, like tPatchGNN')
     parser.add_argument('--patch_len', type=int, default=12, help='patch length. Also used as period_len in some models (SparseTSF).')
     parser.add_argument('--patch_stride', type=int, default=12, help='stride when splitting patches. Originally named as --stride.')
