@@ -107,6 +107,7 @@ class ExpConfigs:
     moving_avg: int
     n_heads: int = field(metadata={"sweep": [1, 4, 8]})
     n_layers: int = field(metadata={"sweep": [1, 2, 3, 4]})
+    n_patches_list: list[int]
     node_dim: int
     patch_len: int
     patch_stride: int
