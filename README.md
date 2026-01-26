@@ -19,6 +19,16 @@ This is also the official repository for the following paper:
         year = {2025}
     }
     ```
+- Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting (ICLR 2026) [[OpenReview]](https://openreview.net/forum?id=JEIDxiTWzB) (code coming soon!)
+
+    ```
+    @inproceedings{li_LearningRecursiveMultiScale_2026,
+        author = {Li, Boyuan and Liu, Zhen and Luo, Yicheng  and Ma, Qianli},
+        booktitle = {International Conference on Learning Representations},
+        title = {Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting},
+        year = {2026}
+    }
+    ```
 
 ## 1. ✨ Hightlighted Features
 
