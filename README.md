@@ -43,11 +43,7 @@ This is also the official repository for the following paper:
 
 ## 2. 🧭 Documentation
 
-1. [🚀 Get Started](https://github.com/Ladbaby/PyOmniTS/blob/master/docs/tutorial/1_get_started.md)
-2. [⚙️ Change Experiment Settings](https://github.com/Ladbaby/PyOmniTS/blob/master/docs/tutorial/2_change_experiment_settings.md)
-3. 🧩 API Definition
-
-    - [Forecasting API](https://github.com/Ladbaby/PyOmniTS/blob/master/docs/forecasting/1_API.md)
+Checkout the new [documentation website](https://ladbaby.github.io/PyOmniTS-docs/).
 
 ## 3. 🤖 Models
 
