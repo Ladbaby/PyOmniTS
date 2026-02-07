@@ -64,10 +64,7 @@ class ExperimentRunner:
         1. Initialize Weights & Biases tracking if enabled.
         2. Overwrite self.configs with hyperparameter settings when --sweep 1.
         """
-        if (self.configs.wandb and accelerator.is_main_process) or self.configs.sweep:
-            assert self.hyperparameters_sweep is not None, \
-                "Please provide 'hyperparameters_sweep' when using --sweep 1."
-            
+        if self.configs.wandb and accelerator.is_main_process:
             import wandb
             wandb.init(
                 project="YOUR_PROJECT_NAME",
@@ -85,6 +82,8 @@ class ExperimentRunner:
             
             # Overwrite hyperparameters when sweeping
             if self.configs.sweep:
+                assert self.hyperparameters_sweep is not None, \
+                    "Please provide 'hyperparameters_sweep' when using --sweep 1."
                 for attr_name in self.hyperparameters_sweep.keys():
                     setattr(self.configs, attr_name, getattr(wandb.config, attr_name))
     
