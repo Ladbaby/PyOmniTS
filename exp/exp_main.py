@@ -289,7 +289,7 @@ class Exp_Main(Exp_Basic):
                             for key, value in outputs.items():
                                 if key == "loss":
                                     continue
-                                elif type(value).__name__ != "Tensor" and torch.any(torch.isnan(value)):
+                                elif type(value).__name__ == "Tensor" and torch.any(torch.isnan(value)):
                                     logger.error(f"Nan value found in model's output tensor '{key}' of shape {value.shape}: {value}")
                             logger.warning("Hint: possible cause for nan loss: 1. large learning rate; 2. sqrt(0); 3. ReLU->LeakyReLU")
                             if_nan_loss = True
