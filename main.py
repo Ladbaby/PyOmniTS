@@ -97,8 +97,11 @@ class ExperimentRunner:
         """
         original_batch_size = self.configs.batch_size
         
+        torch.cuda.set_per_process_memory_fraction(0.95) # avoid speed slowdown caused by UVM
         while self.configs.batch_size >= 1:
             try:
+                if self.configs.batch_size == 1:
+                    torch.cuda.set_per_process_memory_fraction(1) # allow using UVM only when batch size is 1
                 return func()
             except (torch.cuda.OutOfMemoryError, RuntimeError) as e:
                 # Check if it's a CUDA OOM-related error
