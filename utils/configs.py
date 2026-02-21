@@ -119,11 +119,15 @@ def get_configs(args=None) -> ExpConfigs:
     parser.add_argument('--n_patches_list', type=int, nargs="+", default=[2], help='List of number of patches. --patch_len is more commonly used, and in most cases, you wont have to set both --n_patches_list and --patch_len.')
     parser.add_argument('--node_dim', type=int, default=10, help='hidden dimension of nodes used in a few GNNs, like tPatchGNN')
     parser.add_argument('--patch_len', type=int, default=12, help='patch length. Also used as period_len in some models (SparseTSF).')
+    parser.add_argument('--patch_len_list', type=int, nargs="+", default=[12, 6], help="list of patch length. Note: you don't have to set --patch_len at the same time.")
     parser.add_argument('--patch_stride', type=int, default=12, help='stride when splitting patches. Originally named as --stride.')
     parser.add_argument('--revin', type=int, default=1, help='RevIN; True 1 False 0')
     parser.add_argument('--revin_affine', type=int, default=0, help='RevIN-affine; True 1 False 0. Originally named as --affine.')
     parser.add_argument('--scale_factor', type=int, default=2, help='scale factor for upsample. Only used in some regular time series forecasting models.')
     parser.add_argument('--top_k', type=int, default=5, help='top k selection')
+    # Adaptor class
+    parser.add_argument('--ts_backbone_name', type=str, default="", help='For adaptor class, which time series backbone to use. e.g., LSTM')
+    parser.add_argument('--ts_backbone_overwrite_config_list', type=str, nargs='+', default=[], help='List of argument names that we want to overwrite in time series backbones, using argument values in adaptor class. E.g., [d_model, n_layers]')
     # CRU
     parser.add_argument('--cru_bandwidth', type=int, default=3, help="Bandwidth for basis matrices A_k. b in paper")
     parser.add_argument('--cru_num_basis', type=int, default=15, help="Number of basis matrices to use in transition model for locally-linear transitions. K in paper")
@@ -162,6 +166,8 @@ def get_configs(args=None) -> ExpConfigs:
     parser.add_argument('--patchtst_subtract_last', type=int, default=0, help='0: subtract mean; 1: subtract last')
     # PrimeNet
     parser.add_argument('--primenet_pooling', type=str, default='ave', help='[ave, att, bert]: What pooling to use to aggregate the model output sequence representation for different tasks.')
+    # ReIMTS
+    parser.add_argument('--reimts_pad_time_emb', type=int, default=1, help='Whether to pad temporal embedding')
     # TimeMixer
     parser.add_argument('--timemixer_decomp_method', type=str, default='moving_avg', help='method of series decompsition, only support moving_avg or dft_decomp')
     parser.add_argument('--timemixer_down_sampling_layers', type=int, default=0, help='num of down sampling layers')

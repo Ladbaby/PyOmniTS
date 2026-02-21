@@ -110,11 +110,15 @@ class ExpConfigs:
     n_patches_list: list[int]
     node_dim: int
     patch_len: int
+    patch_len_list: list[int]
     patch_stride: int
     revin: int
     revin_affine: int
     scale_factor: int
     top_k: int = field(metadata={"sweep": [3, 5]})
+    # Adaptor
+    ts_backbone_name: str
+    ts_backbone_overwrite_config_list: list[str]
     # CRU
     cru_bandwidth: int
     cru_num_basis: int
@@ -153,6 +157,8 @@ class ExpConfigs:
     patchtst_subtract_last: int
     # PrimeNet
     primenet_pooling: str
+    # ReIMTS
+    reimts_pad_time_emb: int
     # TimeMixer
     timemixer_decomp_method: str
     timemixer_down_sampling_layers: int = field(metadata={"sweep": [1, 3]})
