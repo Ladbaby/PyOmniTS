@@ -283,10 +283,9 @@ class Model(nn.Module):
         tmp_time[new_mask == 0] = float('nan')  # Set masked values to NaN
 
         # Padding missing values with the next valid value
-        for i in range(l):
-            if i > 0:
-                nan_mask = torch.isnan(tmp_time[:, i])
-                tmp_time[nan_mask, i] = tmp_time[nan_mask, i - 1]
+        for i in range(1, l):
+            nan_mask = torch.isnan(tmp_time[:, i, :])  # [B, K]
+            tmp_time[:, i, :] = torch.where(nan_mask, tmp_time[:, i - 1, :], tmp_time[:, i, :])
 
         # Calculate differences
         tmp_time_diff = tmp_time[:, 1:] - tmp_time[:, :-1]  # [B, L-1, K]
