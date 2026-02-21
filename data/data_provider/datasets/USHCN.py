@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 
 from data.dependencies.tsdm.PyOmniTS.tsdmDataset import (  # collate_fns must be imported here for PyOmniTS's --collate_fn argument to work
     collate_fn,
+    collate_fn_fractal,
     collate_fn_patch,
     collate_fn_tpatch,
     tsdmDataset,

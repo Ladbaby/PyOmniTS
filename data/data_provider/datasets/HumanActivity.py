@@ -12,6 +12,7 @@ from data.dependencies.HumanActivity.HumanActivity import (
 )
 from data.dependencies.tsdm.PyOmniTS.tsdmDataset import (  # collate_fns must be imported here for PyOmniTS's --collate_fn argument to work
     collate_fn,
+    collate_fn_fractal,
     collate_fn_patch,
     collate_fn_tpatch,
 )
@@ -136,7 +137,25 @@ class Data(Dataset):
             SEQ_LEN = self.configs.seq_len
             PRED_LEN = self.configs.pred_len
 
-            PATCH_LEN = self.configs.patch_len
+            if self.configs.collate_fn == "collate_fn_fractal":
+                '''
+                Determine `seq_residual_len`: the maximum length of split position for lookback window and forecast window first.
+                '''
+                PATCH_LEN = self.configs.patch_len_list[-1] # get the smallest patch length
+                n_patch: int = SEQ_LEN // PATCH_LEN
+                for sample in test_all_data:
+                    x_y = torch.cat([sample['x'], sample['y']], dim=0)
+                    x_y_mark = torch.cat([sample["x_mark"], sample["y_mark"]], dim=0)
+
+                    observations_left_bound = x_y_mark < (n_patch * PATCH_LEN / (SEQ_LEN + PRED_LEN))
+                    observations_right_bound = x_y_mark < (SEQ_LEN / (SEQ_LEN + PRED_LEN))
+                    sample_mask = slice(observations_left_bound.sum(), observations_right_bound.sum())
+                    x_y_seq_residual = x_y[sample_mask]
+                    seq_residual_len_current = len(x_y_seq_residual)
+                    if seq_residual_len_current > seq_residual_len:
+                        seq_residual_len = seq_residual_len_current
+            else:
+                PATCH_LEN = self.configs.patch_len
 
             for sample in test_all_data:
                 if sample["x"].shape[0] > self.seq_len_max_irr:
@@ -169,17 +188,85 @@ class Data(Dataset):
                             self.patch_len_max_irr = len(y_patch_j)
 
                         patch_j_end_previous = patch_j_end
+                elif self.configs.collate_fn == "collate_fn_fractal":
+                    '''
+                    fractal use the entire time series to split patch, which does not require seq_len % patch_len == 0
+
+                    The goal here is to pad the sequence into a shape, that not only can be divisible by n_patch_all, but also can be splitted directly into lookback and forecast window along time dimension.
+                    '''
+                    if self.configs.task_name == "imputation":
+                        TOTAL_LEN = SEQ_LEN
+                    elif self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+                        TOTAL_LEN = SEQ_LEN + PRED_LEN
+                    else:
+                        raise NotImplementedError()
+                    n_patch_all: int = math.ceil(TOTAL_LEN / PATCH_LEN)
+                    x_y = torch.cat([sample['x'], sample['y']], dim=0)
+                    x_y_mark = torch.cat([sample["x_mark"], sample["y_mark"]], dim=0)
+
+                    # determine the split position of seq_len and pred_len for current sample
+                    n_patch: int = SEQ_LEN // PATCH_LEN
+                    observations_left_bound = x_y_mark < (n_patch * PATCH_LEN / (SEQ_LEN + PRED_LEN))
+                    observations_right_bound = x_y_mark < (SEQ_LEN / (SEQ_LEN + PRED_LEN))
+                    sample_mask = slice(observations_left_bound.sum(), observations_right_bound.sum())
+                    x_y_seq_residual = x_y[sample_mask]
+                    seq_residual_len_current = len(x_y_seq_residual)
+
+                    patch_i_end_previous = 0
+                    for i in range(n_patch_all):
+                        observations = x_y_mark < ((i + 1) * PATCH_LEN / (SEQ_LEN + PRED_LEN))
+                        patch_i_end = observations.sum()
+                        sample_mask = slice(patch_i_end_previous, patch_i_end)
+                        x_y_patch_i = x_y[sample_mask]
+                        if i == n_patch:
+                            # split position in current patch
+                            if seq_residual_len + (len(x_y_patch_i) - seq_residual_len_current) > self.patch_len_max_irr:
+                                self.patch_len_max_irr = seq_residual_len + (len(x_y_patch_i) - seq_residual_len_current)
+                        else:
+                            if len(x_y_patch_i) > self.patch_len_max_irr:
+                                self.patch_len_max_irr = len(x_y_patch_i)
+
+                        patch_i_end_previous = patch_i_end
 
             if self.configs.collate_fn in ["collate_fn_patch", "collate_fn_tpatch"]:
                 n_patch: int = math.ceil(SEQ_LEN / PATCH_LEN)
                 n_patch_y: int = math.ceil(PRED_LEN / PATCH_LEN)
                 self.seq_len_max_irr = max(self.seq_len_max_irr, self.patch_len_max_irr * n_patch)
                 self.pred_len_max_irr = max(self.pred_len_max_irr, self.patch_len_max_irr * n_patch_y)
+            elif self.configs.collate_fn == "collate_fn_fractal":
+                n_patch: int = SEQ_LEN // PATCH_LEN
+                n_patch_all: int = math.ceil(TOTAL_LEN / PATCH_LEN)
+                TOTAL_LEN_MAX_IRR = n_patch_all * self.patch_len_max_irr
+                self.seq_len_max_irr = max(self.seq_len_max_irr, n_patch * self.patch_len_max_irr + seq_residual_len)
+                self.pred_len_max_irr = TOTAL_LEN_MAX_IRR - self.seq_len_max_irr
+
+                # calculate number of patch at each fractal level
+                n_patch_all_list: list[int] = []
+                previous_n_patch_all: int = math.ceil((SEQ_LEN + PRED_LEN) / PATCH_LEN) # last level
+                for i in range(len(self.configs.patch_len_list)):
+                    if i == 0:
+                        n_patch_all_list.append(previous_n_patch_all)
+                    else:
+                        current_n_patch_all = math.ceil(previous_n_patch_all / (self.configs.patch_len_list[i - 1] // self.configs.patch_len_list[i]))
+                        n_patch_all_list.append(current_n_patch_all)
+                        previous_n_patch_all = current_n_patch_all
+                n_patch_all_list.reverse() # -> first level to last level
+
+                # get the max length (real time) among all levels
+                length_list = [n_patch * current_length for n_patch, current_length in zip(n_patch_all_list, self.configs.patch_len_list)]
+                TOTAL_LEN_MAX = max(length_list)
+                # convert to number of smallest patches needed to append at last
+                n_patch_pad = (TOTAL_LEN_MAX - length_list[-1]) / PATCH_LEN
+                self.pred_len_max_irr += int(n_patch_pad * self.patch_len_max_irr)
+
+            if self.configs.task_name == "imputation":
+                # force overwrite pred_len_max_irr for imputation
+                self.pred_len_max_irr = self.seq_len_max_irr
 
             # create a new field in global configs to pass information to models
             self.configs.seq_len_max_irr = self.seq_len_max_irr
             self.configs.pred_len_max_irr = self.pred_len_max_irr
-            if self.configs.collate_fn in ["collate_fn_patch", "collate_fn_tpatch"]:
+            if self.configs.collate_fn in ["collate_fn_patch", "collate_fn_tpatch", "collate_fn_fractal"]:
                 self.configs.patch_len_max_irr = self.patch_len_max_irr
                 logger.debug(f"{self.configs.patch_len_max_irr=}")
             logger.debug(f"{self.configs.seq_len_max_irr=}")
