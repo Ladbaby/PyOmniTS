@@ -47,7 +47,7 @@ Checkout the new [documentation website](https://ladbaby.github.io/PyOmniTS-docs
 
 ## 3. 🤖 Models
 
-45 models, covering regular, irregular, pretrained, and traffic models, have been included in PyOmniTS, and more are coming.
+46 models, covering regular, irregular, pretrained, and traffic models, have been included in PyOmniTS, and more are coming.
 
 Model classes can be found in `models/`, and their dependencies can be found in `layers/`
 
@@ -94,6 +94,7 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 |[Pyraformer](https://openreview.net/pdf?id=0EXmFzUn5I)|ICLR 2022|MTS|✅|✅|-
 |[Raindrop](https://openreview.net/forum?id=Kwm8I7dU-l5)|ICLR 2022|IMTS|✅|✅|✅
 |[Reformer](https://openreview.net/forum?id=rkgNKkHtvB)|ICLR 2020|MTS|✅|✅|-
+|[ReIMTS](https://openreview.net/forum?id=JEIDxiTWzB)|ICLR 2026|IMTS|✅|✅|-
 |[SeFT](https://proceedings.mlr.press/v119/horn20a.html)|ICML 2020|IMTS|✅|✅|✅
 |[SegRNN](https://arxiv.org/abs/2308.11200)|arXiv 2023|MTS|✅|✅|-
 |[Temporal Fusion Transformer](https://arxiv.org/abs/1912.09363)|arXiv 2019|MTS|✅|-|-
