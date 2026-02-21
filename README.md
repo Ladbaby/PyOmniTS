@@ -9,6 +9,16 @@
 
 This is also the official repository for the following paper:
 
+- Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting (ICLR 2026) [[OpenReview]](https://openreview.net/forum?id=JEIDxiTWzB)
+
+    ```
+    @inproceedings{li_LearningRecursiveMultiScale_2026,
+        author = {Li, Boyuan and Liu, Zhen and Luo, Yicheng  and Ma, Qianli},
+        booktitle = {International Conference on Learning Representations},
+        title = {Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting},
+        year = {2026}
+    }
+    ```
 - HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting (ICML 2025) [[poster]](https://icml.cc/virtual/2025/poster/43741) [[OpenReview]](https://openreview.net/forum?id=u8wRbX2r2V) [[arXiv]](https://arxiv.org/abs/2505.17431)
 
     ```
@@ -17,16 +27,6 @@ This is also the official repository for the following paper:
         booktitle = {Forty-Second International Conference on Machine Learning},
         title = {HyperIMTS: Hypergraph Neural Network for Irregular Multivariate Time Series Forecasting},
         year = {2025}
-    }
-    ```
-- Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting (ICLR 2026) [[OpenReview]](https://openreview.net/forum?id=JEIDxiTWzB) (code coming soon!)
-
-    ```
-    @inproceedings{li_LearningRecursiveMultiScale_2026,
-        author = {Li, Boyuan and Liu, Zhen and Luo, Yicheng  and Ma, Qianli},
-        booktitle = {International Conference on Learning Representations},
-        title = {Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting},
-        year = {2026}
     }
     ```
 
