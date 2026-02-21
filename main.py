@@ -126,12 +126,16 @@ class ExperimentRunner:
                     )
                     exit(1)
                 
-                new_batch_size = max(1, self.configs.batch_size // 2)
-                logger.error(
-                    f"CUDA OOM error during {operation_name}! "
-                    f"Reducing batch_size from {self.configs.batch_size} to {new_batch_size}"
-                )
-                self.configs.batch_size = new_batch_size
+                if not (self.configs.test_gpu_memory or self.configs.test_train_time):
+                    new_batch_size = max(1, self.configs.batch_size // 2)
+                    logger.error(
+                        f"CUDA OOM error during {operation_name}! "
+                        f"Reducing batch_size from {self.configs.batch_size} to {new_batch_size}"
+                    )
+                    self.configs.batch_size = new_batch_size
+                else:
+                    logger.exception(f"Test failed due to CUDA OOM error.")
+                    exit(1)
         
         # Restore original batch size for subsequent operations
         self.configs.batch_size = original_batch_size
