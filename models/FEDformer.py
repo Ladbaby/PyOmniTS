@@ -165,7 +165,7 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -183,8 +183,17 @@ class Model(nn.Module):
         x_mark_dec = torch.cat([x_mark[:, -self.label_len:, :], y_mark], dim=1).float().to(x_mark.device)
         # END adaptor
 
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x, x_mark, x_mark_dec)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "imputation":
+            dec_out = self.imputation(x, x_mark)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
@@ -201,7 +210,7 @@ class Model(nn.Module):
         else:
             raise NotImplementedError()
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
+    def imputation(self, x_enc, x_mark_enc):
         # enc
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
         enc_out, attns = self.encoder(enc_out, attn_mask=None)
