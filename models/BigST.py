@@ -78,8 +78,10 @@ class Model(nn.Module):
         if self.use_long:
             self.regression_layer = nn.Conv2d(configs.d_model*4*2+configs.d_model+self.pred_len, self.pred_len, kernel_size=(1, 1), bias=True)
         else:
-            if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 self.regression_layer = nn.Conv2d(configs.d_model*4*2, self.pred_len, kernel_size=(1, 1), bias=True)
+            elif configs.task_name == "classification":
+                self.decoder_classification = nn.Linear(configs.enc_in * configs.d_model*4*2, configs.n_classes)
             else:
                 raise NotImplementedError()
 
@@ -89,6 +91,7 @@ class Model(nn.Module):
         x_mark: Tensor | None = None, 
         y: Tensor | None = None, 
         y_mask: Tensor | None = None,
+        y_class: Tensor | None = None,
         exp_stage: str = "train", 
         **kwargs
     ):
@@ -98,11 +101,16 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
+        if y_class is None:
+            if self.configs.task_name == "classification":
+                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
+
         x_mark[x_mark == 1] = 0.9999 # cannot process value == 1 in mark
 
         # concat x and x_mark along the 4th dimension
@@ -167,7 +175,7 @@ class Model(nn.Module):
         
         x = self.activation(x) # (B, dim*4, N, 1)
 
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             if self.use_long:
                 feat = feat.permute(0, 2, 1).unsqueeze(-1) # (B, F, N, 1)
                 x = torch.cat([x, feat], dim=1)
@@ -185,6 +193,12 @@ class Model(nn.Module):
                 "pred": x[:, -PRED_LEN:, f_dim:],
                 "true": y[:, :, f_dim:],
                 "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "classification":
+            output = self.decoder_classification(rearrange(x, "B D ENC_IN 1 -> B (ENC_IN D 1)"))
+            return {
+                "pred_class": output,
+                "true_class": y_class
             }
         else:
             raise NotImplementedError()
