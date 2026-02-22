@@ -21,6 +21,7 @@ for pred_len in 3; do
     --is_training 1 \
     --collate_fn "collate_fn" \
     --d_model 32 \
+    --n_layers 4 \
     --dropout 0.3 \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \
