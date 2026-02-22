@@ -95,15 +95,21 @@ class Model(nn.Module):
         return dec_out
 
     def imputation(self, x_enc, mask):
+        '''
+        WARNING: codes have been modified. nan_to_num is used to prevent nan values
+        '''
         # Normalization from Non-stationary Transformer
         means = torch.sum(x_enc, dim=1) / torch.sum(mask == 1, dim=1)
+        means = torch.nan_to_num(means)
         means = means.unsqueeze(1).detach()
         x_enc = x_enc - means
         x_enc = x_enc.masked_fill(mask == 0, 0)
         stdev = torch.sqrt(torch.sum(x_enc * x_enc, dim=1) /
                            torch.sum(mask == 1, dim=1) + 1e-5)
+        stdev = torch.nan_to_num(stdev)
         stdev = stdev.unsqueeze(1).detach()
         x_enc /= stdev
+        x_enc = torch.nan_to_num(x_enc)
 
         # do patching and embedding
         x_enc = x_enc.permute(0, 2, 1)
@@ -207,7 +213,7 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, dtype=x.dtype, device=x.device)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -234,7 +240,7 @@ class Model(nn.Module):
                 "true_class": y_class
             }
         elif self.task_name == 'imputation':
-            dec_out = self.forecast(x) # imputation() will result in nan output.
+            dec_out = self.imputation(x, x_mask)
             return {
                 "pred": dec_out,
                 "true": y,
