@@ -173,7 +173,7 @@ class Model(nn.Module):
             y_mask_L_flattened=y_mask_L_flattened
         )
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast', "imputation", "representation_learning"]:
+        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast', "imputation"]:
             # hypergraph to IMTS
             pred_flattened = self.hypergraph_decoder(
                 torch.cat([
@@ -208,9 +208,6 @@ class Model(nn.Module):
                     "pred": pred[:, -PRED_LEN:, f_dim:],
                     "true": y[:, :, f_dim:],
                     "mask": y_mask[:, :, f_dim:],
-                    "pred_repr_time": temporal_hyperedges,
-                    "pred_repr_var": variable_hyperedges,
-                    "pred_repr_obs": self.get_pred_repr_obs(observation_nodes, x_y_mask)
                 }
         else:
             raise NotImplementedError()
