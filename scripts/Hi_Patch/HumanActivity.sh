@@ -16,14 +16,14 @@ model_name="$(basename "$(dirname "$(readlink -f "$0")")")" # folder name
 model_id=$model_name
 
 seq_len=3000
-for pred_len in 1000; do
+for pred_len in 300; do
     $launch_command main.py \
         --is_training 1 \
         --loss "MSE" \
         --collate_fn "collate_fn_patch" \
         --n_heads 1 \
-        --n_layers 1 \
-        --d_model 64 \
+        --n_layers 4 \
+        --d_model 128 \
         --patch_len 500 \
         --patch_stride 500 \
         --use_multi_gpu $use_multi_gpu \
@@ -39,7 +39,7 @@ for pred_len in 1000; do
         --dec_in $n_variables \
         --c_out $n_variables \
         --train_epochs 300 \
-        --patience 5 \
+        --patience 10 \
         --val_interval 1 \
         --itr 5 \
         --batch_size 32 \

@@ -42,7 +42,7 @@ for pred_len in 12 24 36 48; do
     --dec_in $n_variables \
     --c_out $n_variables \
     --train_epochs 300 \
-    --patience 5 \
+    --patience 10 \
     --itr 5 \
     --batch_size 32 \
     --learning_rate 1e-3

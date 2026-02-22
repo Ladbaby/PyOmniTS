@@ -22,8 +22,8 @@ for pred_len in 3; do
     --collate_fn "collate_fn_patch" \
     --loss "MSE" \
     --n_heads 1 \
-    --n_layers 1 \
-    --d_model 64 \
+    --n_layers 2 \
+    --d_model 32 \
     --patch_len 90 \
     --patch_stride 90 \
     --use_multi_gpu $use_multi_gpu \
@@ -39,10 +39,10 @@ for pred_len in 3; do
     --dec_in $n_variables \
     --c_out $n_variables \
     --train_epochs 300 \
-    --patience 5 \
+    --patience 10 \
     --val_interval 1 \
     --itr 5 \
-    --batch_size 32 \
+    --batch_size 8 \
     --learning_rate 1e-3
 done
 
