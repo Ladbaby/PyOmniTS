@@ -20,6 +20,7 @@ for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
     --collate_fn "collate_fn" \
+    --d_model 32 \
     --mtan_num_ref_points 32 \
     --loss "ModelProvidedLoss" \
     --use_multi_gpu $use_multi_gpu \
