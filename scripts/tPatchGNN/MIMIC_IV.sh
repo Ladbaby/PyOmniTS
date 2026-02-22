@@ -19,8 +19,8 @@ seq_len=2160
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
-    --d_model 64 \
-    --n_layers 1 \
+    --d_model 32 \
+    --n_layers 2 \
     --dropout 0.0 \
     --node_dim 10 \
     --collate_fn "collate_fn_patch" \

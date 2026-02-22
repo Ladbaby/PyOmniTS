@@ -20,13 +20,13 @@ for pred_len in 300; do
     $launch_command main.py \
     --is_training 1 \
     --d_model 64 \
-    --n_layers 1 \
+    --n_layers 4 \
     --dropout 0.0 \
     --node_dim 10 \
+    --n_heads 1 \
     --collate_fn "collate_fn_patch" \
     --patch_len 300 \
     --loss "MSE" \
-    --n_heads 1 \
     --use_multi_gpu $use_multi_gpu \
     --dataset_root_path $dataset_root_path \
     --model_id $model_id \
