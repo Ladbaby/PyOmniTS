@@ -20,6 +20,7 @@ label_len=48
 for pred_len in 96 192 336 720; do
     $launch_command main.py \
     --is_training 1 \
+    --freq h \
     --patch_len 4 \
     --e_layers 2 \
     --d_layers 1 \

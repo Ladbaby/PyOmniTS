@@ -22,6 +22,7 @@ for pred_len in 3; do
     --collate_fn "collate_fn" \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \
+    --d_model 128 \
     --patch_len 4 \
     --e_layers 2 \
     --d_layers 1 \
