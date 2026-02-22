@@ -25,7 +25,7 @@ class Model(nn.Module):
         self.leddam = Leddam(configs.enc_in, configs.seq_len_max_irr or configs.seq_len, configs.d_model,
                              configs.dropout, "sincos", kernel_size=25, n_layers=configs.n_layers)
 
-        if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             self.Linear_main = nn.Linear(configs.d_model, self.pred_len)
             self.Linear_res = nn.Linear(configs.d_model, self.pred_len)
             self.Linear_main.weight = nn.Parameter(
@@ -34,6 +34,8 @@ class Model(nn.Module):
                 (1 / configs.d_model) * torch.ones([self.pred_len, configs.d_model]))
         elif configs.task_name == "classification":
             self.decoder_classification = nn.Linear(configs.d_model * configs.enc_in, configs.n_classes)
+        else:
+            raise NotImplementedError()
 
     def forward(
         self, 
@@ -47,7 +49,7 @@ class Model(nn.Module):
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -62,7 +64,7 @@ class Model(nn.Module):
             x = self.revin_layer(x, "norm")
         res, main = self.leddam(x)
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             main_out = self.Linear_main(main.permute(0, 2, 1)).permute(0, 2, 1)
             res_out = self.Linear_res(res.permute(0, 2, 1)).permute(0, 2, 1)
             pred = main_out+res_out
