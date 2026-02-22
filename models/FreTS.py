@@ -37,7 +37,7 @@ class Model(nn.Module):
         self.rb2 = nn.Parameter(self.scale * torch.randn(self.embed_size))
         self.ib2 = nn.Parameter(self.scale * torch.randn(self.embed_size))
 
-        if configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             self.fc = nn.Sequential(
                 nn.Linear(self.seq_len * self.embed_size, self.hidden_size),
                 nn.LeakyReLU(),
@@ -149,7 +149,7 @@ class Model(nn.Module):
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -161,7 +161,7 @@ class Model(nn.Module):
         # END adaptor
 
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             dec_out = self.forecast(x)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
