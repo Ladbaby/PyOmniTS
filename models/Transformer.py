@@ -138,7 +138,7 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -166,15 +166,21 @@ class Model(nn.Module):
                 "true": y[:, :, f_dim:],
                 "mask": y_mask[:, :, f_dim:],
             }
+        elif self.task_name == 'imputation':
+            dec_out = self.imputation(x, x_mark)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:],
+            }
         elif self.task_name == 'classification':
             dec_out = self.classification(x, x_mark)
             return {
                 "pred_class": dec_out,
                 "true_class": y_class
             }
-        # elif self.task_name == 'imputation':
-        #     dec_out = self.imputation(x, x_mark)
-        #     return dec_out  # [B, L, D]
         # elif self.task_name == 'anomaly_detection':
         #     dec_out = self.anomaly_detection(x)
         #     return dec_out  # [B, L, D]
