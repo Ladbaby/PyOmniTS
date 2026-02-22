@@ -84,22 +84,29 @@ class Model(nn.Module):
             self.argg.append(nn.Linear(self.all_size[i], self.pred_len))
         self.chan_tran = nn.Linear(configs.enc_in, configs.enc_in)
 
+        self.decoder_classification = nn.Linear(self.channels * (self.seq_len + self.Ms_length + 80), configs.n_classes)
+
     def forward(
         self, 
         x: Tensor, 
         y: Tensor | None = None, 
         y_mask: Tensor | None = None, 
+        y_class: Tensor | None = None,
         **kwargs
     ):
         # BEGIN adaptor
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones_like(x, dtype=x.dtype, device=x.device)
         if y_mask is None:
             y_mask = torch.ones_like(y, dtype=y.dtype, device=y.device)
+        if y_class is None:
+            if self.configs.task_name == "classification":
+                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
         # END adaptor
 
         # normalization
@@ -158,7 +165,7 @@ class Model(nn.Module):
         pad = torch.nn.functional.pad(
             hyperedge_attention, (0, 0, 0, padding_need, 0, 0)
         )
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             if self.individual:
                 output = torch.zeros(
                     [x.size(0), self.pred_len, x.size(2)], dtype=x.dtype
@@ -182,6 +189,16 @@ class Model(nn.Module):
                 "mask": y_mask[:, :, f_dim:],
                 "loss2": result_conloss
             }
+        elif self.configs.task_name == "classification":
+            output = self.decoder_classification(torch.cat([
+                x.permute(0, 2, 1), 
+                result_tensor.permute(0, 2, 1), 
+                pad.permute(0, 2, 1)
+            ], dim=-1).reshape(BATCH_SIZE, -1))
+            return {
+                "pred_class": output,
+                "true_class": y_class
+            }   
         else:
             raise NotImplementedError()
 
