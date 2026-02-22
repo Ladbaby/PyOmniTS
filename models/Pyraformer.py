@@ -67,7 +67,7 @@ class Model(nn.Module):
         dec_out = dec_out * std_enc + mean_enc
         return dec_out
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
+    def imputation(self, x_enc, x_mark_enc):
         enc_out = self.encoder(x_enc, x_mark_enc)
         dec_out = self.projection(enc_out)
         return dec_out
@@ -108,7 +108,7 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -121,11 +121,13 @@ class Model(nn.Module):
         x_mark[x_mark == 1] = 0.9999 # cannot process value == 1 in mark
         # END adaptor
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             if self.configs.task_name == 'long_term_forecast':
                 dec_out = self.long_forecast(x, x_mark)
             elif self.configs.task_name == 'short_term_forecast':
                 dec_out = self.short_forecast(x, x_mark)
+            elif self.configs.task_name == "imputation":
+                dec_out = self.imputation(x, x_mark)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
