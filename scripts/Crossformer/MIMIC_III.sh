@@ -20,6 +20,7 @@ for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
     --collate_fn "collate_fn" \
+    --d_model 32 \
     --patch_len 12 \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \
