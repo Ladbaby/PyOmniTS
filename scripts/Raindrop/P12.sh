@@ -20,7 +20,7 @@ for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
     --collate_fn "collate_fn" \
-    --n_layers 2 \
+    --n_layers 1 \
     --dropout 0.3 \
     --d_model 32 \
     --loss "MSE" \
