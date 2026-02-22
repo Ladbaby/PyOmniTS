@@ -104,6 +104,7 @@ class Model(nn.Module):
         self, 
         x: Tensor,
         x_mark: Tensor | None = None, 
+        x_mask: Tensor | None = None, 
         y: Tensor | None = None,
         y_mask: Tensor | None = None,
         y_class: Tensor | None = None,
@@ -114,8 +115,10 @@ class Model(nn.Module):
         Y_LEN = self.pred_len
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
+        if x_mask is None:
+            x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -129,8 +132,17 @@ class Model(nn.Module):
         # END adaptor
 
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x, x_mark)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "imputation":
+            dec_out = self.imputation(x, x_mark, x_mask)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
@@ -329,14 +341,20 @@ class Model(nn.Module):
         return dec_out
 
     def imputation(self, x_enc, x_mark_enc, mask):
+        '''
+        WARNING: codes have been modified. nan_to_num is used to prevent nan values
+        '''
         means = torch.sum(x_enc, dim=1) / torch.sum(mask == 1, dim=1)
+        means = torch.nan_to_num(means)
         means = means.unsqueeze(1).detach()
         x_enc = x_enc - means
         x_enc = x_enc.masked_fill(mask == 0, 0)
         stdev = torch.sqrt(torch.sum(x_enc * x_enc, dim=1) /
                            torch.sum(mask == 1, dim=1) + 1e-5)
         stdev = stdev.unsqueeze(1).detach()
+        stdev = torch.nan_to_num(stdev)
         x_enc /= stdev
+        x_enc = torch.nan_to_num(x_enc)
 
         B, T, N = x_enc.size()
         x_enc, x_mark_enc = self.__multi_scale_process_inputs(x_enc, x_mark_enc)
