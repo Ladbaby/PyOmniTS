@@ -95,7 +95,7 @@ class Model(nn.Module):
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -106,7 +106,7 @@ class Model(nn.Module):
             y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
         # END adaptor
 
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             dec_out = self.forecast(x)
             # handle the special Multi-variate to Single-variate forecast task
             f_dim = -1 if self.configs.features == 'MS' else 0
