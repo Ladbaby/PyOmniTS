@@ -23,6 +23,7 @@ for pred_len in 96 192 336 720; do
     --loss "MSE" \
     --task_name "long_term_forecast" \
     --use_multi_gpu $use_multi_gpu \
+    --freq h \
     --factor 3 \
     --d_model 512 \
     --dataset_root_path $dataset_root_path \
