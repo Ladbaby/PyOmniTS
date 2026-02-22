@@ -168,7 +168,7 @@ class SpatioTemporalDataModule(LightningDataModule):
                                    f"key '{key}'.")
             # set scalers
             if stage == 'predict':
-                layers.tsl.logger.info(f'Set scaler for {key}: {scaler}')
+                tsl.logger.info(f'Set scaler for {key}: {scaler}')
             else:  # fit scalers before training
                 data = getattr(self.torch_dataset, key)
                 # get only training slice
@@ -181,7 +181,7 @@ class SpatioTemporalDataModule(LightningDataModule):
                         mask = self.torch_dataset.get_mask()[self.train_slice]
 
                 scaler = scaler.fit(data, mask=mask, keepdims=True)
-                layers.tsl.logger.info(f'Fit and set scaler for {key}: {scaler}')
+                tsl.logger.info(f'Fit and set scaler for {key}: {scaler}')
             self.torch_dataset.add_scaler(key, scaler)
 
     def get_dataloader(self, split: Literal['train', 'val', 'test'] = None,
