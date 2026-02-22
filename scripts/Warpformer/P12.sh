@@ -24,7 +24,7 @@ for pred_len in 3; do
     --d_model 64 \
     --n_heads 1 \
     --dropout 0.0 \
-    --n_layers 3 \
+    --n_layers 1 \
     --use_multi_gpu $use_multi_gpu \
     --dataset_root_path $dataset_root_path \
     --model_id $model_id \
