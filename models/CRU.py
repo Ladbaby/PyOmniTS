@@ -73,7 +73,7 @@ class Model(CRU):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -81,10 +81,16 @@ class Model(CRU):
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
 
-        x_padding = torch.zeros_like(y)
-        x = torch.cat([x, x_padding], dim=1)
-        x_mark = torch.cat([x_mark, y_mark], dim=1)[:, :, 0]
-        x_mask = torch.cat([x_mask, y_mask], dim=1)[:, :, 0].bool()
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            x_padding = torch.zeros_like(y)
+            x = torch.cat([x, x_padding], dim=1)
+            x_mark = torch.cat([x_mark, y_mark], dim=1)[:, :, 0]
+            x_mask = torch.cat([x_mask, y_mask], dim=1)[:, :, 0].bool()
+        elif self.configs.task_name in ["imputation"]:
+            x_mark = x_mark[:, :, 0]
+            x_mask = x_mask[:, :, 0].bool()
+        else:
+            raise NotImplementedError()
         # END adaptor
 
         x_enc, x_var = self._enc(x)
@@ -109,7 +115,7 @@ class Model(CRU):
             out_mean, out_var = self._dec(
                 post_mean, torch.cat(post_cov, dim=-1))
 
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             PRED_LEN = y.shape[1]
             f_dim = -1 if self.configs.features == 'MS' else 0
             return {
