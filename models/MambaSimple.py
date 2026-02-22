@@ -42,7 +42,7 @@ class Model(nn.Module):
         self.layers = nn.ModuleList([ResidualBlock(configs, self.d_inner, self.dt_rank) for _ in range(configs.e_layers)])
         self.norm = RMSNorm(configs.d_model)
 
-        if configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if configs.task_name in ['long_term_forecast', 'short_term_forecast', "imputation"]:
             self.out_layer = nn.Linear(configs.d_model, configs.c_out, bias=False)
         elif configs.task_name == "classification":
             self.decoder_classification = nn.Linear(configs.d_model, configs.n_classes)
@@ -64,7 +64,7 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -78,7 +78,7 @@ class Model(nn.Module):
         x_mark_enc = x_mark
         # END adaptor
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             mean_enc = x_enc.mean(1, keepdim=True).detach()
             x_enc = x_enc - mean_enc
             std_enc = torch.sqrt(torch.var(x_enc, dim=1, keepdim=True, unbiased=False) + 1e-5).detach()
@@ -90,7 +90,7 @@ class Model(nn.Module):
 
         x_enc = self.norm(x_enc)
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             x_out = self.out_layer(x_enc)
             x_out = x_out * std_enc + mean_enc
             f_dim = -1 if self.configs.features == 'MS' else 0
