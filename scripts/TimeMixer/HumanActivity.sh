@@ -18,30 +18,30 @@ model_id=$model_name
 seq_len=3000
 for pred_len in 300; do
     $launch_command main.py \
-        --is_training 1 \
-        --loss "MSE" \
-        --e_layers 3 \
-        --timemixer_down_sampling_layers 1 \
-        --collate_fn "collate_fn_patch" \
-        --patch_len 300 \
-        --d_model 16 \
-        --d_ff 32 \
-        --use_multi_gpu $use_multi_gpu \
-        --dataset_root_path $dataset_root_path \
-        --model_id $model_id \
-        --model_name $model_name \
-        --dataset_name $dataset_name \
-        --dataset_id $dataset_id \
-        --features M \
-        --seq_len $seq_len \
-        --pred_len $pred_len \
-        --enc_in $n_variables \
-        --dec_in $n_variables \
-        --c_out $n_variables \
-        --train_epochs 300 \
-        --patience 10 \
-        --val_interval 1 \
-        --itr 5 \
-        --batch_size 32 \
-        --learning_rate 1e-2
+    --is_training 1 \
+    --loss "MSE" \
+    --e_layers 3 \
+    --timemixer_down_sampling_layers 1 \
+    --collate_fn "collate_fn_patch" \
+    --patch_len 300 \
+    --d_model 16 \
+    --d_ff 32 \
+    --use_multi_gpu $use_multi_gpu \
+    --dataset_root_path $dataset_root_path \
+    --model_id $model_id \
+    --model_name $model_name \
+    --dataset_name $dataset_name \
+    --dataset_id $dataset_id \
+    --features M \
+    --seq_len $seq_len \
+    --pred_len $pred_len \
+    --enc_in $n_variables \
+    --dec_in $n_variables \
+    --c_out $n_variables \
+    --train_epochs 300 \
+    --patience 10 \
+    --val_interval 1 \
+    --itr 5 \
+    --batch_size 32 \
+    --learning_rate 1e-2
 done

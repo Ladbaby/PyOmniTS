@@ -25,7 +25,7 @@ for pred_len in 3; do
     --timemixer_down_sampling_layers 1 \
     --collate_fn "collate_fn_patch" \
     --patch_len 12 \
-    --d_model 16 \
+    --d_model 64 \
     --d_ff 32 \
     --dataset_root_path $dataset_root_path \
     --model_id $model_id \
