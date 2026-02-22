@@ -22,6 +22,7 @@ for pred_len in 720; do
     --collate_fn "collate_fn_patch" \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \
+    --d_model 128 \
     --patch_len 90 \
     --patch_stride 90 \
     --e_layers 3 \
