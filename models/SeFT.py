@@ -43,7 +43,7 @@ class Model(nn.Module):
 
         # BEGIN adaptor
         d_inp = configs.enc_in
-        nhid = 128
+        nhid = configs.d_model
         nlayers = configs.n_layers
         dropout = configs.dropout
         max_len = configs.seq_len_max_irr or configs.seq_len
@@ -78,16 +78,16 @@ class Model(nn.Module):
         if static:
             self.emb = nn.Linear(d_static, 16)
 
-        self.proj_weight = Parameter(torch.Tensor(self.d_K, 128))
+        self.proj_weight = Parameter(torch.Tensor(self.d_K, configs.d_model))
 
-        self.lin_map = nn.Linear(self.d_K, 128)
+        self.lin_map = nn.Linear(self.d_K, configs.d_model)
 
-        d_fi = 128 + 16
+        d_fi = configs.d_model + 16
 
         if static == False:
-            d_fi = 128
+            d_fi = configs.d_model
         else:
-            d_fi = 128 + d_pe
+            d_fi = configs.d_model + d_pe
 
         if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             self.mlp = nn.Sequential(
@@ -136,7 +136,7 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
