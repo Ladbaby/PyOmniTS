@@ -65,7 +65,11 @@ class tsdmDataset(Dataset):
         return len(self.dataset)
     
     def _check_lengths(self):
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name == "imputation":
+            assert self.seq_len == self.pred_len, f"--seq_len {self.seq_len} must be equal to --pred_len {self.pred_len} for imputation!"
+            assert self.configs.missing_rate > 0, f"--missing_rate {self.configs.missing_rate} should be greater than 0 for imputation!"
+            assert self.seq_len <= self.L_TOTAL and self.pred_len <= self.L_TOTAL, f"Either {self.seq_len=} or {self.pred_len=} is too large. Expect their values smaller than {self.L_TOTAL}"
+        elif self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             assert self.seq_len + self.pred_len <= self.L_TOTAL, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than {self.L_TOTAL}"
         else:
             raise NotImplementedError()
@@ -219,6 +223,10 @@ class tsdmDataset(Dataset):
                 self.pred_len_max_irr += int(n_patch_pad * self.patch_len_max_irr)
             
             del dataset
+
+            if self.configs.task_name == "imputation":
+                # force overwrite pred_len_max_irr for imputation
+                self.pred_len_max_irr = self.seq_len_max_irr
 
             # create a new field in global configs to pass information to models
             self.configs.seq_len_max_irr = self.seq_len_max_irr
