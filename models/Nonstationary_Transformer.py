@@ -115,17 +115,23 @@ class Model(nn.Module):
         dec_out = dec_out * std_enc + mean_enc
         return dec_out
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
+    def imputation(self, x_enc, x_mark_enc, mask):
+        '''
+        WARNING: codes have been modified. nan_to_num is used to prevent nan values
+        '''
         x_raw = x_enc.clone().detach()
 
         # Normalization
         mean_enc = torch.sum(x_enc, dim=1) / torch.sum(mask == 1, dim=1)
+        mean_enc = torch.nan_to_num(mean_enc) # WARNING: prevent possible nan values
         mean_enc = mean_enc.unsqueeze(1).detach()
         x_enc = x_enc - mean_enc
         x_enc = x_enc.masked_fill(mask == 0, 0)
         std_enc = torch.sqrt(torch.sum(x_enc * x_enc, dim=1) / torch.sum(mask == 1, dim=1) + 1e-5)
+        std_enc = torch.nan_to_num(std_enc) # WARNING: prevent possible nan values
         std_enc = std_enc.unsqueeze(1).detach()
         x_enc /= std_enc
+        x_enc = torch.nan_to_num(x_enc) # WARNING: prevent possible nan values
         # B x S x E, B x 1 x E -> B x 1, positive scalar
         tau = self.tau_learner(x_raw, std_enc).exp()
         # B x S x E, B x 1 x E -> B x S
@@ -187,6 +193,7 @@ class Model(nn.Module):
         self, 
         x: Tensor,
         x_mark: Tensor | None = None,
+        x_mask: Tensor | None = None,
         y: Tensor | None = None,
         y_mark: Tensor | None = None,
         y_mask: Tensor | None = None,
@@ -198,8 +205,10 @@ class Model(nn.Module):
         Y_LEN = self.pred_len
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
+        if x_mask is None:
+            x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -218,8 +227,17 @@ class Model(nn.Module):
         x_mark_dec = torch.cat([x_mark[:, -self.label_len:, :], y_mark], dim=1).float().to(x_mark.device)
         # END adaptor
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x, x_mark, x_dec, x_mark_dec)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "imputation":
+            dec_out = self.imputation(x, x_mark, x_mask)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
