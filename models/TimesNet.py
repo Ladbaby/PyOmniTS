@@ -37,7 +37,7 @@ class Model(nn.Module):
                 self.seq_len, self.pred_len + self.seq_len)
             self.projection = nn.Linear(
                 configs.d_model, configs.c_out, bias=True)
-        elif self.task_name == ['imputation', 'anomaly_detection']:
+        elif self.task_name in ['imputation', 'anomaly_detection']:
             self.projection = nn.Linear(
                 configs.d_model, configs.c_out, bias=True)
         elif self.task_name == 'classification':
@@ -52,6 +52,7 @@ class Model(nn.Module):
         self, 
         x: Tensor,
         x_mark: Tensor | None = None, 
+        x_mask: Tensor | None = None, 
         y: Tensor | None = None,
         y_mask: Tensor | None = None,
         y_class: Tensor | None = None,
@@ -62,8 +63,10 @@ class Model(nn.Module):
         Y_LEN = self.pred_len
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
+        if x_mask is None:
+            x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -76,8 +79,17 @@ class Model(nn.Module):
         x_mark[x_mark == 1] = 0.9999
         # END adaptor
 
-        if self.configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x, x_mark)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
+        if self.configs.task_name in ["imputation"]:
+            dec_out = self.imputation(x, x_mark, x_mask)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
@@ -120,16 +132,22 @@ class Model(nn.Module):
                       1, self.pred_len + self.seq_len, 1))
         return dec_out
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
+    def imputation(self, x_enc, x_mark_enc, mask):
+        '''
+        WARNING: codes have been modified. nan_to_num is used to prevent nan values
+        '''
         # Normalization from Non-stationary Transformer
         means = torch.sum(x_enc, dim=1) / torch.sum(mask == 1, dim=1)
+        means = torch.nan_to_num(means)
         means = means.unsqueeze(1).detach()
         x_enc = x_enc - means
         x_enc = x_enc.masked_fill(mask == 0, 0)
         stdev = torch.sqrt(torch.sum(x_enc * x_enc, dim=1) /
                            torch.sum(mask == 1, dim=1) + 1e-5)
+        stdev = torch.nan_to_num(stdev)
         stdev = stdev.unsqueeze(1).detach()
         x_enc /= stdev
+        x_enc = torch.nan_to_num(x_enc)
 
         # embedding
         enc_out = self.enc_embedding(x_enc, x_mark_enc)  # [B,T,C]
@@ -142,10 +160,10 @@ class Model(nn.Module):
         # De-Normalization from Non-stationary Transformer
         dec_out = dec_out * \
                   (stdev[:, 0, :].unsqueeze(1).repeat(
-                      1, self.pred_len + self.seq_len, 1))
+                      1, self.seq_len, 1))
         dec_out = dec_out + \
                   (means[:, 0, :].unsqueeze(1).repeat(
-                      1, self.pred_len + self.seq_len, 1))
+                      1, self.seq_len, 1))
         return dec_out
 
     def anomaly_detection(self, x_enc):
@@ -207,6 +225,7 @@ def FFT_for_Period(x, k=2):
 class TimesBlock(nn.Module):
     def __init__(self, configs: ExpConfigs):
         super(TimesBlock, self).__init__()
+        self.configs = configs
         self.seq_len = configs.seq_len_max_irr or configs.seq_len # equal to seq_len_max_irr if not None, else seq_len
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
         self.k = 5
@@ -227,14 +246,25 @@ class TimesBlock(nn.Module):
         for i in range(self.k):
             period = period_list[i]
             # padding
-            if (self.seq_len + self.pred_len) % period != 0:
-                length = (
-                                 ((self.seq_len + self.pred_len) // period) + 1) * period
-                padding = torch.zeros([x.shape[0], (length - (self.seq_len + self.pred_len)), x.shape[2]]).to(x.device)
-                out = torch.cat([x, padding], dim=1)
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+                if (self.seq_len + self.pred_len) % period != 0:
+                    length = (
+                                    ((self.seq_len + self.pred_len) // period) + 1) * period
+                    padding = torch.zeros([x.shape[0], (length - (self.seq_len + self.pred_len)), x.shape[2]]).to(x.device)
+                    out = torch.cat([x, padding], dim=1)
+                else:
+                    length = (self.seq_len + self.pred_len)
+                    out = x
+            elif self.configs.task_name in ["imputation", "classification"]:
+                if self.seq_len % period != 0:
+                    length = ((self.seq_len // period) + 1) * period
+                    padding = torch.zeros([x.shape[0], (length - self.seq_len), x.shape[2]]).to(x.device)
+                    out = torch.cat([x, padding], dim=1)
+                else:
+                    length = self.seq_len
+                    out = x
             else:
-                length = (self.seq_len + self.pred_len)
-                out = x
+                raise NotImplementedError()
             # reshape
             out = out.reshape(B, length // period, period,
                               N).permute(0, 3, 1, 2).contiguous()
@@ -242,7 +272,12 @@ class TimesBlock(nn.Module):
             out = self.conv(out)
             # reshape back
             out = out.permute(0, 2, 3, 1).reshape(B, -1, N)
-            res.append(out[:, :(self.seq_len + self.pred_len), :])
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+                res.append(out[:, :(self.seq_len + self.pred_len), :])
+            elif self.configs.task_name in ["imputation", "classification"]:
+                res.append(out[:, :self.seq_len, :])
+            else:
+                raise NotImplementedError()
         res = torch.stack(res, dim=-1)
         # adaptive aggregation
         period_weight = F.softmax(period_weight, dim=1)
