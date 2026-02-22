@@ -1,17 +1,15 @@
 # Code from: https://github.com/Ladbaby/PyOmniTS
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from einops import *
 from torch import Tensor
 from torch.distributions.normal import Normal
 
-from layers.GNeuralFlow.experiments.latent_ode.lib.encoder_decoder import *
+from layers.GNeuralFlow.experiments.latent_ode.lib.encoder_decoder import Encoder_z0_ODE_RNN, Decoder
 from layers.GNeuralFlow.experiments.latent_ode.lib.latent_ode import LatentODE
-from layers.GNeuralFlow.models import (
-    CouplingFlow_latent,
-    GRUFlow,
-    ResNetFlow,
-)
+from layers.GNeuralFlow.models.flow import CouplingFlow_latent, ResNetFlow
+from layers.GNeuralFlow.models.gru import GRUFlow
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import logger
 
@@ -71,7 +69,7 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:

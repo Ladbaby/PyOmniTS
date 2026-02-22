@@ -4,7 +4,6 @@ import torch.nn.functional as F
 
 import layers.GNeuralFlow.experiments.latent_ode.lib.utils as utils
 from layers.GNeuralFlow.models.gnn import GNN
-from layers.GNeuralFlow.models.mlp import MLP
 
 
 def get_mask(x):

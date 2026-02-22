@@ -5,11 +5,8 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn import Module
 
-from layers.GNeuralFlow.models import (
-    CouplingFlow,
-    ODEModel,
-    ResNetFlow,
-)
+from layers.GNeuralFlow.models.flow import CouplingFlow, ResNetFlow
+from layers.GNeuralFlow.models.ode import ODEModel
 
 
 class BaseContinuousLSTM(Module):
