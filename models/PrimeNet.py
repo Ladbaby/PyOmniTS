@@ -61,7 +61,7 @@ class Model(nn.Module):
             n_classes=configs.n_classes
         )
         self.model = TimeBERTForPretrainingV2(config)
-        if configs.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             self.loss_fn_finetune = MSE(config)
         elif configs.task_name == "classification":
             '''
@@ -81,6 +81,8 @@ class Model(nn.Module):
 
         if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             self.n_patch_all: int = math.ceil(configs.seq_len / configs.patch_len) + math.ceil(configs.pred_len / configs.patch_len) # pad pred_len to times of patch_len
+        elif self.configs.task_name in ["imputation", "classification"]:
+            self.n_patch_all: int = math.ceil(configs.seq_len / configs.patch_len)
         else:
             raise NotImplementedError()
 
@@ -104,7 +106,7 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, dtype=x.dtype, device=x.device)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -122,6 +124,12 @@ class Model(nn.Module):
             observed_tp = torch.cat([x_mark, y_mark], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)[:, :, :, 0]
             observed_mask = torch.cat([x_mask, torch.zeros_like(y_mask).to(y_mask.device)], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
             interp_mask = torch.cat([torch.zeros_like(x_mask).to(x_mask.device), y_mask], dim=1).reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+        elif self.configs.task_name in ["imputation", "classification"]:
+            assert self.seq_len % self.patch_len == 0, f"{self.seq_len=} should be divisible by {self.patch_len=}"
+            observed_data = x.reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+            observed_tp = x_mark.reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)[:, :, :, 0]
+            observed_mask = x_mask.reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
+            interp_mask = y_mask.reshape(BATCH_SIZE, self.n_patch_all, self.patch_len, -1)
         else:
             raise NotImplementedError()
         # END adaptor
@@ -130,7 +138,7 @@ class Model(nn.Module):
             torch.cat((observed_data, observed_mask, interp_mask), dim=-1),
             observed_tp
         ) # "loss", "cl_loss", "mse_loss", "correct_num", "total_num", "pred", "cls_pooling", "last_hidden_state"
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             pred = rearrange(
                 out['pred'], 
                 "(B N_PATCH) L N -> B (N_PATCH L) N", 
