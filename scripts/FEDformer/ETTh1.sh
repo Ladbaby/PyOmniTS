@@ -20,6 +20,7 @@ label_len=48
 for pred_len in 96 192 336 720; do
     $launch_command main.py \
     --is_training 1 \
+    --freq h \
     --factor 3 \
     --d_model 512 \
     --loss "MSE" \
