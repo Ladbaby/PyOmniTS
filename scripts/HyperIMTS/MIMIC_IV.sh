@@ -22,8 +22,8 @@ for pred_len in 3; do
     --collate_fn "collate_fn" \
     --loss "MSE" \
     --d_model 128 \
-    --n_layers 2 \
-    --n_heads 4 \
+    --n_layers 4 \
+    --n_heads 8 \
     --use_multi_gpu $use_multi_gpu \
     --dataset_root_path $dataset_root_path \
     --model_id $model_id \
