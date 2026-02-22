@@ -80,7 +80,7 @@ class GraphConv(MessagePassing, NormalizedAdjacencyMixin):
     def forward(self,
                 x: Tensor,
                 edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+                edge_weight: OptTensor | None = None) -> Tensor:
         """"""
         out = self.lin(x)
 

@@ -28,7 +28,7 @@ from .dcrnn import DCRNNCell
 
 
 def compute_support(edge_index: LongTensor,
-                    edge_weight: OptTensor = None,
+                    edge_weight: OptTensor | None = None,
                     order: int = 1,
                     num_nodes: Optional[int] = None,
                     add_backward: bool = True):
@@ -87,7 +87,7 @@ class SpatialDecoder(nn.Module):
 
     def compute_support(self,
                         edge_index: LongTensor,
-                        edge_weight: OptTensor = None,
+                        edge_weight: OptTensor | None = None,
                         num_nodes: Optional[int] = None,
                         add_backward: bool = True):
         ei, ew = asymmetric_norm(edge_index,
@@ -106,8 +106,8 @@ class SpatialDecoder(nn.Module):
                 mask: Tensor,
                 h: Tensor,
                 edge_index: LongTensor,
-                edge_weight: OptTensor = None,
-                u: OptTensor = None):
+                edge_weight: OptTensor | None = None,
+                u: OptTensor | None = None):
         # x: [batch, nodes, channels]
         x_in = [x, mask, h]
         if u is not None:
@@ -238,9 +238,9 @@ class GRINCell(nn.Module):
     def forward(self,
                 x: Tensor,
                 edge_index: LongTensor,
-                edge_weight: OptTensor = None,
-                mask: OptTensor = None,
-                u: OptTensor = None,
+                edge_weight: OptTensor | None = None,
+                mask: OptTensor | None = None,
+                u: OptTensor | None = None,
                 h: Union[List[Tensor], Tensor] = None):
         """"""
         # x: [batch, steps, nodes, channels]

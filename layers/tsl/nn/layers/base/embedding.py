@@ -67,7 +67,7 @@ class NodeEmbedding(nn.Module):
 
     def forward(self,
                 expand: Optional[List] = None,
-                node_index: OptTensor = None,
+                node_index: OptTensor | None = None,
                 nodes_first: bool = True):
         """"""
         emb = self.get_emb()

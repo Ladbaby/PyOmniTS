@@ -50,7 +50,7 @@ class AGCRNModel(BaseModel):
                                      output_size=output_size,
                                      horizon=horizon)
 
-    def forward(self, x: Tensor, u: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, u: OptTensor | None = None) -> Tensor:
         """"""
         x = maybe_cat_exog(x, u)
         x = self.input_encoder(x)

@@ -166,7 +166,7 @@ class RKNCell(nn.Module):
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
     def forward(self, prior_mean: torch.Tensor, prior_cov: Iterable[torch.Tensor],
-                obs: torch.Tensor, obs_var: torch.Tensor, obs_valid: torch.Tensor = None, delta_t: torch.Tensor = None) -> \
+                obs: torch.Tensor, obs_var: torch.Tensor, obs_valid: torch.Tensor | None = None, delta_t: torch.Tensor | None = None) -> \
             Tuple[torch.Tensor, Iterable[torch.Tensor], torch.Tensor, Iterable[torch.Tensor]]:
         """Forward pass trough the cell. 
 
@@ -257,7 +257,7 @@ class RKNCell(nn.Module):
                 1, self._lsd, dtype=self._dtype), init_log_trans_cov))
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
-    def get_transition_model(self, post_mean: torch.Tensor, delta_t: torch.Tensor = None) -> Tuple[List[torch.Tensor], torch.Tensor]:
+    def get_transition_model(self, post_mean: torch.Tensor, delta_t: torch.Tensor | None = None) -> Tuple[List[torch.Tensor], torch.Tensor]:
         """
         Compute the locally-linear transition model given the current posterior mean
         :param post_mean: current posterior mean
@@ -333,7 +333,7 @@ class RKNCell(nn.Module):
 
 
     # taken from https://github.com/ALRhub/rkn_share/ and modified
-    def _predict(self, post_mean: torch.Tensor, post_covar: List[torch.Tensor], delta_t: torch.Tensor = None) \
+    def _predict(self, post_mean: torch.Tensor, post_covar: List[torch.Tensor], delta_t: torch.Tensor | None = None) \
             -> Tuple[torch.Tensor, List[torch.Tensor]]:
         """ Performs prediction step for regular time intervals (RKN variant)
         :param post_mean: last posterior mean

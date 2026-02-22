@@ -91,8 +91,8 @@ class AttentionEncoder(nn.Module):
 
     def forward(self,
                 query: Tensor,
-                key: OptTensor = None,
-                value: OptTensor = None):
+                key: OptTensor | None = None,
+                value: OptTensor | None = None):
         """"""
         # inputs: [batches, steps, nodes, channels]
         if key is None:
@@ -159,11 +159,11 @@ class MultiHeadAttention(nn.MultiheadAttention):
 
     def forward(self,
                 query: Tensor,
-                key: OptTensor = None,
-                value: OptTensor = None,
-                key_padding_mask: OptTensor = None,
+                key: OptTensor | None = None,
+                value: OptTensor | None = None,
+                key_padding_mask: OptTensor | None = None,
                 need_weights: bool = True,
-                attn_mask: OptTensor = None):
+                attn_mask: OptTensor | None = None):
         """"""
         # inputs: [batches, steps, nodes, channels] -> [s (b n) c]
         if key is None:

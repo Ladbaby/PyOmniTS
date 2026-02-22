@@ -201,7 +201,7 @@ class GATConv(MessagePassing):
     def forward(self,
                 x: Union[Tensor, OptPairTensor],
                 edge_index: Adj,
-                edge_attr: OptTensor = None,
+                edge_attr: OptTensor | None = None,
                 need_weights: bool = False):
         """"""
         node_dim = self.node_dim

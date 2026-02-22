@@ -25,7 +25,7 @@ class DiffConv(DiffConv_):
         self.cached = cached
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, cache_support: bool = None) \
+                edge_weight: OptTensor | None = None, cache_support: bool = None) \
             -> Tensor:
         if cache_support is None:
             cache_support = self.cached

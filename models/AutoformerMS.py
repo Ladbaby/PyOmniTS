@@ -104,10 +104,10 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,  
-        x_mark: Tensor = None, 
-        y: Tensor = None,
-        y_mark: Tensor = None,
-        y_mask: Tensor = None,
+        x_mark: Tensor | None = None, 
+        y: Tensor | None = None,
+        y_mark: Tensor | None = None,
+        y_mask: Tensor | None = None,
         **kwargs
     ):
         # BEGIN adaptor

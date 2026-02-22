@@ -75,8 +75,8 @@ class DCRNNModel(BaseModel):
     def forward(self,
                 x: Tensor,
                 edge_index: Adj,
-                edge_weight: OptTensor = None,
-                u: OptTensor = None) -> Tensor:
+                edge_weight: OptTensor | None = None,
+                u: OptTensor | None = None) -> Tensor:
         """"""
         if u is not None:
             if u.dim() == 3:

@@ -86,9 +86,9 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,  
-        y: Tensor = None,
-        y_mask: Tensor = None,
-        y_class: Tensor = None,
+        y: Tensor | None = None,
+        y_mask: Tensor | None = None,
+        y_class: Tensor | None = None,
         **kwargs
     ):
         # BEGIN adaptor

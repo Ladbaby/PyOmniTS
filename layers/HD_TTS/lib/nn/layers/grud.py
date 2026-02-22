@@ -202,8 +202,8 @@ class GRUD(RNNBase):
     def forward(self,  # noqa
                 x: Tensor,
                 mask: Tensor,
-                x_mean: Tensor = None,
-                u: Tensor = None,
+                x_mean: Tensor | None = None,
+                u: Tensor | None = None,
                 h: Optional[List[StateType]] = None):
 
         # Compute time intervals

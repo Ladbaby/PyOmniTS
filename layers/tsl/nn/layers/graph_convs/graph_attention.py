@@ -56,7 +56,7 @@ class AttentionScores(MessagePassing):
                 query: Tensor,
                 key: Tensor,
                 edge_index: Adj,
-                edge_attr: OptTensor = None):
+                edge_attr: OptTensor | None = None):
         n = (key if key.size(-2) > query.size(-2) else query).size(-2)
         h_and_c = self.heads, self.embed_dim
         # project and split heads
@@ -207,7 +207,7 @@ class MultiHeadGraphAttention(MessagePassing):
                 key: Tensor,
                 value: Tensor,
                 edge_index: Adj,
-                edge_attr: OptTensor = None,
+                edge_attr: OptTensor | None = None,
                 return_attention_weights: Optional[bool] = False,
                 return_attention_matrix: Optional[bool] = False):
         """"""

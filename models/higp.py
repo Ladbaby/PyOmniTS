@@ -129,11 +129,11 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        y: Tensor = None,
-        y_mask: Tensor = None, 
-        y_class: Tensor = None, 
-        edge_index: Tensor = None,
-        edge_weight: Tensor = None,
+        y: Tensor | None = None,
+        y_mask: Tensor | None = None, 
+        y_class: Tensor | None = None, 
+        edge_index: Tensor | None = None,
+        edge_weight: Tensor | None = None,
         **kwargs
     ):
         # BEGIN adaptor

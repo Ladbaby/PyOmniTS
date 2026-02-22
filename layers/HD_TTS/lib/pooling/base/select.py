@@ -48,14 +48,14 @@ class SelectOutput:
     cluster_index: Tensor
     num_clusters: int
     weight: Optional[Tensor] = None
-    s_inv: SparseTensor = None
+    s_inv: SparseTensor | None = None
 
     def __init__(
             self,
-            s: SparseTensor = None,
-            node_index: Tensor = None,
+            s: SparseTensor | None = None,
+            node_index: Tensor | None = None,
             num_nodes: int = None,
-            cluster_index: Tensor = None,
+            cluster_index: Tensor | None = None,
             num_clusters: int = None,
             weight: Optional[Tensor] = None,
     ):

@@ -89,11 +89,11 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor,
-        x_mark: Tensor = None,
-        x_mask: Tensor = None,
-        y: Tensor = None,
-        y_mask: Tensor = None,
-        y_class: Tensor = None,
+        x_mark: Tensor | None = None,
+        x_mask: Tensor | None = None,
+        y: Tensor | None = None,
+        y_mask: Tensor | None = None,
+        y_class: Tensor | None = None,
         static=None,
         **kwargs
     ):

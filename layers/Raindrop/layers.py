@@ -163,7 +163,7 @@ class ObservationPropagation(MessagePassing):
         edge_index: Adj,
         edge_weights=None,
         use_beta=False,
-        edge_attr: OptTensor = None,
+        edge_attr: OptTensor | None = None,
         return_attention_weights=None,
     ) -> Tuple[torch.Tensor, Any]:
         r"""

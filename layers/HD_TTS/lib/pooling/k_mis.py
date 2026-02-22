@@ -54,7 +54,7 @@ Scorer = Callable[[Tensor, Adj, OptTensor, OptTensor], Tensor]
 
 
 def maximal_independent_set(edge_index: Adj, k: int = 1,
-                            perm: OptTensor = None,
+                            perm: OptTensor | None = None,
                             num_nodes: int = None) -> Tensor:
     r"""Returns a Maximal :math:`k`-Independent Set of a graph, i.e., a set of
     nodes (as a :class:`ByteTensor`) such that none of them are :math:`k`-hop
@@ -110,7 +110,7 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
 
 
 def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
-                                    perm: OptTensor = None,
+                                    perm: OptTensor | None = None,
                                     num_nodes: int = None) -> PairTensor:
     r"""Computes the Maximal :math:`k`-Independent Set (:math:`k`-MIS)
     clustering of a graph, as defined in `"Generalizing Downsampling from
@@ -212,8 +212,8 @@ class KMISSelect(Select):
 
         return x / k_sums
 
-    def _scorer(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None,
-                batch: OptTensor = None,
+    def _scorer(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor | None = None,
+                batch: OptTensor | None = None,
                 num_nodes: Optional[int] = None) -> Tensor:
         if self.scorer == 'linear':
             return self.lin(x).sigmoid()

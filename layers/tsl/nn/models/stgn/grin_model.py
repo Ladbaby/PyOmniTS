@@ -103,9 +103,9 @@ class GRINModel(BaseModel):
     def forward(self,
                 x: Tensor,
                 edge_index: Adj,
-                edge_weight: OptTensor = None,
-                mask: OptTensor = None,
-                u: OptTensor = None) -> list:
+                edge_weight: OptTensor | None = None,
+                mask: OptTensor | None = None,
+                u: OptTensor | None = None) -> list:
         """"""
         # x: [batch, steps, nodes, channels]
         fwd_out, fwd_pred, fwd_repr, _ = self.fwd_gril(x,
@@ -140,9 +140,9 @@ class GRINModel(BaseModel):
     def predict(self,
                 x: Tensor,
                 edge_index: Adj,
-                edge_weight: OptTensor = None,
-                mask: OptTensor = None,
-                u: OptTensor = None) -> Tensor:
+                edge_weight: OptTensor | None = None,
+                mask: OptTensor | None = None,
+                u: OptTensor | None = None) -> Tensor:
         """"""
         imputation = self.forward(x=x,
                                   mask=mask,

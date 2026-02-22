@@ -50,15 +50,15 @@ class Model(nn.Module):
     def forward(
         self, 
         x: Tensor, 
-        x_mark: Tensor = None, 
-        x_mask: Tensor = None, 
-        y: Tensor = None, 
-        y_mark: Tensor = None, 
-        y_mask: Tensor = None,
-        x_L_flattened: Tensor = None,
-        x_y_mask_flattened: Tensor = None,
-        y_L_flattened: Tensor = None,
-        y_mask_L_flattened: Tensor = None,
+        x_mark: Tensor | None = None, 
+        x_mask: Tensor | None = None, 
+        y: Tensor | None = None, 
+        y_mark: Tensor | None = None, 
+        y_mask: Tensor | None = None,
+        x_L_flattened: Tensor | None = None,
+        x_y_mask_flattened: Tensor | None = None,
+        y_L_flattened: Tensor | None = None,
+        y_mask_L_flattened: Tensor | None = None,
         exp_stage: str = "train", 
         **kwargs
     ):
@@ -566,7 +566,7 @@ class MultiHeadAttentionBlock(nn.Module):
         self, 
         Q: Tensor, 
         K: Tensor, 
-        mask: Tensor = None
+        mask: Tensor | None = None
     ):
         Q = self.fc_q(Q)
         K, V = self.fc_k(K), self.fc_v(K)
@@ -603,10 +603,10 @@ class IrregularityAwareAttention(nn.Module):
     def forward(
         self, 
         x: Tensor, 
-        query_aux: Tensor = None,
-        key_aux: Tensor = None,
-        adjacency_mask: Tensor = None,
-        merge_coefficients: Tensor = None,
+        query_aux: Tensor | None = None,
+        key_aux: Tensor | None = None,
+        adjacency_mask: Tensor | None = None,
+        merge_coefficients: Tensor | None = None,
     ):
         batch_size, n_variables, hidden_dim = x.shape
         

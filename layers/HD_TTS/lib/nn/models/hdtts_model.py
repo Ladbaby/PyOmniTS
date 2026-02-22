@@ -152,7 +152,7 @@ class HDTTSModel(BaseModel):
 
         return out, None, alpha, None
 
-    def get_coarsened_graphs(self, edge_index: Tensor = None,
+    def get_coarsened_graphs(self, edge_index: Tensor | None = None,
                              edge_attr: Optional[Tensor] = None,
                              num_nodes: int = None,
                              cached: bool = False):

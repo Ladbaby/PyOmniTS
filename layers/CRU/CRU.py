@@ -143,8 +143,8 @@ class CRU(nn.Module):
     def forward(
         self, 
         obs_batch: torch.Tensor, 
-        time_points: torch.Tensor = None, 
-        obs_valid: torch.Tensor = None
+        time_points: torch.Tensor | None = None, 
+        obs_valid: torch.Tensor | None = None
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Single forward pass on a batch
         :param obs_batch: batch of observation sequences

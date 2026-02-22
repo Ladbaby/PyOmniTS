@@ -96,7 +96,7 @@ class AggrLift(Lift):
 
 #  AGGR CONNECT  ##############################################################
 
-def connect(assignment: Tensor, edge_index: Adj, edge_attr: OptTensor = None,
+def connect(assignment: Tensor, edge_index: Adj, edge_attr: OptTensor | None = None,
             num_nodes: int = None,
             remove_self_loops: bool = True,
             reduce: ConnectionType = "sum"):

@@ -14,7 +14,7 @@ from layers.tsl.ops.connectivity import asymmetric_norm, transpose
 
 
 def diff_conv_gso(edge_index: Tensor,
-                  edge_weight: OptTensor = None,
+                  edge_weight: OptTensor | None = None,
                   k: int = 2,
                   num_nodes: int = None,
                   add_backward: bool = True):
@@ -103,7 +103,7 @@ class DiffConv(MessagePassing):
 
     @staticmethod
     def compute_support_index(edge_index: Adj,
-                              edge_weight: OptTensor = None,
+                              edge_weight: OptTensor | None = None,
                               num_nodes: int = None,
                               add_backward: bool = True) -> List:
         """Normalize the connectivity weights and (optionally) add normalized
@@ -137,7 +137,7 @@ class DiffConv(MessagePassing):
         return matmul(adj_t, x, reduce=self.aggr)
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, cache_support: bool = False) \
+                edge_weight: OptTensor | None = None, cache_support: bool = False) \
             -> Tensor:
         """"""
         # x: [batch, (steps), nodes, nodes]
