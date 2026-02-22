@@ -71,7 +71,7 @@ class Model(nn.Module):
         if x_mark is None:
             x_mark = repeat(torch.arange(end=x.shape[1], dtype=x.dtype, device=x.device) / x.shape[1], "L -> B L 1", B=x.shape[0])
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
@@ -84,8 +84,17 @@ class Model(nn.Module):
         x_mark[x_mark == 1] = 0.9999 # cannot process value == 1 in mark
         # END adaptor
 
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
             dec_out = self.forecast(x, x_mark)
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": dec_out[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.task_name == "imputation":
+            dec_out = self.imputation(x, x_mark)
             f_dim = -1 if self.configs.features == 'MS' else 0
             PRED_LEN = y.shape[1]
             return {
@@ -120,12 +129,18 @@ class Model(nn.Module):
         dec_out = dec_out + (means[:, 0, :].unsqueeze(1).repeat(1, self.pred_len, 1))
         return dec_out
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
+    def imputation(self, x_enc, x_mark_enc):
+        '''
+        WARNING: codes have been modified. nan_to_num is used to prevent nan values
+        '''
         # Normalization from Non-stationary Transformer
         means = x_enc.mean(1, keepdim=True).detach()
+        means = torch.nan_to_num(means)
         x_enc = x_enc - means
         stdev = torch.sqrt(torch.var(x_enc, dim=1, keepdim=True, unbiased=False) + 1e-5)
+        stdev = torch.nan_to_num(stdev)
         x_enc /= stdev
+        x_enc = torch.nan_to_num(x_enc)
 
         _, L, N = x_enc.shape
 
