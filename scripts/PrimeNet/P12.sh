@@ -20,6 +20,7 @@ for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
     --d_model 128 \
+    --n_train_stages 2 \
     --collate_fn "collate_fn_patch" \
     --patch_len 6 \
     --n_heads 1 \

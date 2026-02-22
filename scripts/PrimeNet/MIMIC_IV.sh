@@ -19,9 +19,10 @@ seq_len=2160
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
-    --d_model 128 \
+    --d_model 32 \
+    --n_train_stages 2 \
     --collate_fn "collate_fn_patch" \
-    --patch_len 360 \
+    --patch_len 180 \
     --n_heads 1 \
     --pretrained_checkpoint_root_path "storage/pretrained/PrimeNet" \
     --pretrained_checkpoint_file_name "87623.h5" \
@@ -42,7 +43,7 @@ for pred_len in 3; do
     --patience 10 \
     --val_interval 1 \
     --itr 5 \
-    --batch_size 32 \
+    --batch_size 16 \
     --learning_rate 1e-4
 done
 

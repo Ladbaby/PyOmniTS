@@ -18,31 +18,32 @@ model_id=$model_name
 seq_len=150
 for pred_len in 3; do
     $launch_command main.py \
-        --is_training 1 \
-    --d_model 128 \
-        --collate_fn "collate_fn_patch" \
-        --patch_len 10 \
-        --n_heads 1 \
-        --pretrained_checkpoint_root_path "storage/pretrained/PrimeNet" \
-        --pretrained_checkpoint_file_name "87623.h5" \
-        --loss "ModelProvidedLoss" \
-        --use_multi_gpu $use_multi_gpu \
-        --dataset_root_path $dataset_root_path \
-        --model_id $model_id \
-        --model_name $model_name \
-        --dataset_name $dataset_name \
-        --dataset_id $dataset_id \
-        --features M \
-        --seq_len $seq_len \
-        --pred_len $pred_len \
-        --enc_in $n_variables \
-        --dec_in $n_variables \
-        --c_out $n_variables \
-        --train_epochs 300 \
-        --patience 10 \
-        --val_interval 1 \
-        --itr 5 \
-        --batch_size 16 \
-        --learning_rate 1e-4
+    --is_training 1 \
+    --d_model 64 \
+    --n_heads 1 \
+    --n_train_stages 2 \
+    --collate_fn "collate_fn_patch" \
+    --patch_len 10 \
+    --pretrained_checkpoint_root_path "storage/pretrained/PrimeNet" \
+    --pretrained_checkpoint_file_name "87623.h5" \
+    --loss "ModelProvidedLoss" \
+    --use_multi_gpu $use_multi_gpu \
+    --dataset_root_path $dataset_root_path \
+    --model_id $model_id \
+    --model_name $model_name \
+    --dataset_name $dataset_name \
+    --dataset_id $dataset_id \
+    --features M \
+    --seq_len $seq_len \
+    --pred_len $pred_len \
+    --enc_in $n_variables \
+    --dec_in $n_variables \
+    --c_out $n_variables \
+    --train_epochs 300 \
+    --patience 10 \
+    --val_interval 1 \
+    --itr 5 \
+    --batch_size 16 \
+    --learning_rate 1e-4
 done
 
