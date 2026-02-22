@@ -109,6 +109,8 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
                 hidden_size=ff_size,
                 activation=activation,
             ) for _ in range(self.levels)])
+        elif configs.task_name == "classification":
+            self.decoder_classification = nn.Linear(decoder_input_size * sum(enc_in_list), configs.n_classes)
         else:
             raise NotImplementedError()
 
@@ -140,13 +142,13 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
         BATCH_SIZE, SEQ_LEN, ENC_IN = x.shape
         Y_LEN = self.pred_len
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         u = None
@@ -228,7 +230,7 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
         # 1.shape = [64, 12, 20, 1]
         # 2.shape = [64, 12, 1, 1]
 
-        if self.configs.task_name in ["long_term_forecast", "short_term_forecast"]:
+        if self.configs.task_name in ["long_term_forecast", "short_term_forecast", "imputation"]:
             # skip connection and decoder
             for i in range(self.levels):
                 outs[i] = self.decoders[i](outs[i])
@@ -247,6 +249,13 @@ class HierarchicalTimeThanSpaceModel(nn.Module):
                 "pred": pred[:, -PRED_LEN:, f_dim:],
                 "true": y[:, :, f_dim:],
                 "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "classification":
+            # skip connection and decoder
+            output = self.decoder_classification(torch.cat(outs, dim=1).view(BATCH_SIZE, -1))
+            return {
+                "pred_class": output,
+                "true_class": y_class
             }
         else:
             raise NotImplementedError()
