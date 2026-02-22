@@ -159,6 +159,8 @@ class ExpConfigs:
     primenet_pooling: str
     # ReIMTS
     reimts_pad_time_emb: int
+    # ScaleFormer
+    scaleformer_scales: list[int]
     # TimeMixer
     timemixer_decomp_method: str
     timemixer_down_sampling_layers: int = field(metadata={"sweep": [1, 3]})

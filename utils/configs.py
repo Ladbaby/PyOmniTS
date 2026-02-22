@@ -168,6 +168,8 @@ def get_configs(args=None) -> ExpConfigs:
     parser.add_argument('--primenet_pooling', type=str, default='ave', help='[ave, att, bert]: What pooling to use to aggregate the model output sequence representation for different tasks.')
     # ReIMTS
     parser.add_argument('--reimts_pad_time_emb', type=int, default=1, help='Whether to pad temporal embedding')
+    # ScaleFormer
+    parser.add_argument('--scaleformer_scales', default=[2, 1], help='scales in mult-scale')
     # TimeMixer
     parser.add_argument('--timemixer_decomp_method', type=str, default='moving_avg', help='method of series decompsition, only support moving_avg or dft_decomp')
     parser.add_argument('--timemixer_down_sampling_layers', type=int, default=0, help='num of down sampling layers')
