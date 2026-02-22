@@ -143,6 +143,8 @@ class Dataset_Custom(Dataset):
 
         self.data_stamp = data_stamp
 
+        self.sample_index = np.arange(len(df_raw))[border1:border2]
+
     def __getitem__(self, index):
         s_begin = index
         s_end = s_begin + self.seq_len
@@ -158,7 +160,8 @@ class Dataset_Custom(Dataset):
             'x': seq_x.astype(np.float32),
             'y': seq_y.astype(np.float32),
             "x_mark": seq_x_mark.astype(np.float32),
-            "y_mark": seq_y_mark.astype(np.float32)
+            "y_mark": seq_y_mark.astype(np.float32),
+            "sample_ID": self.sample_index[index]
         }
         # return seq_x, seq_y, seq_x_mark, seq_y_mark
 
