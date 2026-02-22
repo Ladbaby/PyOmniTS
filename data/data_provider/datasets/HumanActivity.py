@@ -85,13 +85,19 @@ class Data(Dataset):
         return len(self.data)
 
     def _check_lengths(self):
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name == "imputation":
+            assert self.seq_len == self.pred_len, f"--seq_len {self.seq_len} must be equal to --pred_len {self.pred_len} for imputation!"
+            assert self.configs.missing_rate > 0, f"--missing_rate {self.configs.missing_rate} should be greater than 0 for imputation!"
+            assert self.seq_len <= self.L_TOTAL and self.pred_len <= self.L_TOTAL, f"Either {self.seq_len=} or {self.pred_len=} is too large. Expect their values smaller than self.L_TOTAL"
+        elif self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             assert self.seq_len + self.pred_len <= self.L_TOTAL, f"{self.seq_len+self.pred_len=} is too large. Expect the value smaller than self.L_TOTAL"
         else:
             raise NotImplementedError()
 
     def _preprocess(self):
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name == "imputation":
+            backbone_pred_len = 300 # data in pred_len unused. not set to 0 to prevent error
+        elif self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             backbone_pred_len = self.pred_len
         else:
             raise NotImplementedError()

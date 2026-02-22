@@ -160,7 +160,9 @@ class Data(tsdmDataset):
         return super()._preprocess_base(task)
 
     def _preprocess(self):
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name == "imputation":
+            backbone_pred_len = 0
+        elif self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
             backbone_pred_len = self.pred_len
         else:
             raise NotImplementedError()
