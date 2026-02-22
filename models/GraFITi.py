@@ -14,6 +14,8 @@ class Model(nn.Module):
     - paper: "GraFITi: Graphs for Forecasting Irregularly Sampled Time Series" (AAAI 2024)
     - paper link: https://ojs.aaai.org/index.php/AAAI/article/view/29560
     - code adapted from: https://github.com/yalavarthivk/GraFITi
+
+    Since PyOmniTS v2.0.0: The model runs significantly faster.
     '''
     def __init__(
         self,
@@ -33,11 +35,7 @@ class Model(nn.Module):
         X = context_w[:, :, :self.dim]
         X = X*context_mask
         context_mask = context_mask + target_y[:,:,self.dim:]
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
-            output, target_U_, target_mask_ = self.enc(context_x, X, context_mask, target_y[:,:,:self.dim], target_y[:,:,self.dim:], exp_stage)
-            return output, target_U_, target_mask_
-        else:
-            raise NotImplementedError()
+        return self.enc(context_x, X, context_mask, target_y[:,:,:self.dim], target_y[:,:,self.dim:], exp_stage)
 
     def convert_data(self,  x_time, x_vals, x_mask, y_time, y_vals, y_mask):
         return x_time, torch.cat([x_vals, x_mask],-1), y_time, torch.cat([y_vals, y_mask],-1)  
@@ -50,6 +48,7 @@ class Model(nn.Module):
         y: Tensor | None = None, 
         y_mark: Tensor | None = None, 
         y_mask: Tensor | None = None,
+        y_class: Tensor | None = None,
         exp_stage: str = "train", 
         **kwargs
     ):
@@ -61,18 +60,22 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
             y_mark = repeat(torch.arange(end=y.shape[1], dtype=y.dtype, device=y.device) / y.shape[1], "L -> B L 1", B=y.shape[0])
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
+        if y_class is None:
+            if self.configs.task_name == "classification":
+                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
 
         x_mark = x_mark[:, :, 0]
         y_mark = y_mark[:, :, 0]
 
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "classification"]:
             x_zero_padding = torch.zeros_like(y, device=x.device)
             y_zero_padding = torch.zeros_like(x, device=y.device)
 
@@ -109,9 +112,11 @@ class Model(nn.Module):
             target_x = target_x.unsqueeze(0)
             target_y = target_y.unsqueeze(0)
 
+        output_dict: dict[str, Tensor] = self.get_extrapolation(context_x, context_y, target_x, target_y, exp_stage)
         if self.configs.task_name in ['long_term_forecast', 'short_term_forecast', "imputation"]:
-            output, target_U_, target_mask_ = self.get_extrapolation(context_x, context_y, target_x, target_y, exp_stage)
-            output = output.squeeze(-1)
+            output = output_dict["output"].squeeze(-1)
+            target_U_ = output_dict["target_U_"]
+            target_mask_ = output_dict["target_mask_"]
             if exp_stage in ["train", "val"]:
                 return {
                     "pred": output,
@@ -132,20 +137,42 @@ class Model(nn.Module):
                     "true": y[:, :, f_dim:],
                     "mask": y_mask[:, :, f_dim:]
                 }
+        elif self.configs.task_name == "classification":
+            output_class = output_dict["output_class"]
+            return {
+                "pred_class": output_class,
+                "true_class": y_class
+            }
         else:
             raise NotImplementedError()
 
     # convert the output back to original shape, to align with api
-    def unpad_and_reshape(self, target_U: Tensor, mask: Tensor, original_shape: Tensor):
-        # print(f"{target_U.shape=}")
-        # print(f"{mask.shape=}")
-        # print(f"{original_shape.shape=}")
-        batch_size, time_length, ndims = original_shape
-        result = torch.zeros(original_shape, dtype=target_U.dtype, device=target_U.device)
+    def unpad_and_reshape(
+        self, 
+        tensor_flattened: Tensor, 
+        original_mask: Tensor, 
+        original_shape: tuple
+    ):
+        original_mask = original_mask.bool()
+        device = tensor_flattened.device
+        # Initialize the result tensor on the correct device
+        result = torch.zeros(original_shape, dtype=tensor_flattened.dtype, device=device)
 
-        for i in range(batch_size):
-            masked_indices = mask[i].view(-1).nonzero(as_tuple=True)[0]
-            unpadded_sequence = target_U[i][:len(masked_indices)]
-            result[i].view(-1)[masked_indices] = unpadded_sequence
-            
+        # 1. Calculate how many valid elements exist per batch item
+        # This replaces len(masked_indices) for every row at once
+        # Supports masks of shape (B, L) or (B, H, W)
+        counts = original_mask.sum(dim=tuple(range(1, original_mask.dim())))
+
+        # 2. Create a boolean mask for the 'tensor_flattened' source
+        # We need to pick the first 'n' elements from each row of tensor_flattened
+        batch_size, max_len = tensor_flattened.shape[:2]
+        # Creates a grid of indices: [[0,1,2...], [0,1,2...]]
+        steps = torch.arange(max_len, device=device).expand(batch_size, max_len)
+        src_mask = steps < counts.unsqueeze(-1)
+
+        # 3. Vectorized Assignment
+        # result[original_mask] automatically maps to the flattened valid elements
+        # tensor_flattened[src_mask] extracts only the unpadded elements
+        result[original_mask] = tensor_flattened[src_mask]
+
         return result

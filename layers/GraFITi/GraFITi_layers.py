@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import *
+from torch import Tensor
 
 
 class MAB2(nn.Module):
@@ -65,6 +66,8 @@ class Encoder(nn.Module):
             self.edge_nn.append(nn.Linear(3*nkernel, nkernel))
         self.relu = nn.ReLU()
 
+        if task_name == "classification":
+            self.decoder_classification = nn.Linear(dim * nkernel, n_classes)
 
     def gather(self, x: torch.Tensor, inds: torch.Tensor):
         # inds =  # keep repeating until the embedding len as a new dim
@@ -87,18 +90,16 @@ class Encoder(nn.Module):
         # get total number of observations in each sample, and take max
         N_OBSERVATIONS_MAX = torch.max(mask.sum((1, 2))).to(torch.int64)  # flattened TxC max length possible
 
-        # function to pad 0s to the last dimension of input v, with no padding on left side and some paddings on right side
-        def pad(v): return F.pad(v, [0, N_OBSERVATIONS_MAX - len(v)], value=0)
 
         # flatten everything, from (L, ENC_IN) to (N_OBSERVATIONS_MAX), where observations belonging to the same timestep are nearby
         # note that r[m] won't keep the original tensor shape by default, thus flattened
-        value_flattened = torch.stack([pad(r[m]) for r, m in zip(value, mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-        time_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(time_indices, mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-        channel_indices_flattened = torch.stack([pad(r[m]) for r, m in zip(channel_indices, mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-        mask_flattened = torch.stack([pad(r[m]) for r, m in zip(mask, mask_bool)]).contiguous() # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        value_flattened = self.pad_and_flatten(value, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        time_indices_flattened = self.pad_and_flatten(time_indices, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        channel_indices_flattened = self.pad_and_flatten(channel_indices, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        mask_flattened = self.pad_and_flatten(mask, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
 
-        target_value_flattened = torch.stack([pad(r[m]) for r, m in zip(target_value, mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
-        target_mask_flattened = torch.stack([pad(r[m]) for r, m in zip(target_mask, mask_bool)]).contiguous()  # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        target_value_flattened = self.pad_and_flatten(target_value, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
+        target_mask_flattened = self.pad_and_flatten(target_mask, mask_bool, N_OBSERVATIONS_MAX) # (BATCH_SIZE, L, ENC_IN) -> (BATCH_SIZE, N_OBSERVATIONS_MAX)
 
 
         channel_IDs = torch.ones([BATCH_SIZE, ENC_IN]).cumsum(dim=1).to(context_x.device) - 1  # (BATCH_SIZE, ENC_IN) prepare for later one hot encoding channels. 0, 1, 2,...
@@ -185,6 +186,55 @@ class Encoder(nn.Module):
             k_t = self.gather(time_embedding, time_indices_flattened)
             k_c = self.gather(channel_embedding, channel_indices_flattened)
             output = self.output(torch.cat([value_flattened, k_t, k_c], dim=-1))
-            return output, target_value_flattened, target_mask_flattened
+            return {
+                "output": output,
+                "target_U_": target_value_flattened,
+                "target_mask_": target_mask_flattened,
+                "channel_embedding": channel_embedding
+            }
+        elif self.task_name == "classification":
+            return {
+                "output_class": self.decoder_classification(channel_embedding.reshape(BATCH_SIZE, -1)),
+                "channel_embedding": channel_embedding
+            }
         else:
             raise NotImplementedError()
+        
+    def pad_and_flatten(self, tensor: Tensor, mask: Tensor, max_len: int) -> Tensor:
+        """
+        Speed optimized since PyOmniTS v2.0.0
+        Much faster than looping through batch with list comprehension.
+        """
+        batch_size = tensor.shape[0]
+        device = tensor.device
+        dtype = tensor.dtype
+
+        # 1. Flatten both to (B, -1)
+        tensor_flat = tensor.reshape(batch_size, -1)
+        mask_flat = mask.reshape(batch_size, -1)
+
+        # 2. Use cumsum to find the destination column index for every element
+        # We subtract 1 to make it 0-indexed.
+        # [0, 1, 0, 1] -> cumsum -> [0, 1, 1, 2] -> minus 1 -> [-1, 0, 0, 1]
+        dest_indices = torch.cumsum(mask_flat, dim=1) - 1
+
+        # 3. Create a filter for valid elements that fit within max_len
+        # Elements must be in the mask AND their destination index must be < max_len
+        keep_mask = (mask_flat == 1) & (dest_indices < max_len)
+
+        # 4. Prepare the output buffer
+        result = torch.zeros((batch_size, max_len), dtype=dtype, device=device)
+
+        # 5. Advanced Indexing: 
+        # We need row indices for every element we are keeping
+        row_indices = torch.arange(batch_size, device=device).unsqueeze(1).expand_as(mask_flat)
+        
+        # Filter the indices and values
+        rows = row_indices[keep_mask]
+        cols = dest_indices[keep_mask]
+        values = tensor_flat[keep_mask]
+
+        # 6. Scatter the values into the result
+        result[rows, cols] = values
+
+        return result
