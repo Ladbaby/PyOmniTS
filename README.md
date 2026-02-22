@@ -157,8 +157,8 @@ The following loss functions are included under `loss_fns/`:
 PyOmniTS is continously evolving:
 
 - [ ] More tutorials.
-- [ ] Classification support in core components.
-- [ ] Imputation support in core components.
+- [x] Classification support in core components.
+- [x] Imputation support in core components.
 - [x] Optional python package management via [uv](https://github.com/astral-sh/uv).
 
 ## Yet Another Code Framework?
