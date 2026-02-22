@@ -25,7 +25,10 @@ from data.data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
 from utils.ExpConfigs import ExpConfigs
 from utils.globals import accelerator, logger
-from utils.metrics import metric
+from utils.metrics import (
+    metric,
+    metric_classification,
+)
 from utils.tools import (
     EarlyStopping,
     test_gpu_memory,
@@ -133,10 +136,15 @@ class Exp_Main(Exp_Basic):
             logger.exception(f"Expect model's forward function to return dict. Current output's data type is {type(outputs)}.", stack_info=True)
             exit(1)
 
-        if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+        if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             # check if outputs' true is the the same as input dataset's y
             if "true" in outputs.keys() and not torch.equal(batch["y"], outputs["true"]):
                 logger.warning(f"Model's outputs['true'] is not equal to input's batch['y']. Please confirm that you are not using input's batch['y'] as ground truth. This is expected in some models such as diffusion.")
+        elif self.configs.task_name in ["classification"]:
+            if "true_class" in outputs.keys():
+                # check if outputs' true_class is the the same as input dataset's y_class
+                if not torch.equal(batch["y_class"], outputs["true_class"]):
+                    logger.warning(f"Model's outputs['true_class'] is not equal to input's batch['y_class']. Please confirm that you are not using input's batch['y_class'] as ground truth.")
 
     def _merge_gathered_dicts(self, dicts: list[dict]) -> dict:
         '''
@@ -306,6 +314,8 @@ class Exp_Main(Exp_Basic):
                             loss.backward(retain_graph=self.configs.retain_graph)
                         else:
                             accelerator.backward(loss, retain_graph=self.configs.retain_graph)
+                        if self.configs.task_name == "classification":
+                            clip_grad_norm_(model_train.parameters(), max_norm=4.0)
                         model_optim.step()
 
                 if if_nan_loss:
@@ -516,6 +526,9 @@ class Exp_Main(Exp_Basic):
             if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 input_tensor_names = ["x", "y", "x_mask", "y_mask", "sample_ID"]
                 output_tensor_names = ["pred"]
+            elif self.configs.task_name in ["classification"]:
+                input_tensor_names = ["x", "y_class", "x_mask", "y_mask", "sample_ID"]
+                output_tensor_names = ["pred_class"]
             else:
                 raise NotImplementedError()
 
@@ -604,6 +617,17 @@ class Exp_Main(Exp_Basic):
                     wandb.log({
                         "loss_test": np.mean(metrics["MSE"]),
                     })
+            elif self.configs.task_name in ["classification"]:
+                metrics = metric_classification(
+                    **array_dict,
+                    n_classes=self.configs.n_classes
+                )
+                if (self.configs.wandb and accelerator.is_main_process and self.configs.is_training) or self.configs.sweep:
+                    import wandb
+                    wandb.log({
+                        "loss_test": np.mean(metrics["Accuracy"]),
+                    })
+
             
             if metrics is not None:
                 # convert to float before saving to json
