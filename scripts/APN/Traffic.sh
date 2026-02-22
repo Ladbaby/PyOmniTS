@@ -46,7 +46,7 @@ for pred_len in 96 192 336 720; do
     --patience 10 \
     --val_interval 1 \
     --itr 5 \
-    --batch_size 1 \
+    --batch_size 32 \
     --learning_rate 1e-2
 done
 

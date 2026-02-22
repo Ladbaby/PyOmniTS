@@ -39,7 +39,7 @@ for pred_len in 96 192 336 720; do
     --train_epochs 300 \
     --patience 10 \
     --itr 5 \
-    --batch_size 1 \
+    --batch_size 32 \
     --learning_rate 1e-3
 done
 

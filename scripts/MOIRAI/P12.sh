@@ -37,7 +37,7 @@ for pred_len in 3; do
     --train_epochs 300 \
     --patience 10 \
     --itr 5 \
-    --batch_size 16 \
+    --batch_size 32 \
     --learning_rate 1e-4
 done
 
