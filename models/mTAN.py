@@ -24,9 +24,9 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.configs = configs
         self.pred_len = configs.pred_len_max_irr or configs.pred_len
-        self.latent_dim = 16
-        rec_hidden = 64 # random.choice([32, 64, 128])
-        gen_hidden = 50
+        self.latent_dim = configs.d_model # 16
+        rec_hidden = configs.d_model # random.choice([32, 64, 128])
+        gen_hidden = configs.d_model # 50
         num_ref_points = configs.mtan_num_ref_points # random.choice([8, 16, 32, 64, 128])
         self.k_iwae = 8
         self.alpha = configs.mtan_alpha
@@ -53,7 +53,7 @@ class Model(nn.Module):
         if configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
             self.reconstruction_loss_fn = ReconstructionLoss()
         elif configs.task_name == "classification":
-            self.classifier = create_classifier(self.latent_dim, rec_hidden)
+            self.classifier = create_classifier(self.latent_dim, rec_hidden, N=configs.n_classes)
             self.reconstruction_loss_fn = ReconstructionLoss()
             self.classification_loss_fn = nn.CrossEntropyLoss()
         else:
@@ -79,7 +79,7 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
@@ -146,17 +146,17 @@ class Model(nn.Module):
                     qz0_mean=qz0_mean,
                     qz0_logvar=qz0_logvar
                 )
-                ce_loss = self.classification_loss_fn(pred_y, y_class.unsqueeze(0).repeat_interleave(self.k_iwae, 0).view(-1))
+                ce_loss = self.classification_loss_fn(pred_y, torch.argmax(y_class, dim=1).unsqueeze(0).repeat_interleave(self.k_iwae, 0).view(-1))
                 loss = recon_loss + self.alpha * ce_loss
                 return {
-                    "pred_class": pred_y,
-                    "true": y_class,
+                    "pred_class": pred_y.view(self.k_iwae, batch_len, pred_y.shape[1]).mean(0),
+                    "true_class": y_class,
                     "loss": loss
                 }
             else:
                 return {
                     "pred_class": pred_y.view(self.k_iwae, batch_len, pred_y.shape[1]).mean(0),
-                    "true": y_class
+                    "true_class": y_class
                 }
         else:
             raise NotImplementedError()
