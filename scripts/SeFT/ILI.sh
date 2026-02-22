@@ -20,6 +20,7 @@ label_len=18
 for pred_len in 12 24 36 48; do
     $launch_command main.py \
     --is_training 1 \
+    --d_model 128 \
     --n_layers 2 \
     --dropout 0.1 \
     --loss "MSE" \
