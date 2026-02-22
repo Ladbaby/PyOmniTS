@@ -117,6 +117,12 @@ class Model(nn.Module):
                 nn.ReLU(inplace=True),
                 nn.Linear(self.hid_dim, 1)
             )
+        elif configs.task_name == "classification":
+            self.decoder_classification = nn.Sequential(
+                nn.Linear(configs.enc_in * d_model, 200),
+                nn.ReLU(),
+                nn.Linear(200, configs.n_classes)
+            )
         else:
             raise NotImplementedError()
         
@@ -207,6 +213,7 @@ class Model(nn.Module):
         y: Tensor | None = None, 
         y_mark: Tensor | None = None, 
         y_mask: Tensor | None = None, 
+        y_class: Tensor | None = None,
         **kwargs
     ):
         # BEGIN adaptor
@@ -217,13 +224,17 @@ class Model(nn.Module):
         if x_mask is None:
             x_mask = torch.ones_like(x, device=x.device, dtype=x.dtype)
         if y is None:
-            if self.configs.task_name in ["short_term_forecast", "long_term_forecast"]:
+            if self.configs.task_name in ["short_term_forecast", "long_term_forecast", "imputation"]:
                 logger.warning(f"y is missing for the model input. This is only reasonable when the model is testing flops!")
             y = torch.ones((BATCH_SIZE, Y_LEN, ENC_IN), dtype=x.dtype, device=x.device)
         if y_mark is None:
             y_mark = repeat(torch.arange(end=y.shape[1], dtype=y.dtype, device=y.device) / y.shape[1], "L -> B L 1", B=y.shape[0])
         if y_mask is None:
             y_mask = torch.ones_like(y, device=y.device, dtype=y.dtype)
+        if y_class is None:
+            if self.configs.task_name == "classification":
+                logger.warning(f"y_class is missing for the model input. This is only reasonable when the model is testing flops!")
+            y_class = torch.ones((BATCH_SIZE), dtype=x.dtype, device=x.device)
 
         # reshape tensors to align with tPatchGNN's desired input shape
         # x: [B, n_patch, seq_len // n_patch, enc_in]
@@ -271,6 +282,11 @@ class Model(nn.Module):
                 "pred": outputs[:, -PRED_LEN:, f_dim:],
                 "true": y[:, :, f_dim:],
                 "mask": y_mask[:, :, f_dim:]
+            }
+        elif self.configs.task_name == "classification":
+            return {
+                "pred_class": self.decoder_classification(h.view(BATCH_SIZE, -1)),
+                "true_class": y_class
             }
         else:
             raise NotImplementedError()
