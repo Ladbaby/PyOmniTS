@@ -166,6 +166,11 @@ class ExperimentRunner:
         if self.exp is None:
             self.exp = Exp_Main(self.configs)
         
+        if not self.configs.load_checkpoints_test:
+            # for no-training cases like pretrained model
+            self.configs.subfolder_train = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
+            path = self._create_output_path()
+            self._save_configs(path)
         self._run_with_batch_reduction(self.exp.test, "testing")
         torch.cuda.empty_cache()
     

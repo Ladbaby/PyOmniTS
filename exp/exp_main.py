@@ -449,31 +449,22 @@ class Exp_Main(Exp_Basic):
         if self.configs.checkpoints_test is None:
             # by default, if checkpoints_test is not given, it tries to load the latest corresponding checkpoint
             checkpoint_location = Path(self.configs.checkpoints) / self.configs.dataset_name / self.configs.dataset_id / self.configs.model_name / self.configs.model_id / f"{self.configs.seq_len}_{self.configs.pred_len}"
-            if self.configs.load_checkpoints_test:
-                try:
-                    # first, find the latest one based on timestamp in name
-                    child_folders = [(entry.name, entry) for entry in checkpoint_location.iterdir() if entry.is_dir()]
-                    if len(child_folders) == 0:
-                        logger.exception(f"No folder under '{checkpoint_location}' matches the model_id '{self.configs.model_id}'.", stack_info=True)
-                        logger.exception(f"Tips: Failed to infer the latest checkpoint folder. Please manually provide the checkpoints_test argument pointing to the folder of checkpoint file")
-                        exit(1)
-                    latest_folder: str = sorted(child_folders, key=lambda item: datetime.datetime.strptime(item[0], "%Y_%m%d_%H%M"))[-1][1].name
-                    checkpoint_location = checkpoint_location / latest_folder
-                    self.configs.subfolder_train = latest_folder
-                    # then find the latest iter
-                    actual_itrs = len([entry.name for entry in checkpoint_location.iterdir() if entry.is_dir()])
-                except Exception as e:
-                    logger.exception(f"{e}", stack_info=True)
+            try:
+                # first, find the latest one based on timestamp in name
+                child_folders = [(entry.name, entry) for entry in checkpoint_location.iterdir() if entry.is_dir()]
+                if len(child_folders) == 0:
+                    logger.exception(f"No folder under '{checkpoint_location}' matches the model_id '{self.configs.model_id}'.", stack_info=True)
                     logger.exception(f"Tips: Failed to infer the latest checkpoint folder. Please manually provide the checkpoints_test argument pointing to the folder of checkpoint file")
                     exit(1)
-            else:
-                # create pseudo training directory for test results
-                train_folder = datetime.datetime.now().strftime("%Y_%m%d_%H%M")
-                path = checkpoint_location / train_folder / f"iter0"
-                path.mkdir(parents=True, exist_ok=True)
-                checkpoint_location = checkpoint_location / train_folder
-                self.configs.subfolder_train = train_folder
-
+                latest_folder: str = sorted(child_folders, key=lambda item: datetime.datetime.strptime(item[0], "%Y_%m%d_%H%M"))[-1][1].name
+                checkpoint_location = checkpoint_location / latest_folder
+                self.configs.subfolder_train = latest_folder
+                # then find the latest iter
+                actual_itrs = len([entry.name for entry in checkpoint_location.iterdir() if entry.is_dir()])
+            except Exception as e:
+                logger.exception(f"{e}", stack_info=True)
+                logger.exception(f"Tips: Failed to infer the latest checkpoint folder. Please manually provide the checkpoints_test argument pointing to the folder of checkpoint file")
+                exit(1)
 
         # test on all iters' checkpoints
         for itr_i in range(actual_itrs):
