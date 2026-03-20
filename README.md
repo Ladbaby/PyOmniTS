@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/images/icon_dark.png#gh-dark-mode-only" height=200>
   <img src="docs/images/icon_light.png#gh-light-mode-only" height=200>
-  <h3><b> A Researcher-Friendly Framework for Time Series Analysis. </b></h3>
+  <h3><b> A Researcher&Agent-Friendly Framework for Time Series Analysis. </b></h3>
   <h4><b> Train Any Model on Any Dataset. </b></h4>
 </div>
 
@@ -44,6 +44,8 @@ This is also the official repository for the following paper:
 ## 2. 🧭 Documentation
 
 Checkout the new [documentation website](https://ladbaby.github.io/PyOmniTS-docs/).
+
+Using 🦞agent? Check out our official [PyOmniTS skill on clawhub](https://clawhub.ai/Ladbaby/pyomnits). Your agent will understand the essentials of our framework, and even automate the code replication process by adapting other papers' codes into PyOmniTS!
 
 ## 3. 🤖 Models
 
