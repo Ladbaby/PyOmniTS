@@ -19,10 +19,10 @@ seq_len=2160
 for pred_len in 3; do
     $launch_command main.py \
     --is_training 1 \
-    --collate_fn "collate_fn" \
+    --collate_fn "collate_fn_patch" \
+    --patch_len 3 \
     --loss "MSE" \
     --use_multi_gpu $use_multi_gpu \
-    --patch_len 3 \
     --d_model 512 \
     --dropout 0 \
     --dataset_root_path $dataset_root_path \
