@@ -130,11 +130,7 @@ class Model(nn.Module):
         logger.debug(f"""ReIMTS also overwrites the following configs in backbone {configs.ts_backbone_name}:
         - batch_size: -> {configs_backbone.batch_size}
         - seq_len: -> {configs_backbone.seq_len}
-        - seq_len_max_irr: -> {configs_backbone.seq_len_max_irr}
-        - pred_len: -> {configs_backbone.pred_len}
-        - pred_len_max_irr: -> {configs_backbone.pred_len_max_irr}
-        - task_name: -> {configs_backbone.task_name}
-        - n_classes: -> {configs_backbone.n_classes}""")
+        - seq_len_max_irr: -> {configs_backbone.seq_len_max_irr}""")
 
 
         # dynamic backbone model import & construction
