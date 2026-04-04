@@ -5,6 +5,10 @@
   <h4><b> Train Any Model on Any Dataset. </b></h4>
 </div>
 
+📊 Time series analysis leaderboard is now available on our [🤗 Hugging Face space](https://huggingface.co/spaces/Ladbaby/PyOmniTS-leaderboard). Discover the performance of different models!
+
+[![](docs/images/leaderboard.png)](https://huggingface.co/spaces/Ladbaby/PyOmniTS-leaderboard)
+
 ---
 
 This is also the official repository for the following paper:
