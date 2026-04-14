@@ -13,7 +13,7 @@
 
 This is also the official repository for the following paper:
 
-- Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting (ICLR 2026) [[OpenReview]](https://openreview.net/forum?id=JEIDxiTWzB) [[arXiv]](https://arxiv.org/abs/2602.21498)
+- Learning Recursive Multi-Scale Representations for Irregular Multivariate Time Series Forecasting (ICLR 2026) [[poster]](https://iclr.cc/virtual/2026/poster/10010222) [[OpenReview]](https://openreview.net/forum?id=JEIDxiTWzB) [[arXiv]](https://arxiv.org/abs/2602.21498)
 
     ```
     @inproceedings{li_LearningRecursiveMultiScale_2026,
