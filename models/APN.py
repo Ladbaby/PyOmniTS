@@ -12,11 +12,11 @@ from utils.ExpConfigs import ExpConfigs
 
 class Model(nn.Module):
     """
-    - paper: "APN: Rethinking Irregular Time Series Forecasting: A Simple yet Effective Baseline" (AAAI 2026)
-    - paper link: https://arxiv.org/abs/2505.11250
+    - paper: "Rethinking Irregular Time Series Forecasting: A Simple Yet Effective Baseline" (AAAI 2026)
+    - paper link: https://ojs.aaai.org/index.php/AAAI/article/view/39563
     - code adapted from: https://github.com/decisionintelligence/APN
 
-        Note: This model's code repository originated from PyOmniTS.
+        Note: This model's code repository originated from PyOmniTS v1.0.0.
     """
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()
