@@ -17,7 +17,7 @@ class Model(nn.Module):
     - code adapted from: https://github.com/decisionintelligence/APN
 
         Note: This model's code repository originated from PyOmniTS v1.0.0: https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0
-        Authors from PyOmniTS have made changes to the code formatting, aligning with the high standard of PyOmniTS's API.
+        Authors from PyOmniTS have made changes to the code formatting, aligning with the high standard of the PyOmniTS API.
     """
     def __init__(self, configs: ExpConfigs):
         super(Model, self).__init__()
