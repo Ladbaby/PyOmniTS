@@ -3,6 +3,8 @@
 # for dataset_name in "ECL" "ETTh1" "ETTm1" "ILI" "Traffic" "Weather"; do
 for dataset_name in "P12" "MIMIC_III" "MIMIC_IV" "USHCN" "HumanActivity"; do
     # sh scripts/Ada_MSHyper/$dataset_name.sh
+    # sh scripts/APN/$dataset_name.sh
+    # sh scripts/ASTGI/$dataset_name.sh
     # sh scripts/Autoformer/$dataset_name.sh
     # sh scripts/BigST/$dataset_name.sh
     # sh scripts/Crossformer/$dataset_name.sh
@@ -38,6 +40,7 @@ for dataset_name in "P12" "MIMIC_III" "MIMIC_IV" "USHCN" "HumanActivity"; do
     # sh scripts/Reformer/$dataset_name.sh;
     # sh scripts/SeFT/$dataset_name.sh;
     # sh scripts/SegRNN/$dataset_name.sh;
+    # sh scripts/TFMixer/$dataset_name.sh
     # sh scripts/TiDE/$dataset_name.sh;
     # sh scripts/TimeMixer/$dataset_name.sh;
     # sh scripts/TimesNet/$dataset_name.sh
