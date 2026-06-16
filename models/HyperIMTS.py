@@ -191,25 +191,28 @@ class Model(nn.Module):
                     )),
                 ], dim=-1)
             ).squeeze(-1)
-            if exp_stage in ["train", "val"]:
-                return {
-                    "pred": pred_flattened,
-                    "true": y_L_flattened,
-                    "mask": y_mask_L_flattened
-                }
-            else:
-                # convert unpadded tensor back to shape [batch_size, seq_len + pred_len, enc_in] to align with the pipeline's unified api when testing
-                pred = self.unpad_and_reshape(
-                    tensor_flattened=pred_flattened,
-                    original_mask=torch.cat([x_mask, y_mask], dim=1),
-                    original_shape=(BATCH_SIZE, SEQ_LEN + PRED_LEN, ENC_IN)
-                )
-                f_dim = -1 if self.configs.features == 'MS' else 0
-                return {
-                    "pred": pred[:, -PRED_LEN:, f_dim:],
-                    "true": y[:, :, f_dim:],
-                    "mask": y_mask[:, :, f_dim:],
-                }
+
+            # use these codes for faster speed during training, but can affect compatibility with some loss functions
+            # if exp_stage in ["train", "val"]:
+            #     return {
+            #         "pred": pred_flattened,
+            #         "true": y_L_flattened,
+            #         "mask": y_mask_L_flattened
+            #     }
+            # else:
+
+            # convert unpadded tensor back to shape [batch_size, seq_len + pred_len, enc_in] to align with the pipeline's unified api when testing
+            pred = self.unpad_and_reshape(
+                tensor_flattened=pred_flattened,
+                original_mask=torch.cat([x_mask, y_mask], dim=1),
+                original_shape=(BATCH_SIZE, SEQ_LEN + PRED_LEN, ENC_IN)
+            )
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            return {
+                "pred": pred[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:],
+            }
         else:
             raise NotImplementedError()
 
