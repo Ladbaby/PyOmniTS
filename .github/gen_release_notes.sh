@@ -55,9 +55,6 @@ list_commits() {
 }
 
 {
-  echo "# ${version}"
-  echo ""
-
   # ── Features ──────────────────────────────────────────────────────
   FEAT_OUTPUT=$(list_commits "^feat")
   if [ -n "$FEAT_OUTPUT" ]; then
