@@ -65,59 +65,59 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 
 |Model|Venue|Type|Forecasting|Classification|Imputation|Available Versions|
 |---|---|---|---|---|---|---|
-|[Ada-MSHyper](https://openreview.net/forum?id=RNbrIQ0se8)|NeurIPS 2024|MTS|✅|✅|✅|v1.0.0+|
-|[APN](https://arxiv.org/abs/2505.11250)|AAAI 2026|IMTS|✅|-|-|v1.3.2+|
-|[ASTGI](https://openreview.net/forum?id=Wg9Rx5rjgo)|ICLR 2026|IMTS|✅|-|-|v2.0.1+|
-|[Autoformer](https://openreview.net/pdf?id=I55UqU-M11y)|NeurIPS 2021|MTS|✅|✅|✅|v1.0.0+|
-|[Scaleformer](https://openreview.net/forum?id=sCrnllCtjoE)|ICLR 2023|MTS|✅|-|✅|v2.0.0+|
-|[BigST](https://dl.acm.org/doi/abs/10.14778/3641204.3641217)|VLDB 2024|MTS|✅|✅|✅|v1.0.0+|
-|[Crossformer](https://openreview.net/pdf?id=vSVLM2j9eie)|ICLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[CRU](https://proceedings.mlr.press/v162/schirmer22a.html)|ICML 2022|IMTS|✅|❌|✅|v1.0.0+|
-|[DLinear](https://ojs.aaai.org/index.php/AAAI/article/view/26317)|AAAI 2023|MTS|✅|✅|✅|v1.0.0+|
-|[ETSformer](https://arxiv.org/abs/2202.01381)|arXiv 2022|MTS|✅|✅|✅|v1.0.0+|
-|[FEDformer](https://proceedings.mlr.press/v162/zhou22g.html)|ICML 2022|MTS|✅|✅|✅|v1.0.0+|
-|[FiLM](https://papers.nips.cc/paper_files/paper/2022/hash/524ef58c2bd075775861234266e5e020-Abstract-Conference.html)|NeurIPS 2022|MTS|✅|✅|✅|v1.0.0+|
-|[FourierGNN](https://openreview.net/forum?id=bGs1qWQ1Fx)|NeurIPS 2023|MTS|✅|✅|✅|v1.0.0+|
-|[FreTS](https://papers.nips.cc/paper_files/paper/2023/hash/f1d16af76939f476b5f040fd1398c0a3-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|✅|✅|v1.0.0+|
-|[GNeuralFlow](https://openreview.net/forum?id=tFB5SsabVb)|NeurIPS 2024|IMTS|✅|❌|✅|v1.0.0+|
-|[GraFITi](https://ojs.aaai.org/index.php/AAAI/article/view/29560)|AAAI 2024|IMTS|✅|✅|✅|v1.0.0+|
-|[GRU-D](https://www.nature.com/articles/s41598-018-24271-9)|Scientific Reports 2018|IMTS|✅|✅|✅|v1.0.0+|
-|[HD-TTS](https://proceedings.mlr.press/v235/marisca24a.html)|ICML 2024|IMTS|✅|-|✅|v2.0.0+|
-|[Hi-Patch](https://openreview.net/forum?id=nBgQ66iEUu)|ICML 2025|IMTS|✅|✅|✅|v1.0.0+|
-|[higp](https://proceedings.mlr.press/v235/cini24a.html)|ICML 2024|MTS|✅|✅|✅|v1.0.0+|
-|**[HyperIMTS](https://openreview.net/forum?id=u8wRbX2r2V) (Ours)**|ICML 2025|IMTS|✅|-|✅|v1.0.0+|
-|[Informer](https://ojs.aaai.org/index.php/AAAI/article/view/17325)|AAAI 2021|MTS|✅|✅|✅|v1.0.0+|
-|[iTransformer](https://openreview.net/forum?id=JePfAI8fah)|ICLR 2024|MTS|✅|✅|✅|v1.0.0+|
-|[Koopa](https://papers.nips.cc/paper_files/paper/2023/hash/28b3dc0970fa4624a63278a4268de997-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|❌|✅|v1.0.0+|
-|[Latent_ODE](https://papers.nips.cc/paper_files/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html)|NeurIPS 2019|IMTS|✅|❌|✅|v1.0.0+|
-|[Leddam](https://openreview.net/forum?id=87CYNyCGOo)|ICML 2024|MTS|✅|✅|✅|v1.0.0+|
-|[LightTS](https://arxiv.org/abs/2207.01186)|arXiv 2022|MTS|✅|✅|✅|v1.0.0+|
-|[Mamba](https://openreview.net/forum?id=tEYskw1VY2)|Language Modeling 2024|MTS|✅|✅|✅|v1.0.0+|
-|[MICN](https://openreview.net/pdf?id=zt53IDUR1U)|ICLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[MOIRAI](https://proceedings.mlr.press/v235/woo24a.html)|ICML 2024|Any|✅|-|✅|v1.0.0+|
-|[mTAN](https://openreview.net/forum?id=4c0J6lwQ4_)|ICLR 2021|IMTS|✅|✅|✅|v1.0.0+|
-|[NeuralFlows](https://proceedings.neurips.cc/paper/2021/hash/b21f9f98829dea9a48fd8aaddc1f159d-Abstract.html)|NeurIPS 2021|IMTS|✅|❌|✅|v1.0.0+|
-|[NHITS](https://ojs.aaai.org/index.php/AAAI/article/view/25854)|AAAI 2023|MTS|✅|-|✅|v2.0.0+|
-|[Nonstationary Transformer](https://openreview.net/pdf?id=ucNDIDRNjjv)|NeurIPS 2022|MTS|✅|✅|✅|v1.0.0+|
-|[PatchTST](https://openreview.net/forum?id=Jbdc0vTOcol)|ICLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[Pathformer](https://openreview.net/forum?id=lJkOCMP2aW)|ICLR 2024|MTS|✅|-|✅|v2.0.0+|
-|[PrimeNet](https://ojs.aaai.org/index.php/AAAI/article/view/25876)|AAAI 2023|IMTS|✅|✅|✅|v1.0.0+|
-|[Pyraformer](https://openreview.net/pdf?id=0EXmFzUn5I)|ICLR 2022|MTS|✅|✅|✅|v2.0.0+|
-|[Raindrop](https://openreview.net/forum?id=Kwm8I7dU-l5)|ICLR 2022|IMTS|✅|✅|✅|v1.0.0+|
-|[Reformer](https://openreview.net/forum?id=rkgNKkHtvB)|ICLR 2020|MTS|✅|✅|✅|v1.0.0+|
-|**[ReIMTS](https://openreview.net/forum?id=JEIDxiTWzB) (Ours)**|ICLR 2026|IMTS|✅|✅|-|v2.0.0+|
-|[SeFT](https://proceedings.mlr.press/v119/horn20a.html)|ICML 2020|IMTS|✅|✅|✅|v1.0.0+|
-|[SegRNN](https://arxiv.org/abs/2308.11200)|arXiv 2023|MTS|✅|✅|✅|v1.0.0+|
-|[Temporal Fusion Transformer](https://arxiv.org/abs/1912.09363)|arXiv 2019|MTS|✅|-|-|v1.0.0+|
-|[TFMixer](https://arxiv.org/pdf/2602.00582)|ICML 2026|IMTS|✅|-|-|v2.0.1+|
-|[TiDE](https://openreview.net/forum?id=pCbC3aQB5W)|TMLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[TimeCHEAT](https://ojs.aaai.org/index.php/AAAI/article/view/34076)|AAAI 2025|MTS|✅|✅|✅|v1.0.0+|
-|[TimeMixer](https://openreview.net/forum?id=7oLshfEIC2)|ICLR 2024|MTS|✅|✅|✅|v1.0.0+|
-|[TimesNet](https://openreview.net/pdf?id=ju_Uqw384Oq)|ICLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[tPatchGNN](https://openreview.net/forum?id=UZlMXUGI6e)|ICML 2024|IMTS|✅|✅|✅|v1.0.0+|
-|[Transformer](https://papers.nips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)|NeurIPS 2017|MTS|✅|✅|✅|v1.0.0+|
-|[TSMixer](https://openreview.net/forum?id=wbpxTuXgm0)|TMLR 2023|MTS|✅|✅|✅|v1.0.0+|
-|[Warpformer](https://dl.acm.org/doi/abs/10.1145/3580305.3599543)|KDD 2023|IMTS|✅|✅|✅|v1.0.0+|
+|[Ada-MSHyper](https://openreview.net/forum?id=RNbrIQ0se8)|NeurIPS 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[APN](https://arxiv.org/abs/2505.11250)|AAAI 2026|IMTS|✅|-|-|[v1.3.2+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.3.2)|
+|[ASTGI](https://openreview.net/forum?id=Wg9Rx5rjgo)|ICLR 2026|IMTS|✅|-|-|[v2.0.1+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.1)|
+|[Autoformer](https://openreview.net/pdf?id=I55UqU-M11y)|NeurIPS 2021|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Scaleformer](https://openreview.net/forum?id=sCrnllCtjoE)|ICLR 2023|MTS|✅|-|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[BigST](https://dl.acm.org/doi/abs/10.14778/3641204.3641217)|VLDB 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Crossformer](https://openreview.net/pdf?id=vSVLM2j9eie)|ICLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[CRU](https://proceedings.mlr.press/v162/schirmer22a.html)|ICML 2022|IMTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[DLinear](https://ojs.aaai.org/index.php/AAAI/article/view/26317)|AAAI 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[ETSformer](https://arxiv.org/abs/2202.01381)|arXiv 2022|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[FEDformer](https://proceedings.mlr.press/v162/zhou22g.html)|ICML 2022|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[FiLM](https://papers.nips.cc/paper_files/paper/2022/hash/524ef58c2bd075775861234266e5e020-Abstract-Conference.html)|NeurIPS 2022|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[FourierGNN](https://openreview.net/forum?id=bGs1qWQ1Fx)|NeurIPS 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[FreTS](https://papers.nips.cc/paper_files/paper/2023/hash/f1d16af76939f476b5f040fd1398c0a3-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[GNeuralFlow](https://openreview.net/forum?id=tFB5SsabVb)|NeurIPS 2024|IMTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[GraFITi](https://ojs.aaai.org/index.php/AAAI/article/view/29560)|AAAI 2024|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[GRU-D](https://www.nature.com/articles/s41598-018-24271-9)|Scientific Reports 2018|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[HD-TTS](https://proceedings.mlr.press/v235/marisca24a.html)|ICML 2024|IMTS|✅|-|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[Hi-Patch](https://openreview.net/forum?id=nBgQ66iEUu)|ICML 2025|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[higp](https://proceedings.mlr.press/v235/cini24a.html)|ICML 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|**[HyperIMTS](https://openreview.net/forum?id=u8wRbX2r2V) (Ours)**|ICML 2025|IMTS|✅|-|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Informer](https://ojs.aaai.org/index.php/AAAI/article/view/17325)|AAAI 2021|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[iTransformer](https://openreview.net/forum?id=JePfAI8fah)|ICLR 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Koopa](https://papers.nips.cc/paper_files/paper/2023/hash/28b3dc0970fa4624a63278a4268de997-Abstract-Conference.html)|NeurIPS 2023|MTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Latent_ODE](https://papers.nips.cc/paper_files/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html)|NeurIPS 2019|IMTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Leddam](https://openreview.net/forum?id=87CYNyCGOo)|ICML 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[LightTS](https://arxiv.org/abs/2207.01186)|arXiv 2022|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Mamba](https://openreview.net/forum?id=tEYskw1VY2)|Language Modeling 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[MICN](https://openreview.net/pdf?id=zt53IDUR1U)|ICLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[MOIRAI](https://proceedings.mlr.press/v235/woo24a.html)|ICML 2024|Any|✅|-|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[mTAN](https://openreview.net/forum?id=4c0J6lwQ4_)|ICLR 2021|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[NeuralFlows](https://proceedings.neurips.cc/paper/2021/hash/b21f9f98829dea9a48fd8aaddc1f159d-Abstract.html)|NeurIPS 2021|IMTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[NHITS](https://ojs.aaai.org/index.php/AAAI/article/view/25854)|AAAI 2023|MTS|✅|-|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[Nonstationary Transformer](https://openreview.net/pdf?id=ucNDIDRNjjv)|NeurIPS 2022|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[PatchTST](https://openreview.net/forum?id=Jbdc0vTOcol)|ICLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Pathformer](https://openreview.net/forum?id=lJkOCMP2aW)|ICLR 2024|MTS|✅|-|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[PrimeNet](https://ojs.aaai.org/index.php/AAAI/article/view/25876)|AAAI 2023|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Pyraformer](https://openreview.net/pdf?id=0EXmFzUn5I)|ICLR 2022|MTS|✅|✅|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[Raindrop](https://openreview.net/forum?id=Kwm8I7dU-l5)|ICLR 2022|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Reformer](https://openreview.net/forum?id=rkgNKkHtvB)|ICLR 2020|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|**[ReIMTS](https://openreview.net/forum?id=JEIDxiTWzB) (Ours)**|ICLR 2026|IMTS|✅|✅|-|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
+|[SeFT](https://proceedings.mlr.press/v119/horn20a.html)|ICML 2020|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[SegRNN](https://arxiv.org/abs/2308.11200)|arXiv 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Temporal Fusion Transformer](https://arxiv.org/abs/1912.09363)|arXiv 2019|MTS|✅|-|-|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[TFMixer](https://arxiv.org/pdf/2602.00582)|ICML 2026|IMTS|✅|-|-|[v2.0.1+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.1)|
+|[TiDE](https://openreview.net/forum?id=pCbC3aQB5W)|TMLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[TimeCHEAT](https://ojs.aaai.org/index.php/AAAI/article/view/34076)|AAAI 2025|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[TimeMixer](https://openreview.net/forum?id=7oLshfEIC2)|ICLR 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[TimesNet](https://openreview.net/pdf?id=ju_Uqw384Oq)|ICLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[tPatchGNN](https://openreview.net/forum?id=UZlMXUGI6e)|ICML 2024|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Transformer](https://papers.nips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)|NeurIPS 2017|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[TSMixer](https://openreview.net/forum?id=wbpxTuXgm0)|TMLR 2023|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
+|[Warpformer](https://dl.acm.org/doi/abs/10.1145/3580305.3599543)|KDD 2023|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
 
 
 ## 4. 💾 Datasets
