@@ -53,7 +53,7 @@ Using 🦞agent? Check out our official [PyOmniTS skill on clawhub](https://claw
 
 ## 3. 🤖 Models
 
-52 models, covering regular, irregular, pretrained, and traffic models, have been included in PyOmniTS, and more are coming.
+53 models, covering regular, irregular, pretrained, and traffic models, have been included in PyOmniTS, and more are coming.
 
 Model classes can be found in `models/`, and their dependencies can be found in `layers/`
 
@@ -67,6 +67,7 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 |---|---|---|---|---|---|---|
 |[Ada-MSHyper](https://openreview.net/forum?id=RNbrIQ0se8)|NeurIPS 2024|MTS|✅|✅|✅|v1.0.0+|
 |[APN](https://arxiv.org/abs/2505.11250)|AAAI 2026|IMTS|✅|-|-|v1.3.2+|
+|[ASTGI](https://openreview.net/forum?id=Wg9Rx5rjgo)|ICLR 2026|IMTS|✅|-|-|v2.0.1+|
 |[Autoformer](https://openreview.net/pdf?id=I55UqU-M11y)|NeurIPS 2021|MTS|✅|✅|✅|v1.0.0+|
 |[Scaleformer](https://openreview.net/forum?id=sCrnllCtjoE)|ICLR 2023|MTS|✅|-|✅|v2.0.0+|
 |[BigST](https://dl.acm.org/doi/abs/10.14778/3641204.3641217)|VLDB 2024|MTS|✅|✅|✅|v1.0.0+|
@@ -108,7 +109,7 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 |[SeFT](https://proceedings.mlr.press/v119/horn20a.html)|ICML 2020|IMTS|✅|✅|✅|v1.0.0+|
 |[SegRNN](https://arxiv.org/abs/2308.11200)|arXiv 2023|MTS|✅|✅|✅|v1.0.0+|
 |[Temporal Fusion Transformer](https://arxiv.org/abs/1912.09363)|arXiv 2019|MTS|✅|-|-|v1.0.0+|
-|[TFMixer](https://arxiv.org/pdf/2602.00582)|ICML 2026|IMTS|✅|-|-|v2.1.0+|
+|[TFMixer](https://arxiv.org/pdf/2602.00582)|ICML 2026|IMTS|✅|-|-|v2.0.1+|
 |[TiDE](https://openreview.net/forum?id=pCbC3aQB5W)|TMLR 2023|MTS|✅|✅|✅|v1.0.0+|
 |[TimeCHEAT](https://ojs.aaai.org/index.php/AAAI/article/view/34076)|AAAI 2025|MTS|✅|✅|✅|v1.0.0+|
 |[TimeMixer](https://openreview.net/forum?id=7oLshfEIC2)|ICLR 2024|MTS|✅|✅|✅|v1.0.0+|
