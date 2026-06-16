@@ -20,11 +20,6 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history to find previous tag
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
       - name: Validate version input
         id: validate
         run: |
@@ -39,23 +34,31 @@ jobs:
         id: prev_tag
         run: |
           VERSION="${{ steps.validate.outputs.version }}"
-          PREV_TAG=$(git tag -l --sort=-v:v | grep -v "^${VERSION}$" | head -1)
-          if [ -z "$PREV_TAG" ]; then
+          PREV_TAG=$(python -c "
+          import subprocess, re, sys
+          result = subprocess.run(['git', 'tag', '-l'], capture_output=True, text=True)
+          tags = [t.strip() for t in result.stdout.strip().splitlines() if t.strip().startswith('v')]
+          tags = [t for t in tags if t != '$VERSION']
+          if not tags:
+              print('NONE')
+              sys.exit(0)
+          def version_key(t):
+              m = re.match(r'^v(\d+)\.(\d+)\.(\d+)', t)
+              if m:
+                  return tuple(int(x) for x in m.groups())
+              return (-1, -1, -1)
+          tags.sort(key=version_key, reverse=True)
+          print(tags[0])
+          ")
+          if [ "$PREV_TAG" = "NONE" ]; then
             PREV_TAG=$(git rev-list --max-parents=0 HEAD | head -1)
-            echo "No previous tag found. Using root commit: $PREV_TAG"
+            echo "No previous tag found. Using root commit."
           fi
           echo "prev=$PREV_TAG" >> $GITHUB_OUTPUT
 
       - name: Generate release notes
-        id: notes
-        env:
-          VERSION: ${{ steps.validate.outputs.version }}
-          PREV_TAG: ${{ steps.prev_tag.outputs.prev_tag }}
-          REPO: Ladbaby/PyOmniTS
         run: |
-          python .github/generate_release_notes.py "$VERSION" "$PREV_TAG" "$REPO" > release_notes.md
-          echo "Generated release notes:"
-          cat release_notes.md
+          bash .github/gen_release_notes.sh -v "${{ steps.prev_tag.outputs.prev_tag }}...${{ steps.validate.outputs.version }}"
 
       - name: Create Git Tag
         run: |
@@ -68,9 +71,8 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.validate.outputs.version }}
         run: |
-          gh release create "$VERSION" \
-            --title "Release $VERSION" \
-            --notes-file release_notes.md \
+          gh release create "${{ steps.validate.outputs.version }}" \
+            --title "Release ${{ steps.validate.outputs.version }}" \
+            --notes-file release.md \
             --target main
