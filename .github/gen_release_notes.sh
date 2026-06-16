@@ -1,57 +1,61 @@
 #!/usr/bin/env bash
 # Generate categorized release notes from conventional commit messages.
-# Usage: ./gen_release_notes.sh -v prev_tag...curr_tag
-#        ./gen_release_notes.sh -v "...v0.1.0"   (first release, no previous tag)
+# Usage: ./gen_release_notes.sh -v v2.0.1
+#   Auto-finds the previous version tag and generates notes for prev..HEAD.
 
 set -euo pipefail
 
-version_range=""
+version=""
 
 while getopts "v:" opt; do
   case $opt in
-    v) version_range=$OPTARG ;;
-    \?) echo "Usage: $0 -v <prev_tag>...<curr_tag>" >&2; exit 1 ;;
+    v) version=$OPTARG ;;
+    \?) echo "Usage: $0 -v <version>" >&2; exit 1 ;;
   esac
 done
 
-if [ -z "$version_range" ]; then
+if [ -z "$version" ]; then
   echo "Error: -v is required." >&2
-  echo "Example: $0 -v v2.0.0...v2.1.0" >&2
+  echo "Example: $0 -v v2.1.0" >&2
   exit 1
-fi
-
-# Parse prev and curr from the range string
-if [[ "$version_range" == *"..."* ]]; then
-  prev="${version_range%...*}"
-  curr="${version_range#*...}"
-elif [[ "$version_range" == "..."* ]]; then
-  prev=""
-  curr="${version_range:3}"
-else
-  prev=""
-  curr="$version_range"
 fi
 
 REPO="https://github.com/Ladbaby/PyOmniTS"
 
-# For first release (no prev), use the tag directly.
-if [ -z "$prev" ]; then
-  LOG_RANGE="$curr"
+# Auto-detect the previous version tag by sorting all v-prefixed tags.
+prev=$(python -c "
+import subprocess, re, sys
+result = subprocess.run(['git', 'tag', '-l'], capture_output=True, text=True)
+tags = [t.strip() for t in result.stdout.strip().splitlines() if t.strip().startswith('v')]
+# Filter out any tag that starts with the current version (handles re-runs)
+tags = [t for t in tags if not t.startswith('$version')]
+if not tags:
+    sys.exit(0)
+def key(t):
+    m = re.match(r'^v(\d+)\.(\d+)\.(\d+)', t)
+    return tuple(int(x) for x in m.groups()) if m else (-1,-1,-1)
+tags.sort(key=key, reverse=True)
+print(tags[0])
+")
+
+# Always use HEAD as the range endpoint so re-runs capture all recent commits.
+if [ -n "$prev" ]; then
+  LOG_RANGE="${prev}...HEAD"
 else
-  LOG_RANGE="${prev}...${curr}"
+  LOG_RANGE="HEAD"
 fi
 
 # Helper: list commits, filtering out noise (ghrs, merge), deduplicated & sorted
 list_commits() {
   local grep_pattern="$1"
   git log --pretty="- %s ([commit](${REPO}/commit/%h))" --grep="$grep_pattern" -i "$LOG_RANGE" \
-    | grep -v "^- ghrs:" \
-    | grep -v "^- Merge " \
+    | grep -v "^.\+ghrs:" \
+    | grep -v "^.\+Merge " \
     | sort -f | uniq
 }
 
 {
-  echo "# Release ${curr}"
+  echo "# ${version}"
   echo ""
 
   # ── Features ──────────────────────────────────────────────────────
@@ -82,14 +86,12 @@ list_commits() {
   fi
 
   # ── Footer ────────────────────────────────────────────────────────
+  echo "---"
+  echo ""
   if [ -n "$prev" ]; then
-    echo "---"
-    echo ""
-    echo "**Full Changelog**: ${REPO}/compare/${prev}...${curr}"
+    echo "**Full Changelog**: ${REPO}/compare/${prev}...${version}"
   else
-    echo "---"
-    echo ""
-    echo "**Full Changelog**: ${REPO}/releases/tag/${curr}"
+    echo "**Full Changelog**: ${REPO}/releases/tag/${version}"
   fi
 } > release.md
 

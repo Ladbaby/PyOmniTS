@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history to find previous tag
+          fetch-depth: 0
 
       - name: Validate version input
         id: validate
@@ -30,35 +30,10 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Find previous tag
-        id: prev_tag
-        run: |
-          VERSION="${{ steps.validate.outputs.version }}"
-          PREV_TAG=$(python -c "
-          import subprocess, re, sys
-          result = subprocess.run(['git', 'tag', '-l'], capture_output=True, text=True)
-          tags = [t.strip() for t in result.stdout.strip().splitlines() if t.strip().startswith('v')]
-          tags = [t for t in tags if t != '$VERSION']
-          if not tags:
-              print('NONE')
-              sys.exit(0)
-          def version_key(t):
-              m = re.match(r'^v(\d+)\.(\d+)\.(\d+)', t)
-              if m:
-                  return tuple(int(x) for x in m.groups())
-              return (-1, -1, -1)
-          tags.sort(key=version_key, reverse=True)
-          print(tags[0])
-          ")
-          if [ "$PREV_TAG" = "NONE" ]; then
-            PREV_TAG=$(git rev-list --max-parents=0 HEAD | head -1)
-            echo "No previous tag found. Using root commit."
-          fi
-          echo "prev=$PREV_TAG" >> $GITHUB_OUTPUT
-
       - name: Generate release notes
+        id: notes
         run: |
-          bash .github/gen_release_notes.sh -v "${{ steps.prev_tag.outputs.prev_tag }}...${{ steps.validate.outputs.version }}"
+          bash .github/gen_release_notes.sh -v "${{ steps.validate.outputs.version }}"
 
       - name: Create Git Tag
         run: |
@@ -73,6 +48,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.validate.outputs.version }}" \
-            --title "Release ${{ steps.validate.outputs.version }}" \
+            --title "${{ steps.validate.outputs.version }}" \
             --notes-file release.md \
             --target main
