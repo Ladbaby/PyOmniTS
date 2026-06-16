@@ -117,26 +117,29 @@ class Model(nn.Module):
             output = output_dict["output"].squeeze(-1)
             target_U_ = output_dict["target_U_"]
             target_mask_ = output_dict["target_mask_"]
-            if exp_stage in ["train", "val"]:
-                return {
-                    "pred": output,
-                    "true": target_U_,
-                    "mask": target_mask_
-                }
-            else:
-                # convert the compressed tensor back to shape [batch_size, seq_len + pred_len, ndims] when testing
-                pred = self.unpad_and_reshape(
-                    output,
-                    x_y_mask,
-                    original_shape
-                )
-                f_dim = -1 if self.configs.features == 'MS' else 0
-                PRED_LEN = y.shape[1]
-                return {
-                    "pred": pred[:, -PRED_LEN:, f_dim:],
-                    "true": y[:, :, f_dim:],
-                    "mask": y_mask[:, :, f_dim:]
-                }
+
+            # use these codes for faster speed during training, but can affect compatibility with some loss functions
+            # if exp_stage in ["train", "val"]:
+            #     return {
+            #         "pred": output,
+            #         "true": target_U_,
+            #         "mask": target_mask_
+            #     }
+            # else:
+
+            # convert the compressed tensor back to shape [batch_size, seq_len + pred_len, ndims] when testing
+            pred = self.unpad_and_reshape(
+                output,
+                x_y_mask,
+                original_shape
+            )
+            f_dim = -1 if self.configs.features == 'MS' else 0
+            PRED_LEN = y.shape[1]
+            return {
+                "pred": pred[:, -PRED_LEN:, f_dim:],
+                "true": y[:, :, f_dim:],
+                "mask": y_mask[:, :, f_dim:]
+            }
         elif self.configs.task_name == "classification":
             output_class = output_dict["output_class"]
             return {
