@@ -24,7 +24,7 @@ for pred_len in 300; do
     --n_layers 2 \
     --n_heads 1 \
     --loss "MSE" \
-    --lr_scheduler CosineAnnealingLR\
+    --lr_scheduler CosineAnnealingLR \
     --use_multi_gpu $use_multi_gpu \
     --dataset_root_path $dataset_root_path \
     --model_id $model_id \
@@ -41,7 +41,6 @@ for pred_len in 300; do
     --patience 10 \
     --val_interval 1 \
     --itr 5 \
-    --train_subset_frac 1.0 \
     --batch_size 32 \
     --learning_rate 1e-3
 done
