@@ -82,7 +82,7 @@ Model classes can be found in `models/`, and their dependencies can be found in 
 |[GNeuralFlow](https://openreview.net/forum?id=tFB5SsabVb)|NeurIPS 2024|IMTS|✅|❌|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
 |[GraFITi](https://ojs.aaai.org/index.php/AAAI/article/view/29560)|AAAI 2024|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
 |[GRU-D](https://www.nature.com/articles/s41598-018-24271-9)|Scientific Reports 2018|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
-|[GRUwE](https://openreview.net/pdf?id=YLoZA77QzR)|TMLR 2026|IMTS|✅|-|-|-|
+|[GRUwE](https://openreview.net/pdf?id=YLoZA77QzR)|TMLR 2026|IMTS|✅|-|-|[v2.0.2+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.2)|
 |[HD-TTS](https://proceedings.mlr.press/v235/marisca24a.html)|ICML 2024|IMTS|✅|-|✅|[v2.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v2.0.0)|
 |[Hi-Patch](https://openreview.net/forum?id=nBgQ66iEUu)|ICML 2025|IMTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
 |[higp](https://proceedings.mlr.press/v235/cini24a.html)|ICML 2024|MTS|✅|✅|✅|[v1.0.0+](https://github.com/Ladbaby/PyOmniTS/releases/tag/v1.0.0)|
